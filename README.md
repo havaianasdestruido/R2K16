@@ -1,6 +1,8 @@
-# Roblox
+# PROJECT _R2K16_
 
-This is a version of Roblox from 2016 with its source code fixed. The base used is from git.rip, from https://git.rip/exconfidential/roblox/roblox.
+This is a MODDED fork of Roblox from 2016 with its source code. The base used is from git.rip, from https://git.rip/exconfidential/roblox/roblox.
+
+***R2K16*** aims to adjust, adapt and polish the engine in a way it can be compared to the modern ROBLOX STUDIO engine.
 
 ## Warning(s)
 
