@@ -188,6 +188,9 @@ This is a complete and comprehensive list of all the major changes made to the o
 	- [x] Uncap PlayerGui:SetTopbarTransparency
 	- [ ] Mesh format version 3.00 support
 	- [ ] Color3.toRGB
+	- [ ] Standalone game exporting
+    - [ ] FPS uncapping
+    - [ ] Linux support
 - [ ] Bug fixes
 	- [ ] DirectX
 		- [x] DirectX 9 [ text render bug ] [ fixed, apparently never existed in first place ]
