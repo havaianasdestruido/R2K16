@@ -1,0 +1,97 @@
+# Labeler configuration for R2K16 codebase
+# Labels are automatically applied based on files changed in a pull request
+
+# Language-based labels
+cpp:
+  - any: ['**/*.cpp', '**/*.cc', '**/*.cxx', '**/*.c++', '**/*.hpp', '**/*.h', '**/*.hxx', '**/*.h++']
+
+c:
+  - any: ['**/*.c', '!**/*.cpp', '!**/*.cc', '!**/*.cxx', '!**/*.c++']
+
+html:
+  - any: ['**/*.html', '**/*.htm']
+
+javascript:
+  - any: ['**/*.js', '**/*.jsx', '**/*.mjs']
+
+python:
+  - any: ['**/*.py']
+
+objective-cpp:
+  - any: ['**/*.mm', '**/*.M']
+
+# Project component labels
+build-system:
+  - any: ['**/CMakeLists.txt', '**/*.cmake', 'Makefile', '**/*.mk', 'build/**']
+
+configuration:
+  - any: ['**/*.json', '**/*.yaml', '**/*.yml', '**/*.toml', '**/*.ini', '**/*.conf', '**/*.cfg']
+
+documentation:
+  - any: ['**/*.md', '**/*.rst', '**/*.txt', 'docs/**', 'README*']
+
+tests:
+  - any: ['**/test/**', '**/*_test.*', '**/*_tests.*', '**/tests/**']
+
+ci-cd:
+  - any: ['.github/workflows/**', '.github/actions/**', '.gitignore', '**/.travis.yml', '**/appveyor.yml']
+
+assets:
+  - any: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.ico', '**/*.webp']
+
+# Type-based labels
+bug:
+  - any: []
+
+feature:
+  - any: []
+
+enhancement:
+  - any: []
+
+refactor:
+  - any: []
+
+performance:
+  - any: []
+
+security:
+  - any: []
+
+dependencies:
+  - any: ['**/package.json', '**/package-lock.json', '**/requirements.txt', '**/Gemfile', '**/Cargo.toml', '**/go.mod', '**/go.sum']
+
+# Area labels (typical Roblox/2K16 project areas)
+client:
+  - any: ['client/**', 'src/client/**']
+
+server:
+  - any: ['server/**', 'src/server/**']
+
+shared:
+  - any: ['shared/**', 'src/shared/**']
+
+ui:
+  - any: ['ui/**', 'src/ui/**', '**/*.html', '**/*.css']
+
+network:
+  - any: ['network/**', 'src/network/**', '**/networking/**']
+
+physics:
+  - any: ['physics/**', 'src/physics/**', '**/physics/**']
+
+# Size labels (optional - useful for PR reviews)
+size/xs:
+  - any: []
+
+size/s:
+  - any: []
+
+size/m:
+  - any: []
+
+size/l:
+  - any: []
+
+size/xl:
+  - any: []
