@@ -198,3 +198,37 @@ This is a complete and comprehensive list of all the major changes made to the o
 	- [x] SDL Windows Key
 	- [x] Keyboard Shortcuts
 	- [x] Chat output being smaller upon minimize
+
+**Graphics & Rendering:**
+- [ ] Implement modern graphics pipeline (DirectX 12 / Vulkan support)
+- [ ] Add real-time ray tracing capabilities
+- [ ] Enhance particle effects system
+- [ ] Implement dynamic environment mapping
+- [ ] Add support for PBR (Physically Based Rendering) materials
+
+**Networking:**
+- [ ] Implement dedicated server architecture improvements
+- [ ] Add WebSocket support for cross-platform communication
+- [ ] Enhance bandwidth optimization algorithms
+- [ ] Add peer-to-peer networking fallback
+- [ ] Implement improved latency compensation
+
+**Physics:**
+- [ ] Upgrade Bullet Physics to latest version
+<!--- [ ] Add soft-body physics simulation
+- [ ] Implement ragdoll physics systems
+- [ ] Add water/fluid simulation -->
+- [ ] Enhance collision detection performance
+
+**Performance & Optimization:**
+- [ ] Add advanced profiling tools (beyond microprofile)
+- [ ] Implement memory pooling and optimization
+- [ ] Add LOD (Level of Detail) systems
+- [ ] Implement shader caching
+- [ ] Add multi-threaded rendering support
+
+**Platform Support:**
+- [ ] Modernize Android client
+- [ ] Improve iOS client performance
+- [ ] Add web/WebGL support
+- [ ] Enhance VR/AR capabilities
