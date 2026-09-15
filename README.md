@@ -4,6 +4,10 @@ This is a MODDED fork of Roblox from 2016 with its source code. The base used is
 
 ***R2K16*** aims to adjust, adapt and polish the engine in a way it can be compared to the modern ROBLOX STUDIO engine.
 
+***R2K16*** is being made by @havaianasdestruido ([https://github.com/havaianasdestruido](https://github.com/havaianasdestruido)), aka. PatoFlamejanteTV/UltimateQuack.
+
+***TIP: IF YOU WANT TO SEE OTHER REUPLOADS/FORKS OF ROBLOX'S SOURCE CODE, USE THIS SEARCH: [https://github.com/search?q=%22RenderJob%3A%3ARenderJob%28RBX%3A%3AViewBase*+v%2C+Marshaller*+m%29%22&type=code](https://github.com/search?q=%22RenderJob%3A%3ARenderJob%28RBX%3A%3AViewBase*+v%2C+Marshaller*+m%29%22&type=code)***
+
 ## Warning(s)
 
 ### From now, im going to accept pull requests to fixes/PRs
