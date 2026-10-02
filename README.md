@@ -10,6 +10,18 @@ This is a MODDED fork of Roblox from 2016 with its source code. The base used is
 
 > [https://github.com/search?q=%22DeserializedChangePropertyItem%3A%3ADeserializedChangePropertyItem%28%29%22&type=code](https://github.com/search?q=%22DeserializedChangePropertyItem%3A%3ADeserializedChangePropertyItem%28%29%22&type=code) seems good too.
 
+## Documentation
+
+Full codebase documentation is available in the [`website/`](website/) folder, built with [Docusaurus](https://docusaurus.io/). It covers the engine architecture, every module in the repository, build guides and reference material.
+
+Run it locally:
+```sh
+$ cd website
+$ npm install
+$ npm start
+```
+Then open http://localhost:3000 (the docs themselves live in `website/docs/`).
+
 ## Warning(s)
 
 ### From now, im going to accept pull requests to fixes/PRs
