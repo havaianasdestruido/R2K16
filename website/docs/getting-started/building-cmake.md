@@ -28,6 +28,8 @@ It also loads helper modules from `cmake/Modules/` — `ListFilter`, `IncludePro
 The CI workflow configures the tree with:
 
 ```bash
+# Partial Unix configure example — combine with the full configure from the
+# table above: -DCONTRIB_PATH=... -DRBX_STL_INCLUDE_DIRS=... -DCMAKE_BUILD_TYPE=Release
 cmake -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 ```
 

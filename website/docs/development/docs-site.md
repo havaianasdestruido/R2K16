@@ -75,7 +75,7 @@ website/
 - Code blocks get syntax highlighting for C++, Lua, CMake, bash and more via Prism
   (configured in `docusaurus.config.js`).
 - Mermaid diagrams are enabled — fence a block with `mermaid` (see
-  `architecture/overview.md` for examples).
+  `architecture/index.md` for examples).
 - Front matter `title`, `description`, `sidebar_label`, and `sidebar_position` are the ones
   in use.
 
@@ -92,13 +92,14 @@ website/
 ## Deployment (GitHub Pages)
 
 The workflow `.github/workflows/docs-deploy.yml` (in the repository root) builds this site
-and publishes it to the `gh-pages` branch on every push to `main` that touches
-`website/**` or the workflow itself.
+and publishes it to GitHub Pages on every push to `main` that touches `website/**` or the
+workflow itself, using artifact-based deployment (`actions/upload-pages-artifact` +
+`actions/deploy-pages@v4`).
 
 To enable it:
 
-1. **Repository Settings → Pages → Source: *Deploy from a branch***, and select `gh-pages`
-   (created automatically by the first successful run) — or leave it on *GitHub Actions*.
+1. **Repository Settings → Pages → Source: *GitHub Actions*** — the workflow uploads the
+   build artifact and deploys it directly; no `gh-pages` branch is involved.
 2. Push to `main` (or adjust the workflow's `on:` triggers).
 
 The published URL is `https://<user>.github.io/R2K16/`.

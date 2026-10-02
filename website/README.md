@@ -14,8 +14,8 @@ npm start          # dev server with hot reload (http://localhost:3000)
 Production build & preview:
 
 ```bash
-npm run build
-DOCUSAURUS_BASE_URL=/ npm run serve   # serve at / instead of /R2K16/
+DOCUSAURUS_BASE_URL=/ npm run build   # build with root-based paths
+DOCUSAURUS_BASE_URL=/ npm run serve   # serve that root-based build
 ```
 
 `npm run build` defaults to `baseUrl: '/R2K16/'` for GitHub Pages project sites;

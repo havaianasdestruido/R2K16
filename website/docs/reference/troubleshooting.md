@@ -73,8 +73,10 @@ The site's default base URL is `/R2K16/` (for GitHub Pages). Serve it with
 
 ### Docs build fails on a link
 
-`onBrokenLinks: 'throw'` — a moved/deleted doc broke a relative link. Fix the link; the error
-message names the file and target.
+`onBrokenLinks: 'throw'` — a moved/deleted doc broke a link governed by that option
+(doc-to-doc and anchor links). Fix the link; the error message names the file and target.
+Broken **Markdown** links, by contrast, only log a warning — this site sets
+`markdown.hooks.onBrokenMarkdownLinks: 'warn'` — so scan the build log for them.
 
 ## Runtime
 

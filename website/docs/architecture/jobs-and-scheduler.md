@@ -5,7 +5,7 @@ sidebar_position: 4
 # Jobs & the TaskScheduler
 
 *Where:* `Base/include/rbx/TaskScheduler.h`, `Base/rbx/TaskScheduler*.cpp`,
-`App/v8datamodel/DataModelJob.cpp`, `Rendering/GfxBase/BaseRenderJob.cpp`, …
+`App/v8datamodel/DataModelJob.cpp`, `App/v8datamodel/BaseRenderJob.cpp`, …
 
 The 2016 engine replaced a naive main loop with a **job-based scheduler**: all recurring work is
 expressed as `TaskScheduler::Job` objects that a central singleton (`RBX::TaskScheduler`)

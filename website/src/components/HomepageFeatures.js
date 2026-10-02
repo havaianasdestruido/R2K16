@@ -7,7 +7,7 @@ const FeatureList = [
   {
     title: 'The Engine Core',
     svg: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="featureIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.featureIcon}>
         <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" strokeLinejoin="round" />
         <path d="M3 7l9 5 9-5M12 12v10" strokeLinejoin="round" />
       </svg>
@@ -26,7 +26,7 @@ const FeatureList = [
   {
     title: 'Studio & Clients',
     svg: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="featureIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.featureIcon}>
         <rect x="2" y="4" width="20" height="14" rx="2" />
         <path d="M8 21h8M12 18v3M7 9h4M7 12h7" strokeLinecap="round" />
       </svg>
@@ -45,7 +45,7 @@ const FeatureList = [
   {
     title: 'Build System',
     svg: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="featureIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.featureIcon}>
         <path d="M4 17l6-6-6-6M12 19h8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
@@ -63,7 +63,7 @@ const FeatureList = [
   {
     title: 'Testing & Tooling',
     svg: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="featureIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.featureIcon}>
         <path d="M9 3h6M10 3v5L4.5 18a2 2 0 001.8 3h11.4a2 2 0 001.8-3L14 8V3" strokeLinejoin="round" />
         <path d="M7 15h10" />
       </svg>

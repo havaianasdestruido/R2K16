@@ -1,6 +1,7 @@
 # Builds the Docusaurus documentation site in website/ and deploys it to
-# GitHub Pages. Requires Pages to be enabled in the repository settings
-# (Source: GitHub Actions, or "Deploy from a branch" -> gh-pages).
+# GitHub Pages using artifact-based deployment (actions/deploy-pages).
+# Requires Pages to be enabled in the repository settings with
+# Source: GitHub Actions.
 name: Deploy documentation site
 
 on:
@@ -11,11 +12,6 @@ on:
       - ".github/workflows/docs-deploy.yml"
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 # Allow only one concurrent deployment, but don't cancel in-progress runs.
 concurrency:
   group: "pages"
@@ -24,6 +20,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read # actions/configure-pages reads Pages site metadata
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -52,6 +51,9 @@ jobs:
           path: website/build
 
   deploy:
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
