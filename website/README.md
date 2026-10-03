@@ -1,7 +1,11 @@
 # R2K16 Documentation Site
 
 Full codebase documentation for the R2K16 repository, built with
-[Docusaurus 3](https://docusaurus.io/).
+[Docusaurus 3](https://docusaurus.io/) and published at
+<https://havaianasdestruido.github.io/R2K16/docs/>.
+
+> The **primary webpage** at <https://havaianasdestruido.github.io/R2K16/> is a
+> separate Jekyll site living in [`site/`](../site/) at the repository root.
 
 ## Quick start
 
@@ -14,13 +18,14 @@ npm start          # dev server with hot reload (http://localhost:3000)
 Production build & preview:
 
 ```bash
-DOCUSAURUS_BASE_URL=/ npm run build   # build with root-based paths
-DOCUSAURUS_BASE_URL=/ npm run serve   # serve that root-based build
+DOCUSAURUS_BASE_URL=/docs/ npm run build   # build with root-based /docs/ paths
+DOCUSAURUS_BASE_URL=/docs/ npm run serve   # serve that build
 ```
 
-`npm run build` defaults to `baseUrl: '/R2K16/'` for GitHub Pages project sites;
-override with the `DOCUSAURUS_BASE_URL` environment variable when hosting at a
-domain root. The dev server (`npm start`) ignores this.
+`npm run build` defaults to `baseUrl: '/R2K16/docs/'` because on GitHub Pages
+the docs are served under `/R2K16/docs/`; override with the
+`DOCUSAURUS_BASE_URL` environment variable when hosting elsewhere. The dev
+server (`npm start`) ignores this.
 
 ## Content
 
@@ -41,9 +46,12 @@ enabled. Broken links fail the build.
 
 ## Deployment
 
-`.github/workflows/docs-deploy.yml` (repo root) builds and publishes this site to
-GitHub Pages on every push to `main` touching `website/**`. Published URL:
-`https://<user>.github.io/R2K16/`.
+`.github/workflows/docs-deploy.yml` (repo root) builds this site **and** the
+Jekyll primary webpage ([`site/`](../site/)), merges the Docusaurus build under
+`/docs/` of the Jekyll build, and publishes the combined artifact to GitHub
+Pages on every push to `main` touching `site/**` or `website/**`. Published
+URLs: `https://<user>.github.io/R2K16/` (Jekyll) and
+`https://<user>.github.io/R2K16/docs/` (these docs).
 
 See `docs/development/docs-site.md` in the built site for the full maintenance
 guide.

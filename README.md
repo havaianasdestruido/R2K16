@@ -12,15 +12,27 @@ This is a MODDED fork of Roblox from 2016 with its source code. The base used is
 
 ## Documentation
 
-Full codebase documentation is available in the [`website/`](website/) folder, built with [Docusaurus](https://docusaurus.io/). It covers the engine architecture, every module in the repository, build guides and reference material.
+The project website is published to GitHub Pages at <https://havaianasdestruido.github.io/R2K16/>:
 
-Run it locally:
+- **Primary webpage** (`/R2K16/`) — built with [Jekyll](https://jekyllrb.com/) from the [`site/`](site/) folder.
+- **Docs** (`/R2K16/docs/`) — built with [Docusaurus](https://docusaurus.io/) from the [`website/`](website/) folder. It covers the engine architecture, every module in the repository, build guides and reference material.
+
+Both are built and deployed together by [`.github/workflows/docs-deploy.yml`](.github/workflows/docs-deploy.yml) on every push to `main` touching `site/` or `website/` (Pages must be set to *Source: GitHub Actions* in the repository settings).
+
+Run the docs locally:
 ```sh
 $ cd website
 $ npm install
 $ npm start
 ```
 Then open http://localhost:3000 (the docs themselves live in `website/docs/`).
+
+Run the primary webpage locally:
+```sh
+$ cd site
+$ jekyll serve
+```
+Then open http://localhost:4000/R2K16/.
 
 ## Warning(s)
 

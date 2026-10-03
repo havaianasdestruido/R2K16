@@ -1,0 +1,26 @@
+# Jekyll configuration for the primary R2K16 webpage.
+#
+# The primary webpage served at https://havaianasdestruido.github.io/R2K16/ is
+# built from this folder with the same Jekyll engine that GitHub Pages itself
+# uses (actions/jekyll-build-pages). The Docusaurus documentation under
+# website/ is built separately and mounted at /R2K16/docs/ — see
+# .github/workflows/docs-deploy.yml for how the two are combined and deployed.
+#
+# Local preview:
+#   cd site && bundle exec jekyll serve   (or: jekyll serve)
+#   → http://localhost:4000/R2K16/
+
+title: R2K16
+description: >-
+  A modded fork of the 2016 Roblox engine source code — adjusted, adapted and
+  polished so it can stand next to the modern Roblox Studio engine.
+
+url: "https://havaianasdestruido.github.io"
+baseurl: "/R2K16"
+
+# Same Markdown engine GitHub Pages uses.
+markdown: kramdown
+kramdown:
+  input: GFM
+
+# No gem theme — the page layouts live in _layouts/.

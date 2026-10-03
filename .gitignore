@@ -485,3 +485,6 @@ XboxClient/libraries/*
 
 !Library/xulrunner/*
 
+
+# Jekyll primary webpage (site/) — local build output
+_site/
