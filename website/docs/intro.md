@@ -1,5 +1,8 @@
 ---
 sidebar_position: 1
+# Serve the introduction at the docs root (/R2K16/docs/) — docs-only mode
+# has no landing page, so this doc claims the '/' route of the docs app.
+slug: /
 ---
 
 # Introduction

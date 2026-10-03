@@ -1,15 +1,19 @@
 /**
  * Docusaurus configuration for the R2K16 codebase documentation.
  *
+ * The docs are served from a sub-path of the GitHub Pages site:
+ *   https://havaianasdestruido.github.io/R2K16/docs/
+ * The primary webpage at https://havaianasdestruido.github.io/R2K16/ is a
+ * separate Jekyll site (see the `site/` folder at the repository root).
+ *
  * Base URL note:
- *  - GitHub Pages project sites are served from a sub-path (/R2K16/), which is
- *    the default here.
+ *  - The default here matches GitHub Pages (docs live under /R2K16/docs/).
  *  - When running a local preview at the root of a host (e.g. a sandbox
  *    preview), override it with:
- *        DOCUSAURUS_BASE_URL=/ npm run build && DOCUSAURUS_BASE_URL=/ npm run serve
+ *        DOCUSAURUS_BASE_URL=/docs/ npm run build && DOCUSAURUS_BASE_URL=/docs/ npm run serve
  *    (or simply `npm run start`, the dev server always handles this fine).
  */
-const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/R2K16/';
+const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/R2K16/docs/';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -42,7 +46,10 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          routeBasePath: '/docs',
+          // Docs-only mode: this Docusaurus app exists solely to serve the
+          // docs. Combined with baseUrl '/R2K16/docs/' the docs are published
+          // at https://havaianasdestruido.github.io/R2K16/docs/.
+          routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
             'https://github.com/havaianasdestruido/R2K16/edit/main/website/',
@@ -93,6 +100,11 @@ const config = {
             position: 'left',
           },
           {
+            href: 'https://havaianasdestruido.github.io/R2K16/',
+            label: 'Homepage',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/havaianasdestruido/R2K16',
             label: 'GitHub',
             position: 'right',
@@ -106,27 +118,28 @@ const config = {
           {
             title: 'Documentation',
             items: [
-              { label: 'Introduction', to: '/docs/intro' },
-              { label: 'Getting Started', to: '/docs/getting-started/' },
-              { label: 'Architecture', to: '/docs/architecture/' },
-              { label: 'Module Reference', to: '/docs/modules/' },
+              { label: 'Introduction', to: '/' },
+              { label: 'Getting Started', to: '/getting-started/' },
+              { label: 'Architecture', to: '/architecture/' },
+              { label: 'Module Reference', to: '/modules/' },
             ],
           },
           {
             title: 'Development',
             items: [
-              { label: 'Build (Windows)', to: '/docs/getting-started/building-windows' },
-              { label: 'Build (CMake)', to: '/docs/getting-started/building-cmake' },
-              { label: 'CI / CD', to: '/docs/development/ci' },
-              { label: 'Maintaining This Site', to: '/docs/development/docs-site' },
+              { label: 'Build (Windows)', to: '/getting-started/building-windows' },
+              { label: 'Build (CMake)', to: '/getting-started/building-cmake' },
+              { label: 'CI / CD', to: '/development/ci' },
+              { label: 'Maintaining This Site', to: '/development/docs-site' },
             ],
           },
           {
             title: 'Project',
             items: [
+              { label: 'Homepage', href: 'https://havaianasdestruido.github.io/R2K16/' },
               { label: 'GitHub', href: 'https://github.com/havaianasdestruido/R2K16' },
-              { label: 'Roadmap', to: '/docs/reference/roadmap' },
-              { label: 'Glossary', to: '/docs/reference/glossary' },
+              { label: 'Roadmap', to: '/reference/roadmap' },
+              { label: 'Glossary', to: '/reference/glossary' },
               { label: 'License (Apache-2.0)', href: 'https://github.com/havaianasdestruido/R2K16/blob/main/LICENSE' },
             ],
           },

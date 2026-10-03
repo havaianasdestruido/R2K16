@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% if page.title %}{{ page.title | escape }} · {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+    <meta name="description" content="{{ page.description | default: site.description | escape }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{ site.title | escape }}" />
+    <meta property="og:title" content="{{ site.title | escape }}" />
+    <meta property="og:description" content="{{ site.description | escape }}" />
+    <meta property="og:url" content="{{ '/' | absolute_url }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicon.svg' | relative_url }}" />
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="{{ '/' | relative_url }}">
+          <img class="brand-logo" src="{{ '/assets/img/logo.svg' | relative_url }}" alt="" width="28" height="28" />
+          <span>{{ site.title }}</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="{{ '/docs/' | relative_url }}">Docs</a>
+          <a href="{{ '/docs/getting-started/' | relative_url }}">Getting started</a>
+          <a href="https://github.com/havaianasdestruido/R2K16">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          <strong>{{ site.title }}</strong> — maintained by
+          <a href="https://github.com/havaianasdestruido">havaianasdestruido</a>
+          (PatoFlamejanteTV / UltimateQuack). Original engine © 2003–2016 Roblox Corporation.
+        </p>
+        <p class="footer-links">
+          <a href="{{ '/docs/' | relative_url }}">Documentation</a>
+          <a href="{{ '/docs/reference/' | relative_url }}">Reference</a>
+          <a href="{{ '/docs/development/' | relative_url }}">Development</a>
+          <a href="https://github.com/havaianasdestruido/R2K16">GitHub</a>
+          <a href="https://github.com/havaianasdestruido/R2K16/blob/main/LICENSE">License</a>
+        </p>
+        <p class="footer-note">Primary page built with Jekyll · Docs built with Docusaurus</p>
+      </div>
+    </footer>
+  </body>
+</html>
