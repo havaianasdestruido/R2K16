@@ -488,3 +488,5 @@ XboxClient/libraries/*
 
 # Jekyll primary webpage (site/) — local build output
 _site/
+# Scratch destination used by the Pages workflow before merging in the docs
+_jekyll/

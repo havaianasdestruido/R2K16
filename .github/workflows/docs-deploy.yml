@@ -55,16 +55,30 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
+      # jekyll-build-pages is a Docker action running as root, so everything it
+      # writes is owned by root:root (0755). Build into a scratch directory and
+      # assemble the final _site as the runner user below, otherwise creating
+      # _site/docs fails with "Permission denied".
       - name: Build primary webpage with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./site
-          destination: ./_site
+          destination: ./_jekyll
 
-      - name: Mount the docs under /docs/
+      - name: Assemble Pages artifact with the docs under /docs/
         run: |
+          set -euo pipefail
+          test -d _jekyll || { echo "::error::Jekyll output _jekyll/ is missing"; exit 1; }
+          test -d website/build || { echo "::error::Docusaurus output website/build/ is missing"; exit 1; }
+          rm -rf _site
+          mkdir -p _site
+          # cp -a from the root-owned tree is fine: as a non-root user cp skips
+          # preserving ownership, so the copies belong to the runner user.
+          cp -a _jekyll/. _site/
           mkdir -p _site/docs
           cp -a website/build/. _site/docs/
+          test -f _site/index.html
+          test -f _site/docs/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
