@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(roblox C CXX ASM)
 
 if(NOT UNIX)
-  message(FATAL_ERROR "Unsupported platform.")
+  message(WARNING "Unsupported platform.")
 endif(NOT UNIX)
 
 list(APPEND CMAKE_PREFIX_PATH "${CONTRIB_PATH}")
