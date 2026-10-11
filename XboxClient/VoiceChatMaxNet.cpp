@@ -275,7 +275,7 @@ void VoiceChatMaxNet::onOutgoingChatPacketReady(Microsoft::Xbox::GameChat::ChatP
         if (args->SendPacketToAllConnectedConsoles)
         {
             RBX::mutex::scoped_lock lock(peersLock);
-            for (auto peer : peers)
+            for (const auto& peer : peers)
             {
                 RBX::mutex::scoped_lock subscriptionLock(subscribedPeersLock);
                 if (subscibedPeers.find(peer.first) != subscibedPeers.end())
@@ -496,7 +496,7 @@ void VoiceChatMaxNet::removeConnections(Windows::Foundation::Collections::IVecto
 
 void VoiceChatMaxNet::unsubscribeToChatMessages_NoLock()
 {
-    for (auto peer : peers)
+    for (const auto& peer : peers)
     {
         sendVoiceControlPacket(peer.second, false);
     }
@@ -504,7 +504,7 @@ void VoiceChatMaxNet::unsubscribeToChatMessages_NoLock()
 
 void VoiceChatMaxNet::subscribeToChatMessages_NoLock()
 {
-    for (auto peer : peers)
+    for (const auto& peer : peers)
     {
         sendVoiceControlPacket(peer.second, true);
     }

@@ -793,7 +793,7 @@ namespace Studio {
 	{
 		int itemTypes = NO_ITEM;
 
-		for (auto it : result)
+		for (const auto& it : result)
 		{
 			if (!it.name.empty())
 			{
