@@ -271,7 +271,7 @@ void LuaSourceContainer::updateScriptInstancesUnderWriteLock(DataModel* /*unused
 		// This mutex lock isn't strictly necessary, this function is expected to only
 		// be run after all scripts have been loaded/failed to load.
 		boost::mutex::scoped_lock l(metadata->scriptApplyResultClosuresMutex);
-		for (auto closure : metadata->scriptApplyResultClosures)
+		for (const auto& closure : metadata->scriptApplyResultClosures)
 		{
 			closure();
 		}

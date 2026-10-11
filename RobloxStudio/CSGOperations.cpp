@@ -76,7 +76,7 @@ bool RBX::CSGOperations::doUnion(
 	if (FFlag::CSGDelayParentingOperationToEnd)
 	{
 		Instances selectionCopy(start, end);
-		for (auto iter : selectionCopy)
+		for (const auto& iter : selectionCopy)
 		{
 			iter->setParent(partOperation.get());
 
