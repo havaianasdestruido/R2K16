@@ -1023,7 +1023,7 @@ int XboxMultiplayerManager::requestJoinParty()
 		}
 
 		auto userList = ref new Platform::Collections::Vector<Platform::String^>();
-		for (auto relationship : socialRelationshipResult->Items)
+		for (const auto& relationship : socialRelationshipResult->Items)
 		{
 			userList->Append(relationship->XboxUserId);
 		}

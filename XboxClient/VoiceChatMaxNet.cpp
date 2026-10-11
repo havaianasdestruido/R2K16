@@ -135,7 +135,7 @@ void VoiceChatMaxNet::init()
 void VoiceChatMaxNet::updateMember(unsigned memberId, float distance, TalkingDelta* talkingDeltaOut)
 {
     if (chatManager)
-        for (auto user : chatManager->GetChatUsers())
+        for (const auto& user : chatManager->GetChatUsers())
         {
             Xp2p::PeerPtr peer = peers[memberId];
             if (user->UniqueConsoleIdentifier && peer.get())
@@ -211,7 +211,7 @@ void VoiceChatMaxNet::multiplayerUserAdded(Microsoft::Xbox::Services::Multiplaye
                 boost::shared_ptr<VoiceChatMaxNet> voiceChat = weakPtrToThis.lock();
                 if (voiceChat != nullptr)
                 {
-                    for (auto audio : localUser->User->AudioDevices)
+                    for (const auto& audio : localUser->User->AudioDevices)
                     {
                         if (audio->Sharing == Windows::Xbox::System::AudioDeviceSharing::Exclusive && audio->DeviceType == Windows::Xbox::System::AudioDeviceType::Capture)
                         {
@@ -400,7 +400,7 @@ Microsoft::Xbox::GameChat::ChatUser^ VoiceChatMaxNet::getUserByMemberId(unsigned
 {
     if (chatManager)
     {
-        for (auto user : chatManager->GetChatUsers())
+        for (const auto& user : chatManager->GetChatUsers())
         {
             ConsoleId^ conId = dynamic_cast<ConsoleId^>(user->UniqueConsoleIdentifier);
             if (conId != nullptr && (unsigned)conId->Value == id)

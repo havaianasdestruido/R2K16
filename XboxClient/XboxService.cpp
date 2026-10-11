@@ -3261,7 +3261,7 @@ int XboxPlatform::getPlatformPartyMembers(shared_ptr<Reflection::ValueArray> res
 	int r = getParty( &party, true, userTranslator.get(), xboxLiveContext );
 	if (!party.empty())
 	{
-		for (auto partyMember : party)
+		for (const auto& partyMember : party)
 		{
 			result->push_back(partyMember);
 		}

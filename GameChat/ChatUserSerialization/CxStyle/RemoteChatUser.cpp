@@ -66,7 +66,7 @@ void RemoteChatUser::ResetAudioDevices(
 {
     m_audioDevices.Clear();
 
-    for (auto device : audioDevices)
+    for (const auto& device : audioDevices)
     {
         m_audioDevices.Append( device );
     }

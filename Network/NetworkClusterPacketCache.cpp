@@ -127,6 +127,6 @@ void OneQuarterClusterPacketCache::onTerrainRegionChanged(const Voxel2::Region& 
 {
 	std::vector<Vector3int32> ids = region.getChunkIds(StreamRegion::_PrivateConstants::kRegionSizeInVoxelsAsBitShift);
 
-	for (auto i: ids)
+	for (const auto& i: ids)
 		streamCache[StreamRegion::Id(i)].dirty = true;
 }
