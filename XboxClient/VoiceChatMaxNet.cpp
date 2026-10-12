@@ -193,7 +193,7 @@ void VoiceChatMaxNet::multiplayerUserAdded(Microsoft::Xbox::Services::Multiplaye
         if (member->Status == MultiplayerSessionMemberStatus::Active && !member->SecureDeviceAddressBase64->IsEmpty() && !member->IsCurrentUser)
         {
             Microsoft::Xbox::GameChat::ChatUser^ localUser;
-            for(auto user : chatManager->GetChatUsers())
+            for(const auto& user : chatManager->GetChatUsers())
                 if (user->IsLocal)
                 {
                     localUser = user;

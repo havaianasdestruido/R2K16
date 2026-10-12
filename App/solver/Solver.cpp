@@ -190,7 +190,7 @@ static void integrateVelocitiesAndInitSimulatedObjects( ArrayDynamic< SolverBody
 
     if( DFFlag::PGSSolverIntegrateOnlyPositionsEnabled && _config.integrateOnlyPositions )
     {
-        for( auto b : _bodyVariableData )
+        for( auto& b : _bodyVariableData )
         {
             b.linearVelocity = Vector3(0.0f);
             b.angularVelocity = Vector3(0.0f);
@@ -1590,7 +1590,7 @@ ContactManifold* PGSSolver::updateContactManifold( const BodyUIDPair& _pairId, c
     // Filter out the bad connectors 
     ArrayDynamic< OrderedConnector > cleanManifold;
     cleanManifold.reserve( _inputManifold.size() );
-    for( auto c : _inputManifold )
+    for( const auto& c : _inputManifold )
     {
         if( c.connector->getContactPoint().normal.squaredLength() > 0.8f )
         {
