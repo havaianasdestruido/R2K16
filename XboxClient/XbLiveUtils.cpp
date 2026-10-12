@@ -79,7 +79,7 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
             [&friendProfiles, &friendGamertags]( IVectorView< XboxUserProfile^ > ^ profiles ) -> void
             {
                 friendProfiles = profiles;
-                for (auto pr : profiles)
+                for (const auto& pr : profiles)
                 {
                     friendGamertags.push_back(ws2s(pr->Gamertag->Data()));
                 }

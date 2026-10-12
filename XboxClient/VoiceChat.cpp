@@ -287,7 +287,7 @@ void VoiceChat::addLocalUserToChannel(uint8 channelIndex, Windows::Xbox::System:
 
     localUserHasHeadset = false;
     if (user)
-        for (auto audio : user->AudioDevices)
+        for (const auto& audio : user->AudioDevices)
             if (audio->Sharing == Windows::Xbox::System::AudioDeviceSharing::Exclusive && audio->DeviceType == Windows::Xbox::System::AudioDeviceType::Capture)
             {
                 localUserHasHeadset = true;

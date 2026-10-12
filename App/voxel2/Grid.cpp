@@ -529,7 +529,7 @@ namespace RBX { namespace Voxel2 {
 			
 			std::vector<Vector3int32> chunkIds = region.getChunkIds(kChunkSizeLog2);
 			
-			for (auto cid: chunkIds)
+			for (const auto& cid: chunkIds)
 			{
 				auto cit = chunks.find(cid);
 				
@@ -571,7 +571,7 @@ namespace RBX { namespace Voxel2 {
         std::vector<Vector3int32> chunkIds = region.getChunkIds(kChunkSizeLog2);
         std::vector<Region> dirtyRegions;
         
-        for (auto cid: chunkIds)
+        for (const auto& cid: chunkIds)
         {
 			auto cit = chunks.find(cid);
 
@@ -678,7 +678,7 @@ namespace RBX { namespace Voxel2 {
 			// We're querying a relatively small area, let's just iterate through all regions
 			std::vector<Vector3int32> chunkIds = region.getChunkIds(kChunkSizeLog2);
 
-			for (auto cid: chunkIds)
+			for (const auto& cid: chunkIds)
 			{
 				if (chunks.find(cid) == chunks.end())
 					continue;

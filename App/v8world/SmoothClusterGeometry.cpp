@@ -631,7 +631,7 @@ void SmoothClusterGeometry::updateAllChunks()
 	{
 		std::vector<Vector3int32> chunks = regions[i].expand(1).getChunkIds(TerrainPartitionSmooth::kChunkSizeLog2);
 
-        for (auto cid: chunks)
+        for (const auto& cid: chunks)
 		{
 			if (bulletChunks.find(cid) == bulletChunks.end())
                 updateChunk(cid);
