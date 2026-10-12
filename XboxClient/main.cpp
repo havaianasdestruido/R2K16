@@ -210,7 +210,7 @@ void ViewProvider::OnResuming(Platform::Object^ sender, Platform::Object^ args)
                         dprintf("resuming for returning player\n");
 
                         //checking if user's controller has changed
-                        for(auto controller : Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUser->Controllers)
+                        for(const auto& controller : Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUser->Controllers)
                         {
                             if (controller == plt->currentController)
                             {

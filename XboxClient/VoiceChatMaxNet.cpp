@@ -193,7 +193,7 @@ void VoiceChatMaxNet::multiplayerUserAdded(Microsoft::Xbox::Services::Multiplaye
         if (member->Status == MultiplayerSessionMemberStatus::Active && !member->SecureDeviceAddressBase64->IsEmpty() && !member->IsCurrentUser)
         {
             Microsoft::Xbox::GameChat::ChatUser^ localUser;
-            for(auto user : chatManager->GetChatUsers())
+            for(const auto& user : chatManager->GetChatUsers())
                 if (user->IsLocal)
                 {
                     localUser = user;
@@ -436,7 +436,7 @@ void VoiceChatMaxNet::headsetConnected(Windows::Xbox::System::User^ user)
     {
         // this will ignore all members that we didnt establish connection yet. Screw those guys right?
         RBX::mutex::scoped_lock lock(peersLock);
-        for(auto peer : peers)
+        for(const auto& peer : peers)
         {
             chatManager->HandleNewRemoteConsole(ref new ConsoleId(peer.first));
         }

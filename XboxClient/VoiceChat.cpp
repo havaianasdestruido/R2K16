@@ -268,7 +268,7 @@ void VoiceChat::headsetConnected(Windows::Xbox::System::User^ user)
     {
         // this will ignore all members that we didnt establish connection yet. Screw those guys right?
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::Samples::NetworkMesh::MeshConnection^>^ meshMembers = networkMesh->GetConnectionsByType(Microsoft::Xbox::Samples::NetworkMesh::ConnectionStatus::PostHandshake);        
-        for(auto member : meshMembers)
+        for(const auto& member : meshMembers)
         {
             chatManager->HandleNewRemoteConsole(member->GetAssociation());
         }
@@ -318,7 +318,7 @@ void VoiceChat::addConnections(Windows::Foundation::Collections::IVectorView<Mul
     if (chatManager && networkMesh)
     {
         std::map<Platform::String^, bool> deviceTokenSeenMap;
-        for( auto member : members )
+        for( const auto& member : members )
         {
             if (member->Status != MultiplayerSessionMemberStatus::Active || member->SecureDeviceAddressBase64->IsEmpty() || member->IsCurrentUser)
                 continue;
@@ -341,7 +341,7 @@ void VoiceChat::removeConnections(Windows::Foundation::Collections::IVectorView<
     if (chatManager && networkMesh)
     {
         std::map<Platform::String^, bool> deviceTokenSeenMap;
-        for( auto member : members )
+        for( const auto& member : members )
         {
             if (member->Status != MultiplayerSessionMemberStatus::Active || member->SecureDeviceAddressBase64->IsEmpty() || member->IsCurrentUser)
                 continue;
