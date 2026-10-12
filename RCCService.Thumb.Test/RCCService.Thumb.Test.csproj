@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.Ccr.Core, Version=2.0.913.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Client.LegacyAssemblies\Roblox.Common\Microsoft.Ccr.Core.dll</HintPath>
+      <HintPath>..\..\ServerBranches\ClientCore\Server\Roblox.Common\Microsoft.Ccr.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -55,11 +55,11 @@
     <Compile Include="ThumbnailerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client.LegacyAssemblies\Grid\Roblox.Grid.Common\Roblox.Grid.Common.csproj">
+    <ProjectReference Include="..\..\ServerBranches\ClientCore\Server\Grid\Roblox.Grid.Common\Roblox.Grid.Common.csproj">
       <Project>{DC7F620E-40D7-41F9-A569-2401AB1B9EAF}</Project>
       <Name>Roblox.Grid.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Client.LegacyAssemblies\Roblox.Common\Roblox.Common.csproj">
+    <ProjectReference Include="..\..\ServerBranches\ClientCore\Server\Roblox.Common\Roblox.Common.csproj">
       <Project>{31C4415B-A946-47BD-83FE-AE13FBFB1324}</Project>
       <Name>Roblox.Common</Name>
     </ProjectReference>
