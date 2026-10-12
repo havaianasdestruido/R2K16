@@ -97,13 +97,13 @@ include_project_files(SystemHeaders "${CMAKE_SYSROOT}/usr/include/*.h;${RBX_STL_
 
 # Add some subdirectories that should have CMakeLists.txt in them.
 if(WIN32)
-  add_subdirectory(DeviceCaps)
+  #add_subdirectory(DeviceCaps)
 endif(WIN32)
 
 add_subdirectory(boostlibs)
 add_subdirectory(ClientShared)
 add_subdirectory(Base)
-add_subdirectory(Log)
+#add_subdirectory(Log)
 add_subdirectory(Rendering)
 add_subdirectory(Network)
 add_subdirectory(App)
