@@ -196,7 +196,7 @@ namespace Xp2p
 
         {
             lock lck(peerMutex);
-            for( auto p: peers )
+            for( const auto& p: peers )
                 destroyPeer(p);
         }
 
@@ -407,7 +407,7 @@ namespace Xp2p
     {
         lock lck(peerMutex);
 
-        for( auto x: peers )
+        for( const auto& x: peers )
             if( x->id == member->MemberId )
                 return x;
 
@@ -445,7 +445,7 @@ namespace Xp2p
                 char buf[128];
                 if(dbg) dprintf( "p2p: destroy peer %s\n", peer->remoteAddr.str(buf) );
 
-                for( auto ptr: peer->reliable ) { free(ptr); }
+                for( const auto& ptr: peer->reliable ) { free(ptr); }
 
                 RBXASSERT( !peers.empty() );
                 RBXASSERT( index < peers.size() );

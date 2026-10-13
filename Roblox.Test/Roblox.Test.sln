@@ -22,15 +22,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptSigner", "..\ScriptSi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSUnitProxy", "MSUnitProxy\MSUnitProxy.csproj", "{FE7D771A-FED8-48B9-86B5-F7A5408026EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Common", "..\..\Client.LegacyAssemblies\Roblox.Common\Roblox.Common.csproj", "{31C4415B-A946-47BD-83FE-AE13FBFB1324}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Common", "..\..\ServerBranches\ClientCore\Server\Roblox.Common\Roblox.Common.csproj", "{31C4415B-A946-47BD-83FE-AE13FBFB1324}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emcaster", "..\..\Client.LegacyAssemblies\Emcaster\Emcaster.csproj", "{6FBD14B8-C57D-49FD-8283-A162F40ABE37}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emcaster", "..\..\ServerBranches\ClientCore\Server\Emcaster\Emcaster.csproj", "{6FBD14B8-C57D-49FD-8283-A162F40ABE37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.WebsiteSettings", "..\..\Client.LegacyAssemblies\WebsiteSettings\Roblox.WebsiteSettings.csproj", "{91147901-6468-4D3B-96C8-93E2ABD4F09A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.WebsiteSettings", "..\..\ServerBranches\ClientCore\Server\WebsiteSettings\Roblox.WebsiteSettings.csproj", "{91147901-6468-4D3B-96C8-93E2ABD4F09A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Diagnostics", "..\..\Client.LegacyAssemblies\Roblox.Diagnostics\Roblox.Diagnostics.csproj", "{5CFFB705-D0E3-4402-8FF9-8BE7E1422FBE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Diagnostics", "..\..\ServerBranches\ClientCore\Server\Roblox.Diagnostics\Roblox.Diagnostics.csproj", "{5CFFB705-D0E3-4402-8FF9-8BE7E1422FBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Configuration", "..\..\Client.LegacyAssemblies\Roblox.Configuration\Roblox.Configuration.csproj", "{D996AD59-D9C6-4DBB-9E96-D7C90896E8D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roblox.Configuration", "..\..\ServerBranches\ClientCore\Server\Roblox.Configuration\Roblox.Configuration.csproj", "{D996AD59-D9C6-4DBB-9E96-D7C90896E8D0}"
 EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
@@ -42,9 +42,9 @@ Global
 		SccProjectUniqueName1 = ..\\ScriptSigner\\ScriptSigner\\ScriptSigner.csproj
 		SccLocalPath1 = ..\\..
 		SccProjectFilePathRelativizedFromConnection1 = Client\\ScriptSigner\\ScriptSigner\\
-		SccProjectUniqueName2 = ..\\..\\Client.LegacyAssemblies\\WebsiteSettings\\Roblox.WebsiteSettings.csproj
+		SccProjectUniqueName2 = ..\\..\\ServerBranches\ClientCore\Server\\WebsiteSettings\\Roblox.WebsiteSettings.csproj
 		SccLocalPath2 = ..\\..
-		SccProjectFilePathRelativizedFromConnection2 = Client.LegacyAssemblies\\WebsiteSettings\\
+		SccProjectFilePathRelativizedFromConnection2 = ServerBranches\ClientCore\Server\\WebsiteSettings\\
 		SccProjectUniqueName3 = TestCases\\Roblox.Test.TestCases.csproj
 		SccLocalPath3 = ..\\..
 		SccProjectFilePathRelativizedFromConnection3 = Client\\Roblox.Test\\TestCases\\
@@ -54,15 +54,15 @@ Global
 		SccProjectUniqueName5 = Rig\\Roblox.Test.csproj
 		SccLocalPath5 = ..\\..
 		SccProjectFilePathRelativizedFromConnection5 = Client\\Roblox.Test\\Rig\\
-		SccProjectUniqueName6 = ..\\..\\Client.LegacyAssemblies\\Roblox.Diagnostics\\Roblox.Diagnostics.csproj
+		SccProjectUniqueName6 = ..\\..\\ServerBranches\ClientCore\Server\\Roblox.Diagnostics\\Roblox.Diagnostics.csproj
 		SccLocalPath6 = ..\\..
-		SccProjectFilePathRelativizedFromConnection6 = Client.LegacyAssemblies\\Roblox.Diagnostics\\
-		SccProjectUniqueName7 = ..\\..\\Client.LegacyAssemblies\\Roblox.Configuration\\Roblox.Configuration.csproj
+		SccProjectFilePathRelativizedFromConnection6 = ServerBranches\ClientCore\Server\\Roblox.Diagnostics\\
+		SccProjectUniqueName7 = ..\\..\\ServerBranches\ClientCore\Server\\Roblox.Configuration\\Roblox.Configuration.csproj
 		SccLocalPath7 = ..\\..
-		SccProjectFilePathRelativizedFromConnection7 = Client.LegacyAssemblies\\Roblox.Configuration\\
-		SccProjectUniqueName8 = ..\\..\\Client.LegacyAssemblies\\Roblox.Common\\Roblox.Common.csproj
+		SccProjectFilePathRelativizedFromConnection7 = ServerBranches\ClientCore\Server\\Roblox.Configuration\\
+		SccProjectUniqueName8 = ..\\..\\ServerBranches\ClientCore\Server\\Roblox.Common\\Roblox.Common.csproj
 		SccLocalPath8 = ..\\..
-		SccProjectFilePathRelativizedFromConnection8 = Client.LegacyAssemblies\\Roblox.Common\\
+		SccProjectFilePathRelativizedFromConnection8 = ServerBranches\ClientCore\Server\\Roblox.Common\\
 		SccProjectUniqueName9 = Publish\\Publish.vcproj
 		SccLocalPath9 = ..\\..
 		SccProjectFilePathRelativizedFromConnection9 = Client\\Roblox.Test\\Publish\\
@@ -70,9 +70,9 @@ Global
 		SccProjectTopLevelParentUniqueName10 = Roblox.Test.sln
 		SccLocalPath10 = ..\\..
 		SccProjectFilePathRelativizedFromConnection10 = Client\\Roblox.Test\\MSUnitProxy\\
-		SccProjectUniqueName11 = ..\\..\\Client.LegacyAssemblies\\Emcaster\\Emcaster.csproj
+		SccProjectUniqueName11 = ..\\..\\ServerBranches\ClientCore\Server\\Emcaster\\Emcaster.csproj
 		SccLocalPath11 = ..\\..
-		SccProjectFilePathRelativizedFromConnection11 = Client.LegacyAssemblies\\Emcaster\\
+		SccProjectFilePathRelativizedFromConnection11 = ServerBranches\ClientCore\Server\\Emcaster\\
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

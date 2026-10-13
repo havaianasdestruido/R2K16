@@ -796,7 +796,7 @@ std::vector<ChatUser^> ChatClient::GetChatUsersForCaptureSourceId(
     std::vector<ChatUser^> chatUsers;
 
     auto userIdsForDevice = GetUserIdsForDevice( captureSourceId );
-    for ( auto uid : userIdsForDevice )
+    for ( const auto& uid : userIdsForDevice )
     {
         auto user = GetChatUserForUserId( uid );
         if (user != nullptr)

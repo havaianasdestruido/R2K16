@@ -56,7 +56,7 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
         async( xboxLiveContext->SocialService->GetSocialRelationshipsAsync()).complete(
             [&friendXuids]( XboxSocialRelationshipResult^ result ) -> void
             {
-                for ( auto r : result->Items )
+                for ( const auto& r : result->Items )
                 {
                     if( r->IsFollowingCaller )
                         friendXuids.push_back( r->XboxUserId );
@@ -120,10 +120,10 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
     std::map< std::wstring, std::wstringstream > combined; // xuid -> user info
     
     
-    for ( auto xuid : friendXuids )
+    for ( const auto& xuid : friendXuids )
         combined[xuid->Data()] << L"    {\n        \"xuid\" : \"" << xuid->Data() << L"\", ";
 
-    for ( auto profile : friendProfiles )
+    for ( const auto& profile : friendProfiles )
     {
         if ( auto str = mapget( combined, profile->XboxUserId->Data() ) )
         {
@@ -143,7 +143,7 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
         }
     }
 
-    for ( auto presence : friendPresence )
+    for ( const auto& presence : friendPresence )
     {
         if ( auto str = mapget( combined, presence->XboxUserId->Data() ) )
         {
@@ -151,7 +151,7 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
             (*str) << L"\"rich\":\n        [\n";
 
             comma = false;
-            for ( auto r: presence->PresenceTitleRecords )
+            for ( const auto& r: presence->PresenceTitleRecords )
             {
                 if( comma ) (*str) << ",\n";
                 (*str) << L"            { \"timestamp\" : \"" << r->LastModifiedDate.UniversalTime.ToString()->Data() << "\", \"device\" : \"" << r->DeviceType.ToString()->Data() << "\",  \"title\" : \"" << r->TitleName->Data() << "\", \"titleId\" : \"" << r->TitleId.ToString()->Data() <<  "\" , \"playing\" : \"" << r->IsTitleActive.ToString()->Data() << "\", \"presence\" : \"" << r->Presence->Data() << "\"}";

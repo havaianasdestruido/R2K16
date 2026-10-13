@@ -98,15 +98,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client.LegacyAssemblies\Grid\Arbiter\Roblox.Grid.Arbiter.Common\Roblox.Grid.Arbiter.Common.csproj">
+    <ProjectReference Include="..\..\ServerBranches\ClientCore\Server\Grid\Arbiter\Roblox.Grid.Arbiter.Common\Roblox.Grid.Arbiter.Common.csproj">
       <Project>{A8540F3F-9CEB-437E-AE59-EBCFE4014051}</Project>
       <Name>Roblox.Grid.Arbiter.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Client.LegacyAssemblies\Grid\Roblox.Grid.Common\Roblox.Grid.Common.csproj">
+    <ProjectReference Include="..\..\ServerBranches\ClientCore\Server\Grid\Roblox.Grid.Common\Roblox.Grid.Common.csproj">
       <Project>{DC7F620E-40D7-41F9-A569-2401AB1B9EAF}</Project>
       <Name>Roblox.Grid.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Client.LegacyAssemblies\Roblox.Common\Roblox.Common.csproj">
+    <ProjectReference Include="..\..\ServerBranches\ClientCore\Server\Roblox.Common\Roblox.Common.csproj">
       <Project>{31C4415B-A946-47BD-83FE-AE13FBFB1324}</Project>
       <Name>Roblox.Common</Name>
     </ProjectReference>

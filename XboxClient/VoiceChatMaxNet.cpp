@@ -436,7 +436,7 @@ void VoiceChatMaxNet::headsetConnected(Windows::Xbox::System::User^ user)
     {
         // this will ignore all members that we didnt establish connection yet. Screw those guys right?
         RBX::mutex::scoped_lock lock(peersLock);
-        for(auto peer : peers)
+        for(const auto& peer : peers)
         {
             chatManager->HandleNewRemoteConsole(ref new ConsoleId(peer.first));
         }
