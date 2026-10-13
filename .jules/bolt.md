@@ -5,3 +5,6 @@
 ## 2023-10-25 - [Atomic Ref-Count Overhead in Range-Based For Loops]
 **Learning:** In C++ codebases processing large amounts of network data or relying heavily on C++/CX WinRT reference counting (`T^` hat pointers), range-based `for` loops iterating by value (`for (auto item : vec)`) over containers of ref-counted types cause atomic reference counting operations (`AddRef` and `Release`) for every single element. This is surprisingly expensive in a hot path.
 **Action:** Use `const auto&` or `auto&` to iterate over containers holding ref-counted pointers to avoid this overhead. However, note that for standard C++ raw pointers (e.g., `SimBody*`), passing by value (`auto`) is sufficient and often faster since no ref-counting is involved.
+## 2024-05-18 - C++/CX WinRT Ref-Counting Performance Penalty
+**Learning:** In legacy Windows/Xbox C++ projects using C++/CX (WinRT components with `^` hat pointers), iterating over collections of `^` pointers by value (e.g., `for(auto user : GetChatUsers())`) is extremely expensive. Each iteration triggers an atomic COM `AddRef()` and `Release()` behind the scenes.
+**Action:** ALWAYS iterate over C++/CX collections using `const auto&` to avoid these invisible performance bottlenecks.
