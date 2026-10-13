@@ -109,7 +109,7 @@ int getFriends(std::string* ret, UserIDTranslator* translator, Microsoft::Xbox::
 
     // filter out unresolved roblox ids
     std::map< std::string, int > rbidLookup;
-    for( auto e : friendRobloxUids )
+    for( const auto& e : friendRobloxUids )
     {
         auto st = e->getState();
         if( st == UserIDTranslator::Ready )
@@ -215,7 +215,7 @@ int getParty(std::vector<std::string>* result, bool filter, UserIDTranslator* tr
             {
                 if( !pv || !pv->Members ) 
                     return;
-                for( auto mem : pv->Members )
+                for( const auto& mem : pv->Members )
                 {
                     std::string xuid = ws2s(mem->XboxUserId->Data());
                     partyMemberXuids.push_back(mem->XboxUserId);
@@ -246,7 +246,7 @@ int getParty(std::vector<std::string>* result, bool filter, UserIDTranslator* tr
         async( xboxLiveContext->ProfileService->GetUserProfilesAsync( ref new Platform::Collections::VectorView< Platform::String^ > ( partyMemberXuids ) ) ).complete(
             [&]( IVectorView< XboxUserProfile^ > ^ profiles ) -> void
             {
-                for( auto pr : profiles )
+                for( const auto& pr : profiles )
                 {
                     std::string xuid = ws2s( pr->XboxUserId->Data() );
                     if( PartyUserInfo* info = mapget(partyMembers, xuid) )
@@ -278,7 +278,7 @@ int getParty(std::vector<std::string>* result, bool filter, UserIDTranslator* tr
         async( xboxLiveContext->PresenceService->GetPresenceForMultipleUsersAsync( ref new Platform::Collections::VectorView< Platform::String^ >( partyMemberXuids ) ) ).complete(
             [&]( IVectorView<PresenceRecord^>^ friends )
             {
-                for( auto rec : friends )
+                for( const auto& rec : friends )
                 {
                     std::string xuid = ws2s(rec->XboxUserId->Data());
                     if( PartyUserInfo* info = mapget(partyMembers, xuid) )
