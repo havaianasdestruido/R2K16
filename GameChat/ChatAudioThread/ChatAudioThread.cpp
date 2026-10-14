@@ -405,7 +405,8 @@ void ChatAudioThread::CaptureDataFromLocalCaptureSources(
     _In_ std::shared_ptr< CHAT_AUDIO_THREAD_STATE > chatAudioThreadState 
     )
 {
-    for each (std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE> chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE>& chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
     {
         IBuffer^ captureBuffer = nullptr;
         Windows::Xbox::Chat::CaptureBufferStatus status = chatAudioThreadCaptureSource->chatCaptureSource->GetNextBuffer( &captureBuffer );
@@ -556,7 +557,8 @@ void ChatAudioThread::RenderAudioToAllRenderTargets(
     }
 
     IBuffer^ decodedBuffer;
-    for each (std::shared_ptr<CHAT_AUDIO_THREAD_RENDER_TARGET> chatAudioThreadRenderTarget in chatAudioThreadState->renderTargets)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<CHAT_AUDIO_THREAD_RENDER_TARGET>& chatAudioThreadRenderTarget in chatAudioThreadState->renderTargets)
     {
         IChatRenderTarget^ target = chatAudioThreadRenderTarget->chatRenderTarget;
         try

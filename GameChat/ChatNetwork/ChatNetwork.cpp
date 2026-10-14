@@ -259,7 +259,8 @@ void ChatNetwork::CreateCombinedChatVoicePacket(
 
     // Collect the capture source buffers and count how
     // large the network packet will need to be
-    for each (std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE> chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE>& chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
     {
         for (;;)
         {
@@ -372,7 +373,8 @@ void ChatNetwork::CreateChatVoicePacketsForEachLocalCaptureSource(
 
     // Collect the capture source buffers and count how
     // large the network packet will need to be
-    for each (std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE> chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<CHAT_AUDIO_THREAD_CAPTURE_SOURCE>& chatAudioThreadCaptureSource in chatAudioThreadState->captureSources)
     {
         for (;;)
         {

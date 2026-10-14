@@ -197,7 +197,8 @@ uint8 ChatClient::GetLocalNameOfRemoteConsole(
     ChatManager^ chatManager = m_chatManager.Resolve<ChatManager>();
     if( chatManager != nullptr )
     {
-        for each (std::shared_ptr<ConsoleNameIdentifierPair> uniqueConsole in m_localNameOfRemoteConsoles)
+        // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+        for each (const std::shared_ptr<ConsoleNameIdentifierPair>& uniqueConsole in m_localNameOfRemoteConsoles)
         {
             if( chatManager->OnCompareUniqueConsoleIdentifiersHandler(uniqueConsole->uniqueConsoleIdentifier, consoleIdentifier) )
             {
@@ -880,7 +881,8 @@ void ChatClient::SetChatAudioThread(
 bool ChatClient::IsLocalNameTaken( uint8 localName )
 {
     bool isTaken = false;
-    for each (std::shared_ptr<ConsoleNameIdentifierPair> uniqueConsole in m_localNameOfRemoteConsoles)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<ConsoleNameIdentifierPair>& uniqueConsole in m_localNameOfRemoteConsoles)
     {
         if( uniqueConsole->consoleName == localName )
         {

@@ -57,7 +57,8 @@ uint32 ChatDiagnostics::GetDiagnosticNameForConsole(
     }
 
     Concurrency::critical_section::scoped_lock lock(m_diagnosticNameOfConsolesLock);
-    for each (std::shared_ptr<ChatEventConsoleNameIdentifierPair> pair in m_diagnosticNameOfConsoles)
+    // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
+    for each (const std::shared_ptr<ChatEventConsoleNameIdentifierPair>& pair in m_diagnosticNameOfConsoles)
     {
         if( chatManager->OnCompareUniqueConsoleIdentifiersHandler(pair->uniqueConsoleIdentifier, uniqueConsoleIdentifier) )
         {
