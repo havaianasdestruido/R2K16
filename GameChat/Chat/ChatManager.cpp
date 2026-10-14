@@ -217,8 +217,9 @@ Windows::Foundation::IAsyncAction^
         if( chatUser != nullptr )
         {
             // For each that I know of, send them a UserAddedMessage packet.
+            // Bolt: Iterate shared_ptr by const reference to avoid atomic ref-count overhead
             std::vector< std::shared_ptr<ConsoleNameIdentifierPair> > myLocalNameOfRemoteConsolesCopy = m_chatClient->GetMyLocalNameOfRemoteConsolesCopy();
-            for each (std::shared_ptr<ConsoleNameIdentifierPair> consoleNameIdentifierPair in myLocalNameOfRemoteConsolesCopy)
+            for each (const std::shared_ptr<ConsoleNameIdentifierPair>& consoleNameIdentifierPair in myLocalNameOfRemoteConsolesCopy)
             {
                 m_chatNetwork->CreateChatUserPacket(channelIndex, chatUser, consoleNameIdentifierPair->uniqueConsoleIdentifier);
             }
