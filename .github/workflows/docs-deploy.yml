@@ -35,7 +35,7 @@ jobs:
       pages: read # actions/configure-pages reads Pages site metadata
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
