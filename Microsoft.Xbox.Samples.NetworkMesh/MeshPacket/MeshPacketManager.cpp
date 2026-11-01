@@ -310,7 +310,7 @@ MeshPacketManager::RecordMessageIfSendingReliable(
     {
         Concurrency::critical_section::scoped_lock lock(m_meshPacketsThatNeedAckLock);
         bool matchFound = false;
-        for each (std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK> meshPacketThatNeedAck in m_meshPacketsThatNeedAck)
+        for each (const std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK>& meshPacketThatNeedAck in m_meshPacketsThatNeedAck)
         {
             if( meshPacketThatNeedAck->messageId == packetMessageId )
             {
@@ -930,7 +930,7 @@ std::vector< std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK> > MeshPacketManager::Ge
 void MeshPacketManager::SendReliablePacketsToConsolesWhoHaveNotAcked()
 {
     std::vector< std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK> > meshPacketsThatNeedAckCopy = GetMeshPacketsThatNeedAckCopy();
-    for each (std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK> meshPacketThatNeedAck in meshPacketsThatNeedAckCopy)
+    for each (const std::shared_ptr<MESH_PACKET_THAT_NEEDS_ACK>& meshPacketThatNeedAck in meshPacketsThatNeedAckCopy)
     {
         QueuePacketToSend( meshPacketThatNeedAck->packetInfo );
     }
