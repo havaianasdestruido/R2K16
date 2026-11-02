@@ -1540,6 +1540,7 @@ cmd /c "exit /b 0"</Command>
     <ClCompile Include="v8datamodel\HttpService.cpp" />
     <ClCompile Include="v8datamodel\InputObject.cpp" />
     <ClCompile Include="v8datamodel\Light.cpp" />
+    <ClCompile Include="v8datamodel\PostEffect.cpp" />
     <ClCompile Include="v8datamodel\LoginService.cpp" />
     <ClCompile Include="v8datamodel\LogService.cpp" />
     <ClCompile Include="v8datamodel\NonReplicatedCSGDictionaryService.cpp" />
@@ -4416,6 +4417,7 @@ cmd /c "exit /b 0"</Command>
     <ClInclude Include="include\v8datamodel\HttpRbxApiService.h" />
     <ClInclude Include="include\v8datamodel\InputObject.h" />
     <ClInclude Include="include\v8datamodel\Light.h" />
+    <ClInclude Include="include\v8datamodel\PostEffect.h" />
     <ClInclude Include="include\v8datamodel\LoginService.h" />
     <ClInclude Include="include\v8datamodel\LogService.h" />
     <ClInclude Include="include\v8datamodel\NonReplicatedCSGDictionaryService.h" />

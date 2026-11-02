@@ -242,6 +242,8 @@ public:
         : visualEngine(visualEngine)
         , blurError(false)
         , blurStrentgh(0)
+        , blurPasses(1)
+        , blurSigma(0)
     {
 
     }
@@ -250,7 +252,27 @@ public:
 
     void update( unsigned width, unsigned height, const SceneManager::PostProcessSettings& pps)
     {
-        blurStrentgh = pps.blurIntensity;
+        // BlurEffect.Size (and the legacy PlatformService.BlurIntensity) is
+        // expressed as a blur radius in pixels, in the range 0..56. Clamp so
+        // that a stray legacy value cannot request unbounded work below.
+        blurStrentgh = std::min(std::max(pps.blurIntensity, 0.f), 56.f);
+
+        // ScreenSpaceEffect::renderBlur takes a Gaussian sigma; its widest
+        // kernel (Blur7FS) covers +-15 pixels, which supports a sigma of up
+        // to ~5 without visible truncation. Map the requested size to
+        // sigma = size / 4 and, for large sizes, iterate the separable blur:
+        // Gaussian variances add, so N passes of sigma / sqrt(N) compose to
+        // the target sigma. At the maximum size of 56 this is 8 passes.
+        const float targetSigma = blurStrentgh * 0.25f;
+        const float maxPassSigma = 5.f;
+
+        blurPasses = 1;
+        if (targetSigma > maxPassSigma)
+        {
+            float passes = (targetSigma / maxPassSigma) * (targetSigma / maxPassSigma);
+            blurPasses = std::min(std::max((int)ceilf(passes), 1), 8);
+        }
+        blurSigma = targetSigma / sqrtf((float)blurPasses);
 
         if (data && !blurNeeded())
         {
@@ -277,14 +299,21 @@ public:
     {
         if (!data) return;
 
-        ScreenSpaceEffect::renderBlur(context, visualEngine, bufferToBlur, data->intermediateFB[0].get(), inTexture, data->intermediateTex[0].get(), blurStrentgh);
+        // inTexture is the color attachment of bufferToBlur, so each pass
+        // reads the result of the previous one.
+        for (int i = 0; i < blurPasses; ++i)
+            ScreenSpaceEffect::renderBlur(context, visualEngine, bufferToBlur, data->intermediateFB[0].get(), inTexture, data->intermediateTex[0].get(), blurSigma);
     }
 
     void render(DeviceContext* context, Framebuffer* bufferToBlur)
     {
         if (!data) return;
-        context->copyFramebuffer( bufferToBlur, data->intermediateTex[0].get() );
-        ScreenSpaceEffect::renderBlur(context, visualEngine, bufferToBlur, data->intermediateFB[1].get(), data->intermediateTex[0].get(), data->intermediateTex[1].get(), blurStrentgh);
+
+        for (int i = 0; i < blurPasses; ++i)
+        {
+            context->copyFramebuffer( bufferToBlur, data->intermediateTex[0].get() );
+            ScreenSpaceEffect::renderBlur(context, visualEngine, bufferToBlur, data->intermediateFB[1].get(), data->intermediateTex[0].get(), data->intermediateTex[1].get(), blurSigma);
+        }
     }
 
 private:
@@ -324,6 +353,8 @@ private:
     VisualEngine* visualEngine;
 
     float blurStrentgh;
+    int blurPasses;
+    float blurSigma;
 };
 
 class ImageProcess
@@ -472,6 +503,16 @@ public:
     Framebuffer* getFramebuffer() const
     {
         return msaaFB.get();
+    }
+
+    Framebuffer* getResolvedFramebuffer() const
+    {
+        return msaaResolvedFB.get();
+    }
+
+    Texture* getResolvedTexture() const
+    {
+        return msaaResolved.get();
     }
 
 	unsigned int getWidth() const
@@ -801,8 +842,10 @@ void SceneManager::renderView(DeviceContext* context, Framebuffer* mainFramebuff
     {
         if (gbuffer)
             blur->render(context, gbuffer->mainFB.get(), gbuffer->mainColor.get());
-        else
+        else if (!msaa)
             blur->render(context, mainFramebuffer);
+        // With MSAA the scene is still in the multisampled framebuffer at
+        // this point; the blur is applied to the resolved image below.
     }
 
     if (imageProcess->valid())
@@ -834,6 +877,9 @@ void SceneManager::renderView(DeviceContext* context, Framebuffer* mainFramebuff
 		RBXPROFILER_SCOPE("GPU", "MSAA");
 
 		msaa->renderResolve(context);
+
+		if (blur->valid() && !gbuffer)
+			blur->render(context, msaa->getResolvedFramebuffer(), msaa->getResolvedTexture());
 
 		context->bindFramebuffer(mainFramebuffer);
 

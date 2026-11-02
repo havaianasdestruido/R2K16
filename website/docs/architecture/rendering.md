@@ -76,6 +76,26 @@ existed), while **D3D11 does not initialize** yet. Modern backends (D3D12/Vulkan
 - `EnvMap.cpp` — environment/sky reflection mapping
 - `AdornRender.cpp` — renders the adornment stream
 
+### Post-processing
+
+Screen-space post effects live in `SceneManager.cpp` (an internal `Blur` and `ImageProcess`
+pass built on `ScreenSpaceEffect::renderBlur` and the `Blur3FS`/`Blur5FS`/`Blur7FS` +
+`ImageProcessFS` shaders in `shaders/source/screenspace.hlsl`), driven per frame through
+`SceneManager::setPostProcess(...)`.
+
+The user-facing API is the `PostEffect` hierarchy in `App/v8datamodel/PostEffect.h`
+(`PostEffect` is the abstract base with `Enabled`; `BlurEffect` adds `Size`, a blur radius
+of 0–56 px, default 24). Each frame `RenderView::presetPostProcess` resolves the active
+blur: among the enabled `BlurEffect`s parented to **Lighting** (applies to everyone) or to
+**Workspace.CurrentCamera** (local only), only one is applied — the greatest `Size` wins.
+On Durango the legacy `PlatformService.BlurIntensity` (plus its brightness/contrast/
+grayscale/tint image processing) is combined with `max()` so the Xbox app shell keeps
+working. The blur is applied to the rendered 3D image before 2D GUI is drawn, so
+`GuiObject`s stay sharp; large sizes iterate the separable Gaussian blur (variances add)
+since a single shader kernel only covers ±15 px. Note the blur shaders are excluded from
+the `glsles` (OpenGL ES 2.0) shader pack (`shaders/shaders.json`), so on those low-end
+devices `BlurEffect` is gracefully inert.
+
 ## RbxG3D and g3d
 
 `Rendering/g3d/` is **G3D** (Grimshaw's Graphics3D), the graphics math/scene library the 2010s

@@ -12,6 +12,7 @@
 #include "V8DataModel/ContentProvider.h"
 #include "V8DataModel/MeshContentProvider.h"
 #include "V8DataModel/Camera.h"
+#include "V8DataModel/PostEffect.h"
 #include "V8DataModel/TextService.h"
 #include "V8DataModel/RenderHooksService.h"
 #include "V8DataModel/Stats.h"
@@ -993,12 +994,7 @@ void RenderView::renderPrepareImpl(IMetric* metric, bool updateViewport)
 
     visualEngine->getTextureCompositor()->update(poi);
     
-#if defined(RBX_PLATFORM_DURANGO)
-    if(RBX::PlatformService* platformService = ServiceProvider::find<PlatformService>(dataModel.get()))
-    {
-        presetPostProcess(platformService);
-    }
-#endif
+    presetPostProcess(lighting, cameraobj);
     
     // Pass FRM configuration to shaders
     GlobalShaderData& globalShaderData = visualEngine->getSceneManager()->writeGlobalShaderData();
@@ -1556,13 +1552,32 @@ void RenderView::presetLighting(RBX::Lighting* l, const RBX::Color3& extraAmbien
 	smgr->setLighting(ambientColor, sunDirection, keyLightColor.min(Color3::white()), fillLightColor.min(Color3::white()));
 }
 
-void RenderView::presetPostProcess(RBX::PlatformService* platformService)
+void RenderView::presetPostProcess(RBX::Lighting* lighting, RBX::Camera* camera)
 {
-#if defined(RBX_PLATFORM_DURANGO)
     SceneManager *smgr = visualEngine->getSceneManager();
 
-    smgr->setPostProcess(platformService->brightness, platformService->contrast, platformService->grayscaleLevel, platformService->blurIntensity, platformService->tintColor);
+    // Post-processing effects parented to Lighting apply to everyone, while
+    // effects parented to the current camera only apply locally. Only one
+    // BlurEffect is applied at a time - the one with the greatest Size wins.
+    float blurSize = std::max(RBX::BlurEffect::getMaxSizeIn(lighting), RBX::BlurEffect::getMaxSizeIn(camera));
+
+    float brightness = 0;
+    float contrast = 0;
+    float grayscaleLevel = 0;
+    Color3 tintColor = Color3::white();
+
+#if defined(RBX_PLATFORM_DURANGO)
+    if (RBX::PlatformService* platformService = ServiceProvider::find<PlatformService>(dataModel.get()))
+    {
+        brightness = platformService->brightness;
+        contrast = platformService->contrast;
+        grayscaleLevel = platformService->grayscaleLevel;
+        tintColor = platformService->tintColor;
+        blurSize = std::max(blurSize, platformService->blurIntensity);
+    }
 #endif
+
+    smgr->setPostProcess(brightness, contrast, grayscaleLevel, blurSize, tintColor);
 }
 
 static void waitForContent(RBX::ContentProvider* contentProvider)

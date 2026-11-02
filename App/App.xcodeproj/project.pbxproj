@@ -803,6 +803,7 @@
 		42CA158319984A0700635DBA /* NotificationService.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAEE854192536B70072392A /* NotificationService.h */; };
 		42CA158419984A0700635DBA /* Util.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F204AC016CAFDE600423E9B /* Util.h */; };
 		42CA158519984A0700635DBA /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFC2A4A16C3414B00B3275A /* Light.h */; };
+		B10E5EC70000000000000002 /* PostEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000001 /* PostEffect.h */; };
 		42CA158619984A0700635DBA /* MachineIdUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFB292E16DC55C200F8DC2A /* MachineIdUploader.h */; };
 		42CA158719984A0700635DBA /* CellChangeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFB29F416DF013600F8DC2A /* CellChangeListener.h */; };
 		42CA158819984A0700635DBA /* CSGMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = C8093EBA192C134B00D1F998 /* CSGMesh.h */; };
@@ -1307,6 +1308,7 @@
 		42CA178419984A0700635DBA /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F204AD316CAFE3E00423E9B /* Serializer.cpp */; };
 		42CA178519984A0700635DBA /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F204AD416CAFE3E00423E9B /* Util.cpp */; };
 		42CA178619984A0700635DBA /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFC2A4716C3413400B3275A /* Light.cpp */; };
+		B10E5EC70000000000000003 /* PostEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000000 /* PostEffect.cpp */; };
 		42CA178719984A0700635DBA /* MachineIdUploader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB293216DC55D400F8DC2A /* MachineIdUploader.cpp */; };
 		42CA178819984A0700635DBA /* MachineIdUploader_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FE668C116E18D3F00115EBE /* MachineIdUploader_OSX.cpp */; };
 		42CA178919984A0700635DBA /* InputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9404A4B016E855DA00F8EEE8 /* InputObject.cpp */; };
@@ -1644,6 +1646,7 @@
 		5698A2BC17FCA47900816494 /* Serializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F204ABF16CAFDE600423E9B /* Serializer.h */; };
 		5698A2BD17FCA47900816494 /* Util.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F204AC016CAFDE600423E9B /* Util.h */; };
 		5698A2BE17FCA47900816494 /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFC2A4A16C3414B00B3275A /* Light.h */; };
+		B10E5EC70000000000000004 /* PostEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000001 /* PostEffect.h */; };
 		5698A2BF17FCA47900816494 /* MachineIdUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFB292E16DC55C200F8DC2A /* MachineIdUploader.h */; };
 		5698A2C017FCA47900816494 /* CellChangeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFB29F416DF013600F8DC2A /* CellChangeListener.h */; };
 		5698A2C117FCA47900816494 /* InputObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 94447C6616E8098A007088DD /* InputObject.h */; };
@@ -2099,6 +2102,7 @@
 		5698A49417FCA47900816494 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F204AD316CAFE3E00423E9B /* Serializer.cpp */; };
 		5698A49517FCA47900816494 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F204AD416CAFE3E00423E9B /* Util.cpp */; };
 		5698A49617FCA47900816494 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFC2A4716C3413400B3275A /* Light.cpp */; };
+		B10E5EC70000000000000005 /* PostEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000000 /* PostEffect.cpp */; };
 		5698A49717FCA47900816494 /* MachineIdUploader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB293216DC55D400F8DC2A /* MachineIdUploader.cpp */; };
 		5698A49817FCA47900816494 /* MachineIdUploader_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FE668C116E18D3F00115EBE /* MachineIdUploader_OSX.cpp */; };
 		5698A49917FCA47900816494 /* InputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9404A4B016E855DA00F8EEE8 /* InputObject.cpp */; };
@@ -2448,8 +2452,11 @@
 		9FFBC850172B3AFE008865A7 /* SleepingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFBC84F172B3AFE008865A7 /* SleepingJob.h */; };
 		9FFBC852172B3B17008865A7 /* SleepingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFBC851172B3B17008865A7 /* SleepingJob.cpp */; };
 		9FFC2A4816C3413400B3275A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFC2A4716C3413400B3275A /* Light.cpp */; };
+		B10E5EC70000000000000006 /* PostEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000000 /* PostEffect.cpp */; };
 		9FFC2A4B16C3414B00B3275A /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFC2A4A16C3414B00B3275A /* Light.h */; };
+		B10E5EC70000000000000007 /* PostEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000001 /* PostEffect.h */; };
 		9FFC2C2316C342CD00B3275A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFC2A4716C3413400B3275A /* Light.cpp */; };
+		B10E5EC70000000000000008 /* PostEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10E5EC70000000000000000 /* PostEffect.cpp */; };
 		BCC6959B1A7C2E4A007737B0 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC695921A7C2E4A007737B0 /* Attachment.h */; };
 		BCC6959C1A7C2E4A007737B0 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC695921A7C2E4A007737B0 /* Attachment.h */; };
 		BCC6959D1A7C2E4A007737B0 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC695921A7C2E4A007737B0 /* Attachment.h */; };
@@ -3295,7 +3302,9 @@
 		9FFBC84F172B3AFE008865A7 /* SleepingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepingJob.h; sourceTree = "<group>"; };
 		9FFBC851172B3B17008865A7 /* SleepingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepingJob.cpp; sourceTree = "<group>"; };
 		9FFC2A4716C3413400B3275A /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
+		B10E5EC70000000000000000 /* PostEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PostEffect.cpp; sourceTree = "<group>"; };
 		9FFC2A4A16C3414B00B3275A /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
+		B10E5EC70000000000000001 /* PostEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostEffect.h; sourceTree = "<group>"; };
 		BCC695921A7C2E4A007737B0 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		BCC695A01A7C2E78007737B0 /* Attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Attachment.cpp; sourceTree = "<group>"; };
 		BCC695B01A7C2EE4007737B0 /* Constraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constraint.h; path = include/solver/Constraint.h; sourceTree = "<group>"; };
@@ -4729,6 +4738,7 @@
 				9FFBC84F172B3AFE008865A7 /* SleepingJob.h */,
 				C8EDBEBA19C7A74B0046D07C /* SolidModelContentProvider.h */,
 				9FFC2A4A16C3414B00B3275A /* Light.h */,
+				B10E5EC70000000000000001 /* PostEffect.h */,
 				22051EF5166ECC6F00C84FFD /* StudioPluginHost.h */,
 				9496A53F166D39C000E1F4D7 /* MarketplaceService.h */,
 				1F43FD8A15F6C1A000B9389F /* GamePassService.h */,
@@ -5313,6 +5323,7 @@
 				9FFBC851172B3B17008865A7 /* SleepingJob.cpp */,
 				C8EDBEC419C7A7BD0046D07C /* SolidModelContentProvider.cpp */,
 				9FFC2A4716C3413400B3275A /* Light.cpp */,
+				B10E5EC70000000000000000 /* PostEffect.cpp */,
 				9F61E3E616A4BB8D0090FC06 /* GuiLayerCollector.cpp */,
 				9496A543166D39D200E1F4D7 /* MarketplaceService.cpp */,
 				1F43FD8615F6C18F00B9389F /* GamePassService.cpp */,
@@ -6007,6 +6018,7 @@
 				42CA158319984A0700635DBA /* NotificationService.h in Headers */,
 				42CA158419984A0700635DBA /* Util.h in Headers */,
 				42CA158519984A0700635DBA /* Light.h in Headers */,
+				B10E5EC70000000000000002 /* PostEffect.h in Headers */,
 				42CA158619984A0700635DBA /* MachineIdUploader.h in Headers */,
 				42CA158719984A0700635DBA /* CellChangeListener.h in Headers */,
 				BCC695BC1A7C2EE4007737B0 /* Constraint.h in Headers */,
@@ -6216,6 +6228,7 @@
 				1FAEE857192536B70072392A /* NotificationService.h in Headers */,
 				5698A2BD17FCA47900816494 /* Util.h in Headers */,
 				5698A2BE17FCA47900816494 /* Light.h in Headers */,
+				B10E5EC70000000000000004 /* PostEffect.h in Headers */,
 				5698A2BF17FCA47900816494 /* MachineIdUploader.h in Headers */,
 				5698A2C017FCA47900816494 /* CellChangeListener.h in Headers */,
 				5698A2C117FCA47900816494 /* InputObject.h in Headers */,
@@ -6422,6 +6435,7 @@
 				1FAEE855192536B70072392A /* NotificationService.h in Headers */,
 				9F204ACD16CAFDE600423E9B /* Util.h in Headers */,
 				9FFC2A4B16C3414B00B3275A /* Light.h in Headers */,
+				B10E5EC70000000000000007 /* PostEffect.h in Headers */,
 				BCC695BD1A7C2EE4007737B0 /* ConstraintJacobian.h in Headers */,
 				9FFB292F16DC55C200F8DC2A /* MachineIdUploader.h in Headers */,
 				9FFB29F516DF013600F8DC2A /* CellChangeListener.h in Headers */,
@@ -6581,6 +6595,7 @@
 				C8B568DC195251AB006BD749 /* CSGMesh.cpp in Sources */,
 				9FC0FD1917E3DBAB008B0F59 /* HttpService.cpp in Sources */,
 				9FFC2C2316C342CD00B3275A /* Light.cpp in Sources */,
+				B10E5EC70000000000000008 /* PostEffect.cpp in Sources */,
 				1F2846EF15E7075700120D64 /* Event.cpp in Sources */,
 				1F2846F015E7075700120D64 /* reflection_function.cpp in Sources */,
 				1F2846F115E7075700120D64 /* reflection_object.cpp in Sources */,
@@ -7632,6 +7647,7 @@
 				42CA178419984A0700635DBA /* Serializer.cpp in Sources */,
 				42CA178519984A0700635DBA /* Util.cpp in Sources */,
 				42CA178619984A0700635DBA /* Light.cpp in Sources */,
+				B10E5EC70000000000000003 /* PostEffect.cpp in Sources */,
 				42CA178719984A0700635DBA /* MachineIdUploader.cpp in Sources */,
 				423DF6561A8AE35E000F698E /* SelectionSphere.cpp in Sources */,
 				42CA178819984A0700635DBA /* MachineIdUploader_OSX.cpp in Sources */,
@@ -8175,6 +8191,7 @@
 				5698A49517FCA47900816494 /* Util.cpp in Sources */,
 				39252055199807EC007725D2 /* TriangleMesh.cpp in Sources */,
 				5698A49617FCA47900816494 /* Light.cpp in Sources */,
+				B10E5EC70000000000000005 /* PostEffect.cpp in Sources */,
 				5698A49717FCA47900816494 /* MachineIdUploader.cpp in Sources */,
 				456795001A82AA48009479E0 /* RobloxReplicatedStorage.cpp in Sources */,
 				5698A49817FCA47900816494 /* MachineIdUploader_OSX.cpp in Sources */,
@@ -8721,6 +8738,7 @@
 				9F204ADB16CAFE3E00423E9B /* Serializer.cpp in Sources */,
 				9F204ADD16CAFE3E00423E9B /* Util.cpp in Sources */,
 				9FFC2A4816C3413400B3275A /* Light.cpp in Sources */,
+				B10E5EC70000000000000006 /* PostEffect.cpp in Sources */,
 				9FFB293316DC55D400F8DC2A /* MachineIdUploader.cpp in Sources */,
 				9FE668C216E18D3F00115EBE /* MachineIdUploader_OSX.cpp in Sources */,
 				9404A4B216E855DA00F8EEE8 /* InputObject.cpp in Sources */,
