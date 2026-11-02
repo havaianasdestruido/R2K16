@@ -565,7 +565,7 @@ void ChatAudioThread::RenderAudioToAllRenderTargets(
         {
             target->BeginMix();
 
-            for each ( auto it in remoteCaptureSourcesCopy)
+            for each ( const auto& it in remoteCaptureSourcesCopy)
             {
                 std::shared_ptr<CHAT_AUDIO_THREAD_REMOTE_CAPTURE_SOURCE> remoteCaptureSource = it.second;
                 Concurrency::critical_section::scoped_lock lock(remoteCaptureSource->jitterBufferLock);
@@ -671,7 +671,7 @@ void ChatAudioThread::RenderAudioToAllRenderTargets(
         }
     }
 
-    for each ( auto it in remoteCaptureSourcesCopy )
+    for each ( const auto& it in remoteCaptureSourcesCopy )
     {
         std::shared_ptr<CHAT_AUDIO_THREAD_REMOTE_CAPTURE_SOURCE> remoteCaptureSource = it.second;
         Concurrency::critical_section::scoped_lock lock(remoteCaptureSource->jitterBufferLock);

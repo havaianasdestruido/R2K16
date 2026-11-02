@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5.0)
 
+cmake_policy(SET CMP0194 OLD)
+
 project(roblox C CXX ASM)
 
 if(NOT UNIX)
