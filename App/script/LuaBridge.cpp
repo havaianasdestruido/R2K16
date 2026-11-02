@@ -2,6 +2,7 @@
 #include "Lua/LuaBridge.h"
 #include "G3D/CoordinateFrame.h"
 #include "G3D/Color3.h"
+#include "G3D/Color3uint8.h"
 #include "G3D/Vector3.h"
 #include "G3D/Vector2.h"
 #include "RbxG3D/RbxRay.h"
@@ -53,6 +54,7 @@ namespace RBX
 		/// https://docs0.google.com/a/roblox.com/document/d/100HFz6lRHJKP88UOshPrrnRoHavNZ5upT6ePIkgcYFc/edit?hl=en#
 
 		template int Bridge <G3D::Color3>::on_tostring(const  G3D::Color3&, lua_State *);
+		template int Bridge <G3D::Color3uint8>::on_tostring(const  G3D::Color3uint8&, lua_State *);
 		template int Bridge <RBX::RbxRay>::on_tostring(const  RBX::RbxRay&, lua_State *);
 		template int Bridge <G3D::Vector3int16>::on_tostring(const  G3D::Vector3int16&, lua_State *);	
 		template int Bridge <G3D::Vector2int16>::on_tostring(const  G3D::Vector2int16&, lua_State *);	
@@ -128,6 +130,7 @@ namespace RBX
         template void Bridge <RBX::Region3>::registerClass(lua_State *);
         template void Bridge <RBX::Region3int16>::registerClass(lua_State *);
         template void Bridge <G3D::Color3>::registerClass(lua_State *);
+        template void Bridge <G3D::Color3uint8>::registerClass(lua_State *);
         template void Bridge <boost::intrusive_ptr<class WeakThreadRef::Node> >::registerClass(lua_State *);
         template void Bridge <shared_ptr<GenericFunction> >::registerClass(lua_State *);
         template void Bridge <shared_ptr<GenericAsyncFunction> >::registerClass(lua_State *);

@@ -396,6 +396,68 @@ bool StringConverter<G3D::Color3>::convertToValue(const std::string& text, G3D::
 	return true;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// StringConverter<G3D::Color3uint8>
+//
+
+template<>
+std::string StringConverter<G3D::Color3uint8>::convertToString(const G3D::Color3uint8& value)
+{
+	char szText[64];
+#ifdef _WIN32
+	_snprintf(szText, 64, "%d, %d, %d", (int)value.r, (int)value.g, (int)value.b);
+#else
+	snprintf(szText, 64, "%d, %d, %d", (int)value.r, (int)value.g, (int)value.b);
+#endif
+	return szText;
+}
+
+template<>
+bool StringConverter<G3D::Color3uint8>::convertToValue(const std::string& text, G3D::Color3uint8& value)
+{
+	if (text.size() > 0 && (text[0]=='#' || text.substr(0,2)=="0x"))
+	{
+		// This is an HTML-style color: #rrggbb or 0xrrggbb
+		const std::string hex = (text[0]=='#') ? text.substr(1) : text.substr(2);
+		if (hex.size()!=6)
+			return false;
+		value.r = static_cast<uint8>(strtol(hex.substr(0,2).c_str(), NULL, 16));
+		value.g = static_cast<uint8>(strtol(hex.substr(2,2).c_str(), NULL, 16));
+		value.b = static_cast<uint8>(strtol(hex.substr(4,2).c_str(), NULL, 16));
+		return true;
+	}
+
+	// Otherwise expect "r, g, b" with integer channels in [0, 255]
+	int channels[3];
+	int count = 0;
+	size_t last = 0;
+	while (count < 3 && last <= text.length())
+	{
+		size_t pos = text.find_first_of(",;", last);
+		std::string token = (pos==std::string::npos) ? text.substr(last) : text.substr(last, pos-last);
+		if (token.empty())
+			return false;
+		char* end = NULL;
+		long v = strtol(token.c_str(), &end, 10);
+		if (end == token.c_str())
+			return false;
+		if (v < 0) v = 0;
+		if (v > 255) v = 255;
+		channels[count++] = (int)v;
+		if (pos==std::string::npos)
+			break;
+		last = pos+1;
+	}
+	if (count!=3)
+		return false;
+
+	value.r = static_cast<uint8>(channels[0]);
+	value.g = static_cast<uint8>(channels[1]);
+	value.b = static_cast<uint8>(channels[2]);
+	return true;
+}
+
 
 template<>
 bool StringConverter<RBX::ContentId>::convertToValue(const std::string& text, RBX::ContentId& value)

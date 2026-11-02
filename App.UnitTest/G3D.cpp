@@ -3,6 +3,7 @@
 #include "RbxG3D/RbxRay.h"
 #include "G3D/AABox.h"
 #include "G3D/Color3.h"
+#include "G3D/Color3uint8.h"
 #include "G3D/CoordinateFrame.h"
 #include "V8DataModel/Camera.h"
 #include "Util/Math.h"
@@ -71,6 +72,39 @@ BOOST_AUTO_TEST_CASE(TestColor3)
 	BOOST_CHECK_EQUAL(color.min(dummy), Color3(0.2f,0.2f,0.5f));
 	BOOST_CHECK_EQUAL(color.fuzzyEq(dummy), false);
 	BOOST_CHECK_EQUAL(color.fuzzyNe(dummy), true);	
+}
+
+BOOST_AUTO_TEST_CASE(TestColor3uint8)
+{
+	// Packed 3-byte representation
+	BOOST_CHECK_EQUAL(sizeof(G3D::Color3uint8), 3);
+
+	G3D::Color3uint8 def;
+	BOOST_CHECK_EQUAL(def, G3D::Color3uint8(0, 0, 0));
+
+	G3D::Color3uint8 color(10, 20, 30);
+	BOOST_CHECK_EQUAL(color.r, 10);
+	BOOST_CHECK_EQUAL(color.g, 20);
+	BOOST_CHECK_EQUAL(color.b, 30);
+	BOOST_CHECK_EQUAL(color[0], 10);
+	BOOST_CHECK_EQUAL(color[1], 20);
+	BOOST_CHECK_EQUAL(color[2], 30);
+
+	// Conversion from Color3 uses floor(c * 256) clamped to 255
+	BOOST_CHECK_EQUAL(G3D::Color3uint8(G3D::Color3(1.0f, 1.0f, 1.0f)), G3D::Color3uint8(255, 255, 255));
+	BOOST_CHECK_EQUAL(G3D::Color3uint8(G3D::Color3(0.0f, 0.0f, 0.0f)), G3D::Color3uint8(0, 0, 0));
+	BOOST_CHECK_EQUAL(G3D::Color3uint8(G3D::Color3(0.5f, 0.25f, 2.0f)), G3D::Color3uint8(128, 64, 255));
+
+	// And back
+	G3D::Color3 f = G3D::Color3(G3D::Color3uint8(255, 128, 0));
+	BOOST_CHECK_EQUAL(f, G3D::Color3(1.0f, 128.0f / 255.0f, 0.0f));
+
+	BOOST_CHECK_EQUAL(G3D::Color3uint8::fromARGB(0x00FF8040), G3D::Color3uint8(0xFF, 0x80, 0x40));
+	BOOST_CHECK_EQUAL(color.bgr(), G3D::Color3uint8(30, 20, 10));
+	BOOST_CHECK_EQUAL(color.asUInt32(), 0xFF0A141Eu);
+	BOOST_CHECK_EQUAL(color.max(G3D::Color3uint8(5, 200, 30)), G3D::Color3uint8(10, 200, 30));
+	BOOST_CHECK_EQUAL(color.min(G3D::Color3uint8(5, 200, 30)), G3D::Color3uint8(5, 20, 30));
+	BOOST_CHECK(color != G3D::Color3uint8(10, 20, 31));
 }
 
 BOOST_AUTO_TEST_CASE(TestCoordinateFrame)

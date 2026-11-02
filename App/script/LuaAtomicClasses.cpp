@@ -159,6 +159,81 @@ void Bridge<G3D::Color3>::on_newindex(G3D::Color3& object, const char* name, lua
 	throw RBX::runtime_error("%s cannot be assigned to", name);
 }
 
+/// G3D::Color3uint8 has a default implementation for on_tostring() invoked from LuaBridge.cpp. It is important you read LuaBridge.cpp if you are adding or removing any specialization
+/// G3D::Color3uint8 has a default implementation for registerClass() invoked from LuaBridge.cpp. It is important you read LuaBridge.cpp if you are adding or removing any specialization
+template<>
+const char* Bridge<G3D::Color3uint8>::className("Color3uint8");
+
+const luaL_reg Color3uint8Bridge::classLibrary[] = {
+	{"fromRGB", newRGBColor3uint8},
+	{NULL, NULL}
+};
+
+void Color3uint8Bridge::registerClassLibrary (lua_State *L) {
+
+	// Register the "fromRGB" function
+	luaL_register(L, className, classLibrary);
+	lua_setreadonly(L, -1, true);
+	lua_pop(L,1);		// Pop table from stack.   http://lua-users.org/lists/lua-l/2003-12/msg00139.html
+}
+
+void Color3uint8Bridge::pushColor3uint8(lua_State *L, const G3D::Color3uint8& color)
+{
+    pushNewObject(L, color);
+}
+
+int Color3uint8Bridge::newRGBColor3uint8(lua_State *L)
+{
+	// There should be up to 3 numerical parameters (r,g,b) in the range [0, 255]. Following Lua conventions ignore others and use 0 for missing
+	int count = std::min(3, lua_gettop(L));
+
+	G3D::uint8 color[3];
+	for (int i = 0; i < count; i++)
+	{
+		float v = lua_tofloat(L, i + 1);
+		if (!(v >= 0.0f))	// also catches NaN
+			v = 0.0f;
+		if (v > 255.0f)
+			v = 255.0f;
+		color[i] = static_cast<G3D::uint8>(G3D::iRound(v));
+	}
+	for (int i = count; i < 3; i++)
+		color[i] = 0;
+
+	pushNewObject(L, G3D::Color3uint8(color[0], color[1], color[2]));
+	return 1;
+}
+
+template<>
+int Bridge<G3D::Color3uint8>::on_index(const G3D::Color3uint8& object, const char* name, lua_State *L)
+{
+	if (strcmp(name,"r")==0 || strcmp(name,"R")==0)
+	{
+		lua_pushnumber(L, object.r);
+		return 1;
+	}
+	if (strcmp(name,"g")==0 || strcmp(name,"G")==0)
+	{
+		lua_pushnumber(L, object.g);
+		return 1;
+	}
+	if (strcmp(name,"b")==0 || strcmp(name,"B")==0)
+	{
+		lua_pushnumber(L, object.b);
+		return 1;
+	}
+
+	// Failure
+	throw RBX::runtime_error("%s is not a valid member", name);
+}
+
+template<>
+void Bridge<G3D::Color3uint8>::on_newindex(G3D::Color3uint8& object, const char* name, lua_State *L)
+{
+	// Failure
+	throw RBX::runtime_error("%s cannot be assigned to", name);
+}
+
 /// RBX::RbxRay has a default implementation for on_tostring() invoked from LuaBridge.cpp. It is important you read LuaBridge.cpp if you are adding or removing any specialization
 /// RBX::RbxRay has a default implementation for registerClass() invoked from LuaBridge.cpp. It is important you read LuaBridge.cpp if you are adding or removing any specialization
 template<>

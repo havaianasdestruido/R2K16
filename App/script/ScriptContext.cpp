@@ -538,6 +538,7 @@ void RBX::registerScriptDescriptors()
 	RBX::Reflection::Type::singleton<RBX::RbxRay>();
 	RBX::Reflection::Type::singleton<G3D::CoordinateFrame>();
 	RBX::Reflection::Type::singleton<G3D::Color3>();
+	RBX::Reflection::Type::singleton<G3D::Color3uint8>();
 	RBX::Reflection::Type::singleton<BrickColor>();
 }
 
@@ -685,6 +686,7 @@ bool ScriptContext::openState(size_t idx)
 		Vector2Bridge::registerClass(globalState);
 		RbxRayBridge::registerClass(globalState);
 		Color3Bridge::registerClass(globalState);
+		Color3uint8Bridge::registerClass(globalState);
 		BrickColorBridge::registerClass(globalState);
 		UDimBridge::registerClass(globalState);
 		UDim2Bridge::registerClass(globalState);
@@ -721,6 +723,7 @@ bool ScriptContext::openState(size_t idx)
 		Vector2Bridge::registerClassLibrary(globalState);
 		RbxRayBridge::registerClassLibrary(globalState);
 		Color3Bridge::registerClassLibrary(globalState);
+		Color3uint8Bridge::registerClassLibrary(globalState);
 		BrickColorBridge::registerClassLibrary(globalState);
 		UDimBridge::registerClassLibrary(globalState);
 		UDim2Bridge::registerClassLibrary(globalState);
