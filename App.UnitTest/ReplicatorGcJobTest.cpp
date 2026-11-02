@@ -1,6 +1,7 @@
 #include "boost/test/unit_test.hpp"
 
 #include "NetworkSettings.h"
+#include "OrderedSet.h"
 #include "Network/Player.h"
 #include "rbx/test/DataModelFixture.h"
 #include "rbx/test/ScopedFastFlagSetting.h"
@@ -29,6 +30,30 @@ using namespace Network;
 #endif
 
 BOOST_AUTO_TEST_SUITE(ReplicatorGcJobTest)
+
+BOOST_AUTO_TEST_CASE(RegionRemovalIdsKeepFirstSeenOrder)
+{
+    OrderedSet<Guid::Data> ids;
+    Guid::Data first, second, otherScope;
+    first.scope.set("stream-out-test-a");
+    first.index = 7;
+    second.scope.set("stream-out-test-a");
+    second.index = 8;
+    otherScope.scope.set("stream-out-test-b");
+    otherScope.index = 7;
+
+    BOOST_CHECK(ids.insert(first));
+    BOOST_CHECK(ids.insert(second));
+    BOOST_CHECK(!ids.insert(first));
+    BOOST_CHECK(ids.insert(otherScope));
+    BOOST_CHECK(!ids.insert(second));
+    ids.finish();
+    BOOST_REQUIRE_EQUAL(ids.size(), 3u);
+    BOOST_CHECK(ids[0] == first);
+    BOOST_CHECK(ids[1] == second);
+    BOOST_CHECK(ids[2] == otherScope);
+}
+
 
 bool SetMemoryLevel(DataModelFixture& dm)
 {

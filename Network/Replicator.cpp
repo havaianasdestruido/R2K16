@@ -2350,7 +2350,8 @@ Replicator::ReplicationData& Replicator::addReplicationData(shared_ptr<Instance>
 				if (clusterPacketCache)
 				{
 					clusterPacketCache->setupListener(cluster);
-					clusterReplicationData.initialChunkIterator = cluster->getVoxelGrid()->getNonEmptyChunks();
+					const std::vector<SpatialRegion::Id> chunks = cluster->getVoxelGrid()->getNonEmptyChunks();
+					clusterReplicationData.initialChunkIterator.assign(chunks.begin(), chunks.end());
 				}
 				else
 					clusterReplicationData.initialSendIterator = ClusterChunksIterator(cluster->getVoxelGrid()->getNonEmptyChunks());
@@ -3095,7 +3096,7 @@ bool Replicator::sendClusterPacket()
                     else
                         numBitsUsed = bitStream->GetNumberOfBitsUsed() - startBitOffset; 
 
-                    clusterData.initialChunkIterator.erase(clusterData.initialChunkIterator.begin());
+                    clusterData.initialChunkIterator.pop_front();
                     numKBytesSent += (numBitsUsed / 8.0f / 1000.0f);
                 }
             }

@@ -1066,6 +1066,7 @@
     <ClInclude Include="MovementHistoryJob.h" />
     <ClInclude Include="NetworkFilter.h" />
     <ClInclude Include="NetworkOwnerJob.h" />
+    <ClInclude Include="OrderedSet.h" />
     <ClInclude Include="NetworkProfiler.h" />
     <ClInclude Include="NetworkSettings.h" />
     <ClInclude Include="PacketIds.h" />

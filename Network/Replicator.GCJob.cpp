@@ -17,6 +17,7 @@
 #include "GfxBase/Adorn.h"
 #include "v8datamodel/JointsService.h"
 #include "NetworkProfiler.h"
+#include "OrderedSet.h"
 #include "Humanoid/Humanoid.h"
 
 //#include "v8world/Contact.h"
@@ -45,7 +46,7 @@ namespace {
 class ClientReplicator::GCJob::RegionRemovalItem : public Item
 {
 	StreamRegion::Id region;
-	std::vector<Guid::Data> collectedInstanceGuids;
+	OrderedSet<Guid::Data> collectedInstanceGuids;
 
 public:
 	RegionRemovalItem(Replicator* replicator, StreamRegion::Id id) : Item(*replicator), region(id) {}
@@ -53,13 +54,9 @@ public:
 	{
         Guid::Data data;
         partInstance->getGuid().extract(data);
-        if(std::find(collectedInstanceGuids.begin(), collectedInstanceGuids.end(), data)==collectedInstanceGuids.end())
-        {
-		    collectedInstanceGuids.push_back(data);
-            return true;
-        }
-        return false;
+        return collectedInstanceGuids.insert(data);
 	}
+	void finish() { collectedInstanceGuids.finish(); }
 	bool write(RakNet::BitStream& bitStream) 
 	{
 		writeItemType(bitStream, ItemTypeRegionRemoval); 
@@ -314,6 +311,7 @@ TaskScheduler::StepResult ClientReplicator::GCJob::stepDataModelJob(const Stats&
 			        RegionRemovalItem* regionRemoveItem = new RegionRemovalItem(replicator.get(), regionId);
 
 			        gcRegion(regionId, regionRemoveItem);
+			        regionRemoveItem->finish();
 
 			        clientRep->pendingItems.push_back(regionRemoveItem);
 
@@ -342,8 +340,10 @@ TaskScheduler::StepResult ClientReplicator::GCJob::stepDataModelJob(const Stats&
                     // gc invalid joints
                     ClientReplicator* cRep = static_cast<ClientReplicator*>(replicator.get());
                     if (JointsService* jointsService = ServiceProvider::find<JointsService>(cRep)) {
+                        // Preserve the original snapshot semantics without copying it for every descendant.
+                        const std::vector<shared_ptr<PartInstance> > pendingParts(pendingRemovalPartInstances);
                         jointsService->visitDescendants(
-                            boost::bind(&ClientReplicator::streamOutAutoJointHelper, cRep, pendingRemovalPartInstances, _1));
+                            boost::bind(&ClientReplicator::streamOutAutoJointHelper, cRep, boost::cref(pendingParts), _1));
                     }
                     CPUPROFILER_STEP(NetworkProfiler::PROFILER_jointRemoval);
                     for (std::vector<shared_ptr<PartInstance> >::iterator iter = pendingRemovalPartInstances.begin(); iter != pendingRemovalPartInstances.end(); iter++)

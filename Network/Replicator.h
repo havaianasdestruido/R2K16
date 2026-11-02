@@ -23,6 +23,7 @@
 #include "Voxel/CellChangeListener.h"
 #include "voxel2/GridListener.h"
 #include "queue"
+#include <deque>
 
 #include <boost/unordered_set.hpp>
 #include <boost/pool/object_pool.hpp>
@@ -160,7 +161,7 @@ public:
 		boost::unordered_set<Vector3int32> updateBufferSmooth;
 
         ClusterChunksIterator initialSendIterator;
-		std::vector<SpatialRegion::Id> initialChunkIterator;
+		std::deque<SpatialRegion::Id> initialChunkIterator;
 		std::vector<StreamRegion::Id> initialSendSmooth;
 
 		bool readyToSendChunks;
