@@ -89,7 +89,7 @@ Library names suffixed with an asterisk (\*) denote a library that is currently 
 This is a complete and comprehensive list of all the major changes made to the original source code.
 
 - [x] Added all the "Contrib" libraries (see above)
-- [ ] Fix all 557 "issues" and stuff scanned by Github ![](.github/res/img/security.png)
+- [ ] Fix all 557 "issues" and stuff scanned by Github ![](.github/res/img/security.png) located at `res/gh_alerts.csv`.
 
 ![](.github/res/img/security2.png)
 
