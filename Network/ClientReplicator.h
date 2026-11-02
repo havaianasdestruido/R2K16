@@ -89,7 +89,7 @@ namespace RBX {
 			void streamOutTerrain(const Vector3int16 &cellPos);
 			void streamOutInstance(Instance* part, bool deleteImmediately = true); // NOTE: passing false to deleteImmediately requires handling auto joints and deleting the instance externally
 			void streamOutPartHelper(const Guid::Data& data, PartInstance* part, shared_ptr<Instance> descendant);
-            void streamOutAutoJointHelper(std::vector<shared_ptr<PartInstance> > pendingRemovalParts, shared_ptr<Instance> instance);
+            void streamOutAutoJointHelper(const std::vector<shared_ptr<PartInstance> >& pendingRemovalParts, shared_ptr<Instance> instance);
 
 			void markerReceived();
 		protected:

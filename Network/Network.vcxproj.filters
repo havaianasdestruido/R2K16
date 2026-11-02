@@ -1036,6 +1036,9 @@
     <ClInclude Include="ReplicatorStats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OrderedSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="NetworkProfiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>

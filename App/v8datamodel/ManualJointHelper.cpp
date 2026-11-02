@@ -12,6 +12,8 @@
 #include "V8World/MegaClusterPoly.h"
 #include "Tool/ToolsArrow.h"
 
+#include <boost/unordered_set.hpp>
+
 #include "Humanoid/Humanoid.h"
 #include "V8DataModel/Workspace.h"
 #include "V8DataModel/PartInstance.h"
@@ -83,6 +85,9 @@ void ManualJointHelper::findPermissibleJointSurfacePairs(void)
 	// Clear the existing part/surface pairs containers
 	clearAndDeleteJointSurfacePairs();
 
+	// Membership checks occur for every touching candidate; keep the original vector for traversal order.
+	const boost::unordered_set<Primitive*> selectedSet(selectedPrimitives.begin(), selectedPrimitives.end());
+
 	// find other parts that are contacting the selected parts
 	for( unsigned int i = 0; i < selectedPrimitives.size(); i++ )
 	{
@@ -96,7 +101,7 @@ void ManualJointHelper::findPermissibleJointSurfacePairs(void)
 		    {
 				if( !selectedPrimitives[i]->getGeometry()->isTerrain() )
                 {
-			        if( std::find(selectedPrimitives.begin(), selectedPrimitives.end(), found[j])== selectedPrimitives.end() )
+			        if( selectedSet.find(found[j]) == selectedSet.end() )
 			        {
 			            if( found[j]->getConstGeometry()->findTouchingSurfacesConvex(found[j]->getCoordinateFrame(), foundPrimSurf, 
                                 *(selectedPrimitives[i]->getConstGeometry()), selectedPrimitives[i]->getCoordinateFrame(), selectedPrimSurf) )

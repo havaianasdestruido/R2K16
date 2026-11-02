@@ -1121,6 +1121,24 @@ static void generateReasonableTerrain(unsigned maxheight, unsigned maxdelta, Meg
 }
 
 BOOST_AUTO_TEST_SUITE(ClusterChunksReplication)
+
+BOOST_AUTO_TEST_CASE(InitialCachedChunksRemainFifoAcrossBatches)
+{
+    Replicator::ClusterReplicationData data;
+    std::vector<SpatialRegion::Id> chunks;
+    chunks.push_back(SpatialRegion::Id(1, 2, 3));
+    chunks.push_back(SpatialRegion::Id(-1, 0, 4));
+    chunks.push_back(SpatialRegion::Id(5, 6, 7));
+    data.initialChunkIterator.assign(chunks.begin(), chunks.end());
+    BOOST_CHECK(data.hasDataToSend());
+    BOOST_CHECK(data.initialChunkIterator.front() == chunks[0]);
+    data.initialChunkIterator.pop_front();
+    BOOST_CHECK(data.initialChunkIterator.front() == chunks[1]);
+    data.initialChunkIterator.pop_front();
+    BOOST_CHECK(data.initialChunkIterator.front() == chunks[2]);
+    data.initialChunkIterator.pop_front();
+    BOOST_CHECK(!data.hasDataToSend());
+}
 BOOST_AUTO_TEST_CASE(ChunkSend) {
 	shared_ptr<MegaClusterInstance> clientCluster(Creatable<Instance>::create<MegaClusterInstance>());
 	shared_ptr<ReplicatorTestWrapper> clientWrapper(ReplicatorTestWrapper::client(clientCluster));

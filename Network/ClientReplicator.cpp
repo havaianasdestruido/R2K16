@@ -1797,7 +1797,7 @@ void ClientReplicator::streamOutPartHelper(const Guid::Data& data,
 	}
 }
 
-void ClientReplicator::streamOutAutoJointHelper(std::vector<shared_ptr<PartInstance> > pendingRemovalParts, shared_ptr<Instance> instance)
+void ClientReplicator::streamOutAutoJointHelper(const std::vector<shared_ptr<PartInstance> >& pendingRemovalParts, shared_ptr<Instance> instance)
 {
     if (shared_ptr<JointInstance> jointInstance =
         Instance::fastSharedDynamicCast<JointInstance>(instance))
@@ -1809,9 +1809,9 @@ void ClientReplicator::streamOutAutoJointHelper(std::vector<shared_ptr<PartInsta
 
         if (partInstance0 == NULL && partInstance1 == NULL)
             return;
-        for (std::vector<shared_ptr<PartInstance> >::iterator iter = pendingRemovalParts.begin(); iter != pendingRemovalParts.end(); iter++)
+        for (std::vector<shared_ptr<PartInstance> >::const_iterator iter = pendingRemovalParts.begin(); iter != pendingRemovalParts.end(); iter++)
         {
-            shared_ptr<PartInstance> pendingRemovalPart = *iter;
+            const shared_ptr<PartInstance>& pendingRemovalPart = *iter;
             if (pendingRemovalPart)
             {
                 const Reflection::RefPropertyDescriptor* refPropDescriptor = NULL;
