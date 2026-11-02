@@ -2171,6 +2171,7 @@ cmd /c "exit /b 0"</Command>
     <ClCompile Include="Util\RunStateOwner.cpp" />
     <ClCompile Include="util\ScriptInformationProvider.cpp" />
     <ClCompile Include="util\SoundChannel.cpp" />
+    <ClCompile Include="util\SoundEffect.cpp" />
     <ClCompile Include="util\SoundWorld.cpp" />
     <ClCompile Include="util\SpanningEdge.cpp" />
     <ClCompile Include="util\SpanningNode.cpp" />
@@ -4781,6 +4782,7 @@ cmd /c "exit /b 0"</Command>
     <ClInclude Include="include\util\Selectable.h" />
     <ClInclude Include="include\util\SimSendFilter.h" />
     <ClInclude Include="include\util\SoundChannel.h" />
+    <ClInclude Include="include\util\SoundEffect.h" />
     <ClInclude Include="include\util\SoundWorld.h" />
     <ClInclude Include="include\util\SpanningEdge.h" />
     <ClInclude Include="include\util\SpanningNode.h" />

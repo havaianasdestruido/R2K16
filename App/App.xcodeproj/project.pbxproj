@@ -2252,17 +2252,25 @@
 		94DF679318457BFD006E50E5 /* KeyCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DF679118457BFD006E50E5 /* KeyCode.cpp */; };
 		94DF679418457BFD006E50E5 /* KeyCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DF679118457BFD006E50E5 /* KeyCode.cpp */; };
 		94F82F8819F870DA0010C135 /* SoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8619F870DA0010C135 /* SoundChannel.h */; };
+		AEF000001000000000000002 /* SoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000001 /* SoundEffect.h */; };
 		94F82F8919F870DA0010C135 /* SoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8619F870DA0010C135 /* SoundChannel.h */; };
+		AEF000001000000000000003 /* SoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000001 /* SoundEffect.h */; };
 		94F82F8A19F870DA0010C135 /* SoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8619F870DA0010C135 /* SoundChannel.h */; };
+		AEF000001000000000000004 /* SoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000001 /* SoundEffect.h */; };
 		94F82F8B19F870DA0010C135 /* SoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8619F870DA0010C135 /* SoundChannel.h */; };
+		AEF000001000000000000005 /* SoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000001 /* SoundEffect.h */; };
 		94F82F8C19F870DA0010C135 /* SoundService.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8719F870DA0010C135 /* SoundService.h */; };
 		94F82F8D19F870DA0010C135 /* SoundService.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8719F870DA0010C135 /* SoundService.h */; };
 		94F82F8E19F870DA0010C135 /* SoundService.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8719F870DA0010C135 /* SoundService.h */; };
 		94F82F8F19F870DA0010C135 /* SoundService.h in Headers */ = {isa = PBXBuildFile; fileRef = 94F82F8719F870DA0010C135 /* SoundService.h */; };
 		94F82F9219F870EA0010C135 /* SoundChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9019F870EA0010C135 /* SoundChannel.cpp */; };
+		AEF000001000000000000007 /* SoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000006 /* SoundEffect.cpp */; };
 		94F82F9319F870EA0010C135 /* SoundChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9019F870EA0010C135 /* SoundChannel.cpp */; };
+		AEF000001000000000000008 /* SoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000006 /* SoundEffect.cpp */; };
 		94F82F9419F870EA0010C135 /* SoundChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9019F870EA0010C135 /* SoundChannel.cpp */; };
+		AEF000001000000000000009 /* SoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000006 /* SoundEffect.cpp */; };
 		94F82F9519F870EA0010C135 /* SoundChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9019F870EA0010C135 /* SoundChannel.cpp */; };
+		AEF00000100000000000000A /* SoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEF000001000000000000006 /* SoundEffect.cpp */; };
 		94F82F9619F870EA0010C135 /* SoundService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9119F870EA0010C135 /* SoundService.cpp */; };
 		94F82F9719F870EA0010C135 /* SoundService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9119F870EA0010C135 /* SoundService.cpp */; };
 		94F82F9819F870EA0010C135 /* SoundService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94F82F9119F870EA0010C135 /* SoundService.cpp */; };
@@ -3197,8 +3205,10 @@
 		94DD54881C6E85A400A2E2DE /* HapticService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HapticService.cpp; sourceTree = "<group>"; };
 		94DF679118457BFD006E50E5 /* KeyCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyCode.cpp; sourceTree = "<group>"; };
 		94F82F8619F870DA0010C135 /* SoundChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundChannel.h; sourceTree = "<group>"; };
+		AEF000001000000000000001 /* SoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundEffect.h; sourceTree = "<group>"; };
 		94F82F8719F870DA0010C135 /* SoundService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundService.h; sourceTree = "<group>"; };
 		94F82F9019F870EA0010C135 /* SoundChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundChannel.cpp; sourceTree = "<group>"; };
+		AEF000001000000000000006 /* SoundEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEffect.cpp; sourceTree = "<group>"; };
 		94F82F9119F870EA0010C135 /* SoundService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundService.cpp; sourceTree = "<group>"; };
 		9F04773E1836CD8000DFD102 /* SurfaceGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SurfaceGui.cpp; sourceTree = "<group>"; };
 		9F0477421836CDD600DFD102 /* SurfaceGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceGui.h; sourceTree = "<group>"; };
@@ -4553,6 +4563,7 @@
 				561C840B1A01CA89004EB619 /* HTW3C.h */,
 				E5D4D90D1A11318B005A8572 /* Unix */,
 				94F82F8619F870DA0010C135 /* SoundChannel.h */,
+				AEF000001000000000000001 /* SoundEffect.h */,
 				94F82F8719F870DA0010C135 /* SoundService.h */,
 				56F917D9197DEAFA002AFFF8 /* HttpPlatformImpl.h */,
 				1F20D3F3194289D7008159B4 /* md5.h */,
@@ -5165,6 +5176,7 @@
 				396D438E1BCDD861000F007D /* PhysicalProperties.cpp */,
 				3BC2469D1ADDD52A00B33BA9 /* Analytics.cpp */,
 				94F82F9019F870EA0010C135 /* SoundChannel.cpp */,
+				AEF000001000000000000006 /* SoundEffect.cpp */,
 				94F82F9119F870EA0010C135 /* SoundService.cpp */,
 				56F9177B197DDBB0002AFFF8 /* Shared */,
 				425759F1190EBE2C00FEFD23 /* Unix */,
@@ -5770,6 +5782,7 @@
 				1F2846E115E7075700120D64 /* FixedSizeCircularBuffer.h in Headers */,
 				1F2846E215E7075700120D64 /* VarInt.h in Headers */,
 				94F82F8919F870DA0010C135 /* SoundChannel.h in Headers */,
+				AEF000001000000000000003 /* SoundEffect.h in Headers */,
 				E5907F461AC093CF00AD0A00 /* JunkCode.h in Headers */,
 				1F2846E415E7075700120D64 /* DoubleEndedVector.h in Headers */,
 				5665496A1891DCD300774F4D /* rbxrandom.h in Headers */,
@@ -5900,6 +5913,7 @@
 				42CA153519984A0700635DBA /* lua.h in Headers */,
 				42CA153619984A0700635DBA /* luaconf.h in Headers */,
 				94F82F8B19F870DA0010C135 /* SoundChannel.h in Headers */,
+				AEF000001000000000000005 /* SoundEffect.h in Headers */,
 				42A639B11B6858E600F009B7 /* Cylinder.h in Headers */,
 				BCC6959E1A7C2E4A007737B0 /* Attachment.h in Headers */,
 				42CA153719984A0700635DBA /* lualib.h in Headers */,
@@ -6063,6 +6077,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94F82F8A19F870DA0010C135 /* SoundChannel.h in Headers */,
+				AEF000001000000000000004 /* SoundEffect.h in Headers */,
 				C8B568E1195251F0006BD749 /* CSGDictionaryService.h in Headers */,
 				56F917DC197DEAFA002AFFF8 /* HttpPlatformImpl.h in Headers */,
 				C8B568E2195251F0006BD749 /* CSGMesh.h in Headers */,
@@ -6306,6 +6321,7 @@
 				9F719669195E18BC002B7320 /* PathfindingService.h in Headers */,
 				528DE27A1315AF6E00758A5E /* ltm.h in Headers */,
 				94F82F8819F870DA0010C135 /* SoundChannel.h in Headers */,
+				AEF000001000000000000002 /* SoundEffect.h in Headers */,
 				528DE27D1315AF6E00758A5E /* lua.h in Headers */,
 				BCC695C11A7C2EE4007737B0 /* Solver.h in Headers */,
 				528DE2811315AF6E00758A5E /* luaconf.h in Headers */,
@@ -7087,6 +7103,7 @@
 				9F204AD816CAFE3E00423E9B /* Grid.Chunk.cpp in Sources */,
 				9F204ADA16CAFE3E00423E9B /* Grid.cpp in Sources */,
 				94F82F9319F870EA0010C135 /* SoundChannel.cpp in Sources */,
+				AEF000001000000000000008 /* SoundEffect.cpp in Sources */,
 				9F204ADC16CAFE3E00423E9B /* Serializer.cpp in Sources */,
 				9F204ADE16CAFE3E00423E9B /* Util.cpp in Sources */,
 				9FFB293416DC55D400F8DC2A /* MachineIdUploader.cpp in Sources */,
@@ -7619,6 +7636,7 @@
 				42CA177A19984A0700635DBA /* GuiBase2d.cpp in Sources */,
 				42CA177B19984A0700635DBA /* StreamRegion.cpp in Sources */,
 				94F82F9519F870EA0010C135 /* SoundChannel.cpp in Sources */,
+				AEF00000100000000000000A /* SoundEffect.cpp in Sources */,
 				42CA177C19984A0700635DBA /* GuiLayerCollector.cpp in Sources */,
 				42CA177819984A0700635DBA /* Base64BinaryInputStream.cpp in Sources */,
 				42CA177919984A0700635DBA /* Base64BinaryOutputStream.cpp in Sources */,
@@ -7667,6 +7685,7 @@
 				C84129611981DACE00B13AFB /* NonReplicatedCSGDictionaryService.cpp in Sources */,
 				9F315FB2196B7F8A0071D580 /* Voxelizer.cpp in Sources */,
 				94F82F9419F870EA0010C135 /* SoundChannel.cpp in Sources */,
+				AEF000001000000000000009 /* SoundEffect.cpp in Sources */,
 				BCC695D31A7C2F0E007737B0 /* Constraint.cpp in Sources */,
 				9FEEB6AE1964D431009E98FE /* PathfindingService.cpp in Sources */,
 				C8B568DD195251BB006BD749 /* CSGDictionaryService.cpp in Sources */,
@@ -8566,6 +8585,7 @@
 				EAE9A5A11291E9D800A46637 /* SimulateStage.cpp in Sources */,
 				EAE9A5A21291E9D800A46637 /* SleepStage.cpp in Sources */,
 				94F82F9219F870EA0010C135 /* SoundChannel.cpp in Sources */,
+				AEF000001000000000000007 /* SoundEffect.cpp in Sources */,
 				EAE9A5A31291E9D800A46637 /* SnapJoint.cpp in Sources */,
 				4297535D192BFD5200566182 /* HttpAsync.cpp in Sources */,
 				50401BBB1AA0FD1000F0A4EF /* CustomParticleEmitter.cpp in Sources */,

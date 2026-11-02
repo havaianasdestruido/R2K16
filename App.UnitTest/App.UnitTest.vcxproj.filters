@@ -60,6 +60,9 @@
     <ClCompile Include="Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SoundEffectTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="LuaReflection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
