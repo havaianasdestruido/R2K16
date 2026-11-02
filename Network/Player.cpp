@@ -8,6 +8,7 @@
 #include "RobloxServicesTools.h"
 #include "V8DataModel/GuiService.h"
 #include "V8DataModel/PlayerGui.h"
+#include "V8DataModel/GuiLayerCollector.h"
 #include "V8DataModel/PlayerScripts.h"
 #include "V8DataModel/TextButton.h"
 #include "V8Datamodel/Tool.h"
@@ -2203,9 +2204,18 @@ void copyChildrenToBackpack(Instance* starterItems, Instance* backpack)
 	}
 }
 
-void copyChildrenToGui(Instance* starterItems, Instance* playerGui)
+void copyChildrenToGui(Instance* starterItems, Instance* playerGui, bool firstSpawn)
 {
-	copyChildrenToBackpack(starterItems, playerGui);
+	for (size_t n = 0; n < starterItems->numChildren(); ++n)
+	{
+		Instance* child = starterItems->getChild(n);
+		GuiLayerCollector* layer = Instance::fastDynamicCast<GuiLayerCollector>(child);
+		// Persistent top-level layers are copied only on the first spawn.
+		if (!firstSpawn && layer && !layer->getResetOnSpawn())
+			continue;
+		if (shared_ptr<Instance> copy = child->clone(EngineCreator))
+			copy->setParent(playerGui);
+	}
 }
 
 void Player::createPlayerGui()
@@ -2231,17 +2241,28 @@ void Player::rebuildGui()
 	StarterGuiService* starterGui = ServiceProvider::find<StarterGuiService>(this);
 
 	RBX::PlayerGui* currPlayerGui = findFirstChildOfType<RBX::PlayerGui>();	
-	if(currPlayerGui) 
-	{	
+	if (currPlayerGui && starterGui)
+	{
 		if (!copiedGuiOnce)
 		{
-			copyChildrenToGui(starterGui, currPlayerGui);
+			copyChildrenToGui(starterGui, currPlayerGui, true);
 			copiedGuiOnce = true;
 		}
 		else if(starterGui && starterGui->getResetPlayerGui()) 
 		{
-			currPlayerGui->removeAllChildren();
-			copyChildrenToGui(starterGui, currPlayerGui);
+			// Only direct LayerCollector children can opt out of the reset.
+			// Snapshot the children because removing one changes the live list.
+			if (shared_ptr<const Instances> children = currPlayerGui->getChildren().read())
+			{
+				Instances snapshot(*children);
+				for (Instances::const_iterator it = snapshot.begin(); it != snapshot.end(); ++it)
+				{
+					GuiLayerCollector* layer = Instance::fastDynamicCast<GuiLayerCollector>(it->get());
+					if ((!layer || layer->getResetOnSpawn()) && (*it)->getParent() == currPlayerGui)
+						(*it)->remove();
+				}
+			}
+			copyChildrenToGui(starterGui, currPlayerGui, false);
 		}	
 	}
 }

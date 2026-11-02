@@ -13,6 +13,7 @@ DYNAMIC_FASTFLAGVARIABLE(FixClippedScrollingFrameNavigation, true)
 
 namespace RBX {
 	const char* const sLayerCollector = "LayerCollector";
+	static Reflection::PropDescriptor<GuiLayerCollector, bool> prop_ResetOnSpawn("ResetOnSpawn", category_Data, &GuiLayerCollector::getResetOnSpawn, &GuiLayerCollector::setResetOnSpawn, Reflection::PropertyDescriptor::STANDARD);
 
 	static bool isAllGuiQueuesHaveCorrectNumberOfLayers( std::vector<  std::vector<shared_ptr<GuiBase> > > vectors[])
 	{
@@ -30,6 +31,7 @@ namespace RBX {
 	GuiLayerCollector::GuiLayerCollector(const char* name)
 		: DescribedNonCreatable<GuiLayerCollector, GuiBase2d, sLayerCollector>(name)
 		, rebuildGuiVector(true)
+		, resetOnSpawn(true)
 	{
 		FASTLOG1(FLog::GuiTargetLifetime, "GuiLayerCollector created: %p", this);
 
@@ -42,6 +44,15 @@ namespace RBX {
 				GuiVector temp;
 				mGuiVectors[queueIdx].push_back(temp);
 			}
+		}
+	}
+
+	void GuiLayerCollector::setResetOnSpawn(bool value)
+	{
+		if (resetOnSpawn != value)
+		{
+			resetOnSpawn = value;
+			raisePropertyChanged(prop_ResetOnSpawn);
 		}
 	}
 

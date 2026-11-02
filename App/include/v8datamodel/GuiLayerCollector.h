@@ -23,6 +23,9 @@ namespace RBX {
 	public:
 		~GuiLayerCollector();
 
+		bool getResetOnSpawn() const { return resetOnSpawn; }
+		void setResetOnSpawn(bool value);
+
 		////////////////////////////////////////////////////////////////////////////////////
 		// 
 		// GuiTarget
@@ -44,6 +47,7 @@ namespace RBX {
 		typedef std::vector<GuiVector> GuiLayers;
 
 		bool rebuildGuiVector;
+		bool resetOnSpawn;
         
 		static void LoadZ(const shared_ptr<RBX::Instance>& instance, GuiLayers guiVectors[]);
 		void loadZVectors();
