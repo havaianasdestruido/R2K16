@@ -1658,6 +1658,9 @@
     <ClCompile Include="util\SoundService.cpp">
       <Filter>Source Files\Util Source</Filter>
     </ClCompile>
+    <ClCompile Include="util\SoundEffect.cpp">
+      <Filter>Source Files\Util Source</Filter>
+    </ClCompile>
     <ClCompile Include="util\SoundChannel.cpp">
       <Filter>Source Files\Util Source</Filter>
     </ClCompile>
@@ -3527,6 +3530,9 @@
       <Filter>Header Files\V8DataModel Header</Filter>
     </ClInclude>
     <ClInclude Include="include\util\SoundService.h">
+      <Filter>Header Files\Util Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SoundEffect.h">
       <Filter>Header Files\Util Header</Filter>
     </ClInclude>
     <ClInclude Include="include\util\SoundChannel.h">

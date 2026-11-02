@@ -180,6 +180,7 @@
 
 #include "util/Sound.h"
 #include "util/SoundService.h"
+#include "util/SoundEffect.h"
 #include "util/UDim.h"
 #include "util/Faces.h"
 #include "util/Axes.h"
@@ -565,6 +566,8 @@ RBX_REGISTER_CLASS(UnionOperation);
 RBX_REGISTER_CLASS(NegateOperation);
 RBX_REGISTER_CLASS(Soundscape::SoundService);
 RBX_REGISTER_CLASS(Soundscape::SoundChannel);
+RBX_REGISTER_CLASS(Soundscape::SoundEffect);
+RBX_REGISTER_CLASS(Soundscape::DistortionSoundEffect);
 RBX_REGISTER_CLASS(GamepadService);
 RBX_REGISTER_CLASS(LuaSourceContainer);
 RBX_REGISTER_CLASS(HapticService);

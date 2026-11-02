@@ -134,6 +134,7 @@
     <ClCompile Include="HTTPTest.cpp" />
     <ClCompile Include="HumanoidTest.cpp" />
     <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="SoundEffectTest.cpp" />
     <ClCompile Include="LogServiceTest.cpp" />
     <ClCompile Include="LuaDebugger.cpp" />
     <ClCompile Include="LuaReflection.cpp" />

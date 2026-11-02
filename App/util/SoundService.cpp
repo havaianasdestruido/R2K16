@@ -303,6 +303,10 @@ void SoundService::closeFmod()
 
 	gameSettingsChangedConnection.disconnect();
 
+	// DSP objects must be released before their FMOD system is closed.
+	for (SoundChannels::iterator it = soundChannels.begin(); it != soundChannels.end(); ++it)
+		(*it)->clearEffects();
+
 	stockSounds.clear();
 	this->removeAllChildren();
 

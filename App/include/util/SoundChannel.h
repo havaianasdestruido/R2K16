@@ -90,6 +90,8 @@ namespace RBX {
 
 		protected:
 			/*override*/ bool askSetParent(const Instance* instance) const;
+			/*override*/ void onChildAdded(Instance* child);
+			/*override*/ void onChildRemoved(Instance* child);
 			/*override*/ void onAncestorChanged(const AncestorChanged& event);
 			/*override*/ void onServiceProvider(ServiceProvider* oldProvider, ServiceProvider* newProvider);
 
@@ -161,6 +163,8 @@ namespace RBX {
 			void setHasPlayed(bool value);
 
 			void updateListenState(const Time::Interval& timeSinceLastStep);
+			void clearEffects();
+			void rebuildEffects();
 
 			static void soundEnded(weak_ptr<SoundChannel> channelWeak, std::string soundId);
 			void onChannelEnd(const FMOD_CHANNEL *channel);

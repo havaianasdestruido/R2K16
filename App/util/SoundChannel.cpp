@@ -4,6 +4,7 @@
 #include "Util/SoundChannel.h"
 #include "V8DataModel/ContentProvider.h"
 #include "Util/SoundService.h"
+#include "Util/SoundEffect.h"
 
 #include "V8DataModel/Workspace.h"
 #include "V8DataModel/PartInstance.h"
@@ -147,6 +148,7 @@ SoundChannel::~SoundChannel()
 
 void SoundChannel::releaseChannel()
 {
+    clearEffects();
 	FASTLOG2(DFLog::SoundTrace, "SoundChannel::releaseChannel(%p, %p)", this, fmod_channel);
 	if (fmod_channel)
 	{
@@ -162,6 +164,56 @@ void SoundChannel::releaseChannel()
 	{
         sound.reset();
 	}
+}
+
+// FMOD DSPs belong to the current playback channel, not to the asset.  Keep
+// them until the next rebuild or teardown if FMOD ends a channel on its callback thread.
+void SoundChannel::clearEffects()
+{
+    shared_ptr<const Instances> children = getChildren().read();
+    if (!children) return;
+    for (Instances::const_iterator it = children->begin(); it != children->end(); ++it)
+        if (SoundEffect* effect = Instance::fastDynamicCast<SoundEffect>(it->get()))
+            effect->detach(invalidChannel ? NULL : fmod_channel);
+}
+
+static bool effectPriorityLess(const SoundEffect* a, const SoundEffect* b)
+{
+    return a->getPriority() < b->getPriority();
+}
+
+void SoundChannel::rebuildEffects()
+{
+    clearEffects();
+    if (!fmod_channel || invalidChannel) return;
+    SoundService* service = ServiceProvider::find<SoundService>(this);
+    if (!service || !service->enabled() || !service->system) return;
+    shared_ptr<const Instances> children = getChildren().read();
+    if (!children) return;
+    std::vector<SoundEffect*> effects;
+    for (Instances::const_iterator it = children->begin(); it != children->end(); ++it)
+        if (SoundEffect* effect = Instance::fastDynamicCast<SoundEffect>(it->get()))
+            effects.push_back(effect);
+    // Inserting at the head reverses the sequence: higher priorities run first.
+    std::stable_sort(effects.begin(), effects.end(), effectPriorityLess);
+    for (std::vector<SoundEffect*>::iterator it = effects.begin(); it != effects.end(); ++it)
+        (*it)->attach(service->system.get(), fmod_channel);
+}
+
+void SoundChannel::onChildAdded(Instance* child)
+{
+    Super::onChildAdded(child);
+    if (Instance::fastDynamicCast<SoundEffect>(child)) rebuildEffects();
+}
+
+void SoundChannel::onChildRemoved(Instance* child)
+{
+    Super::onChildRemoved(child);
+    if (SoundEffect* effect = Instance::fastDynamicCast<SoundEffect>(child))
+    {
+        effect->detach(invalidChannel ? NULL : fmod_channel);
+        rebuildEffects();
+    }
 }
 
 bool SoundChannel::askSetParent(const Instance* instance) const
@@ -1058,6 +1110,8 @@ void SoundChannel::playSound(const Instance* context, bool isResuming)
 							FASTLOGS(FLog::Sound, "SoundChannel %s", ss.str().c_str());
 						}
 
+						// Dispose DSPs from a previous, possibly ended channel before replacing it.
+						clearEffects();
 						FMOD_RESULT fmodResult = soundService->system->playSound(fmod_sound, NULL, true, &fmod_channel);
 						if (FMOD_OK != fmodResult)
 						{
@@ -1092,6 +1146,9 @@ void SoundChannel::playSound(const Instance* context, bool isResuming)
 
 						// make sure sound is in right position for volume
 						update3D(fmod_channel);
+
+						// Attach effects while the new channel is still paused.
+						rebuildEffects();
 
 						// Now we are ready to play!
 						SoundService::checkResult(fmod_channel->setPaused(false), "setPaused play", this, fmod_channel);
@@ -1180,6 +1237,7 @@ bool SoundChannel::controlledByAndIsServer() const
 void SoundChannel::stop()
 {
 	FASTLOG2(DFLog::SoundTrace, "SoundChannel::stop(%p, %p)", this, fmod_channel);
+	clearEffects();
 	if (fmod_channel)
 	{
 		bool currentlyPaused = false;
