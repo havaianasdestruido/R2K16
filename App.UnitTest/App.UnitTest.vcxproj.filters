@@ -66,6 +66,9 @@
     <ClCompile Include="LuaReflection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PropertyChangedSignal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="LuaSandbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -19,6 +19,8 @@
 #include <boost/static_assert.hpp>
 #include <boost/flyweight.hpp>
 
+struct lua_State;
+
 namespace RBX {
 
 	class Instance;
@@ -329,6 +331,12 @@ public:
 	std::string getReadableDebugId(int scopeLength) const { return getGuid().readableString(scopeLength); }
 	std::string getReadableDebugId() const { return getGuid().readableString(); }
 	std::string getReadableDebugId(int scopeLength) { return getGuid().readableString(scopeLength); }
+
+	// Instance:GetPropertyChangedSignal(propertyName) -- returns a Lua-side RBXScriptSignal
+	// (an EventInstance with a property filter) that only fires when that property changes.
+	// Implemented as a custom bound function because the result is a Lua signal, not a
+	// regular reflected EventDescriptor.
+	int getPropertyChangedSignal(lua_State* L);
 
 	inline Instance* getParent()					{return parent;}
 	inline const Instance* getParent() const		{return parent;}

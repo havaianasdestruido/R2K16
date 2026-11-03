@@ -149,6 +149,7 @@
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="NetworkSecurity.cpp" />
     <ClCompile Include="PathfindingTest.cpp" />
+    <ClCompile Include="PropertyChangedSignal.cpp" />
     <ClCompile Include="RakNet.cpp" />
     <ClCompile Include="RaycastTest.cpp" />
     <ClCompile Include="ReflectionTest.cpp" />

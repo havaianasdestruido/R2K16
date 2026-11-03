@@ -143,6 +143,7 @@
 		9F77FCFE156F0AD9006BFEAD /* AutowedgeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77FCFD156F0AD9006BFEAD /* AutowedgeTest.cpp */; };
 		9F89C59116A083C2002447F8 /* VoxelCellUtilV1Deprecated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F89C58F16A083C2002447F8 /* VoxelCellUtilV1Deprecated.cpp */; };
 		9F96928214046FEA00FA206A /* CustomEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F96928114046FEA00FA206A /* CustomEvents.cpp */; };
+		AB12CD34EF56000000AB0002 /* PropertyChangedSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD34EF56000000AB0001 /* PropertyChangedSignal.cpp */; };
 		9F9774BF17DE466A006011C9 /* ReplicatorGcJobTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9774BC17DE466A006011C9 /* ReplicatorGcJobTest.cpp */; };
 		9F9774C017DE466A006011C9 /* ReplicatorStreamJobTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9774BD17DE466A006011C9 /* ReplicatorStreamJobTest.cpp */; };
 		9F9774C117DE466A006011C9 /* StreamRegionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9774BE17DE466A006011C9 /* StreamRegionTest.cpp */; };
@@ -1004,6 +1005,7 @@
 		9F89C58F16A083C2002447F8 /* VoxelCellUtilV1Deprecated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelCellUtilV1Deprecated.cpp; path = App.UnitTest/VoxelCellUtilV1Deprecated.cpp; sourceTree = "<group>"; };
 		9F89C59016A083C2002447F8 /* VoxelCellUtilV1Deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelCellUtilV1Deprecated.h; path = App.UnitTest/VoxelCellUtilV1Deprecated.h; sourceTree = "<group>"; };
 		9F96928114046FEA00FA206A /* CustomEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomEvents.cpp; path = App.UnitTest/CustomEvents.cpp; sourceTree = "<group>"; };
+		AB12CD34EF56000000AB0001 /* PropertyChangedSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PropertyChangedSignal.cpp; path = App.UnitTest/PropertyChangedSignal.cpp; sourceTree = "<group>"; };
 		9F9774BC17DE466A006011C9 /* ReplicatorGcJobTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReplicatorGcJobTest.cpp; path = App.UnitTest/ReplicatorGcJobTest.cpp; sourceTree = "<group>"; };
 		9F9774BD17DE466A006011C9 /* ReplicatorStreamJobTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReplicatorStreamJobTest.cpp; path = App.UnitTest/ReplicatorStreamJobTest.cpp; sourceTree = "<group>"; };
 		9F9774BE17DE466A006011C9 /* StreamRegionTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StreamRegionTest.cpp; path = App.UnitTest/StreamRegionTest.cpp; sourceTree = "<group>"; };
@@ -1397,6 +1399,7 @@
 				1FD59AD714EEEF8F00CEBD53 /* StatsServiceTest.cpp */,
 				F467AB2415058214009A7CC7 /* ClusterReplicationTest.cpp */,
 				9F96928114046FEA00FA206A /* CustomEvents.cpp */,
+				AB12CD34EF56000000AB0001 /* PropertyChangedSignal.cpp */,
 				1FA2D51F13313E6E00026FE2 /* Instance.cpp */,
 				65735C7C132FDCC3005C3CA5 /* ReflectionTest.cpp */,
 				1F595C4812C3D5C600593A43 /* WebSerializerTest.cpp */,
@@ -2482,6 +2485,7 @@
 				1FA2D51813313C5C00026FE2 /* ReflectionTest.cpp in Sources */,
 				1FA2D52013313E6E00026FE2 /* Instance.cpp in Sources */,
 				9F96928214046FEA00FA206A /* CustomEvents.cpp in Sources */,
+				AB12CD34EF56000000AB0002 /* PropertyChangedSignal.cpp in Sources */,
 				1FD59AD814EEEF8F00CEBD53 /* ContentProviderTest.cpp in Sources */,
 				1FD59AD914EEEF8F00CEBD53 /* FastLogSettingsTest.cpp in Sources */,
 				1FD59ADA14EEEF8F00CEBD53 /* LuaTokenizer.cpp in Sources */,

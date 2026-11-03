@@ -82,3 +82,49 @@ See [Tooling](../modules/tooling.md#scriptsigner).
 The `StarterPlayer`/`StarterGui`-style bootstrap of this era runs
 `StarterScript.lua` on the client and `ServerStarterScript.lua` on the server; those scripts
 then set up the standard gameplay environment users expect.
+
+## Backported Lua API
+
+R2K16 retrofits a handful of newer Roblox APIs onto the 2016 reflection/event model.
+
+### `Instance:GetPropertyChangedSignal(property)`
+
+Returns an `RBXScriptSignal` that fires only when the named property of that instance changes:
+
+```lua
+local connection = part:GetPropertyChangedSignal("BrickColor"):connect(function()
+	print("the part changed colour")
+end)
+
+part.Anchored = true      -- does not fire
+part.BrickColor = BrickColor.Red()  -- fires
+
+connection:disconnect()
+```
+
+Details of the implementation, since it does not fit the regular reflection model:
+
+- The returned signal is an `RBX::Lua::EventInstance` (the Lua userdata behind every
+  `RBXScriptSignal`) whose `propertyFilter` points at the `PropertyDescriptor` that was
+  resolved from the string argument. `EventDescriptor` is still `Instance.Changed`, so the
+  connection is a normal `Changed` subscription.
+- `FunctionScriptSlot` / `WaitScriptSlot` (in `App/script/LuaSignalBridge.cpp`) drop every
+  notification whose descriptor doesn't match `propertyFilter`, and they push **no**
+  arguments to the Lua handler — this matches the modern, argument-less
+  `GetPropertyChangedSignal` semantics instead of forwarding the property name.
+- Because the signal shares the `Changed` descriptor, `Destroy()` cleans it up with every
+  other `Changed` connection.
+- An unknown or non-scriptable property raises an error, mirroring Roblox behavior.
+- `ScriptAnalyzer` needs no change: `AnalyzerPassDataflow` is the only pass that resolves
+  members on runtime values, and it is disabled in `ScriptAnalyzer::analyze`.
+
+The method is registered as a `CustomBoundFuncDesc` in `App/v8tree/Instance.cpp`, because the
+return value is a Lua signal rather than a reflected value type:
+
+```cpp
+static Reflection::CustomBoundFuncDesc<Instance, void(std::string)> func_GetPropertyChangedSignal(
+	&Instance::getPropertyChangedSignal, "GetPropertyChangedSignal", "property", Security::None);
+```
+
+The implementation lives in `Instance::getPropertyChangedSignal` (`App/v8tree/Instance.cpp`).
+Tests are in `App.UnitTest/PropertyChangedSignal.cpp`.

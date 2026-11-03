@@ -11,6 +11,9 @@
 #include "security/ApiSecurity.h"
 #include "v8datamodel/HackDefines.h"
 #include "VMProtect/VMProtectSDK.h"
+#include "script/LuaInstanceBridge.h"
+#include "script/LuaSignalBridge.h"
+#include "lua/lua.hpp"
 
 LOGVARIABLE(InstanceTreeManipulation, 0)
 
@@ -49,6 +52,10 @@ static Reflection::PropDescriptor<Instance, std::string> prop_classNameDeprecate
 static Reflection::PropDescriptor<Instance, int> prop_dataCost("DataCost", category_Data, &Instance::getPersistentDataCost, NULL, Reflection::PropertyDescriptor::UI, Security::RobloxPlace);
 
 static Reflection::BoundYieldFuncDesc<Instance, shared_ptr<Instance>(std::string)> func_WaitForChild(&Instance::waitForChild, "WaitForChild", "childName", Security::None);
+
+// Instance:GetPropertyChangedSignal(property)
+// Not a BoundFuncDesc because the return value is a Lua signal object; see Instance::getPropertyChangedSignal
+static Reflection::CustomBoundFuncDesc<Instance, void(std::string)> func_GetPropertyChangedSignal(&Instance::getPropertyChangedSignal, "GetPropertyChangedSignal", "property", Security::None);
 
 const Reflection::PropDescriptor<Instance, std::string> Instance::desc_Name("Name", category_Data, &Instance::getName, &Instance::setName);
 const Reflection::RefPropDescriptor<Instance, Instance> Instance::propParent("Parent", category_Data, &Instance::getParentDangerous, &Instance::setParent, Reflection::PropertyDescriptor::UI);
@@ -1136,6 +1143,37 @@ void Instance::raisePropertyChanged(const RBX::Reflection::PropertyDescriptor& d
     propertyChangedSignal(&descriptor);
     if (getParent()!=NULL)
         getParent()->onChildChanged(this, event);
+}
+
+int Instance::getPropertyChangedSignal(lua_State* L)
+{
+	using namespace RBX::Lua;
+
+	shared_ptr<Instance> instance = ObjectBridge::getInstance(L, 1);
+	if (!instance)
+		throw std::runtime_error("The object has been deleted");
+
+	const std::string propertyName = throwable_lua_tostring(L, 2);
+
+	RBX::Security::Context& securityContext = RBX::Security::Context::current();
+
+	instance->securityCheck(securityContext);
+
+	Reflection::PropertyDescriptor* property = instance->findPropertyDescriptor(propertyName.c_str());
+	if (!property)
+		throw RBX::runtime_error("%s is not a valid property of %s", propertyName.c_str(), instance->getDescriptor().name.c_str());
+
+	if (!property->isScriptable())
+		throw RBX::runtime_error("Unable to get property %s. It is not scriptable", propertyName.c_str());
+
+	if (property->security != RBX::Security::None)
+		securityContext.requirePermission(property->security, property->name.c_str());
+
+	// The Lua-visible signal still points at the reflected "Changed" event; the extra property
+	// filter makes FunctionScriptSlot drop every notification that isn't for this descriptor
+	EventInstance evt(&event_propertyChanged, instance, property);
+	EventBridge::pushNewObject(L, evt);
+	return 1;
 }
 
 void Instance::raiseEventInvocation(const RBX::Reflection::EventDescriptor& descriptor, const RBX::Reflection::EventArguments& args, const SystemAddress* target)
