@@ -898,7 +898,8 @@ void ChatNetwork::ProcessIncomingUserAddedPacket(
 
     // Users can be added to multiple channels so check if we already know about this one
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = chatManager->GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         if (chatUser != nullptr && StringUtils::IsStringEqualCaseInsenstive(chatUser->XboxUserId, chatUserXuid) )
         {

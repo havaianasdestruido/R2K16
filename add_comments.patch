@@ -1,0 +1,21 @@
+--- GameChat/ChatAudioThread/ChatAudioThread.cpp
++++ GameChat/ChatAudioThread/ChatAudioThread.cpp
+@@ -234,7 +234,8 @@
+     if (chatClient != nullptr && chatNetwork != nullptr)
+     {
+-        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatAudioThreadState->allChatUsers)
++        // ⚡ Bolt: Using const auto^& prevents atomic AddRef/Release overhead per iteration
++        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatAudioThreadState->allChatUsers)
+         {
+             chatUser->SetTalkingMode(ChatUserTalkingMode::NotTalking);
+--- Microsoft.Xbox.Samples.NetworkMesh/Mesh/MeshManager.cpp
++++ Microsoft.Xbox.Samples.NetworkMesh/Mesh/MeshManager.cpp
+@@ -167,7 +167,8 @@
+     // Try to connect to every outgoing connection that we are disconnected from.
+     SecureDeviceAssociationTemplate^ secureDeviceAssociationTemplate = GetSecureDeviceAssociationTemplate();
+     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allDisconnectedConnections = GetConnectionsByType(ConnectionStatus::Disconnected);
+-    for each (const MeshConnection^& meshConnection in allDisconnectedConnections)
++    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
++    for each (const MeshConnection^& meshConnection in allDisconnectedConnections)
+     {
+         if(meshConnection->IsInComingAssociation())
