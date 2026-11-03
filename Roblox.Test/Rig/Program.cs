@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,11 +48,14 @@ namespace Roblox.Test
             }
             else
             {
-                sw = new StreamWriter(outputDir + args[2], true /*append*/);
+                // args[2] is concatenated onto outputDir. Reject path separators
+                // and traversal so a caller cannot write outside the results dir.
+                string outputName = RigSecurity.ValidateName(args[2], "output file");
+                sw = new StreamWriter(Path.Combine(outputDir, outputName), true /*append*/);
             }
 
             string result = "OK";
-            string testname = args[1];
+            string testname = RigSecurity.ValidateName(args[1], "testname");
 
 
             string binroot = null;
@@ -109,7 +112,9 @@ namespace Roblox.Test
 
         public static void LoadAssemblyAndExecute(string binroot, TextWriter sw, ShimExecutorDelegate shimExec)
         {
-            string execdir =  CalcBinRoot(binroot);;
+            // Defense in depth: AppDomain.CreateInstanceAndUnwrap loads a DLL from
+            // this directory, so it must stay inside the allowed test directory.
+            string execdir = RigSecurity.ValidateBinRoot(binroot);
 
             string dllfullpath = Path.Combine(execdir, testCasesDll);
 
@@ -169,6 +174,11 @@ namespace Roblox.Test
         {
             string addressFormat = "http://{0}:8000/Roblox.Test/RunService";
 
+            // Machine names are interpolated into a URL. Reject anything that is
+            // not a plain host name to prevent SSRF / URL injection.
+            for (int i = 0; i < machinenames.Length; ++i)
+                machinenames[i] = RigSecurity.ValidateMachineName(machinenames[i]);
+
             IAsyncResult[] results = new IAsyncResult[machinenames.Length];
 
 
@@ -193,7 +203,8 @@ namespace Roblox.Test
 
         private static void RemoteCmd(string[] args)
         {
-            string testnamearg = args[1];
+            // This value becomes part of the results file name.
+            string testnamearg = RigSecurity.ValidateName(args[1], "testname");
             string[] machinenames = new string[args.Length - 2];
             for (int i = 0; i < machinenames.Length; ++i)
             {
@@ -233,7 +244,7 @@ namespace Roblox.Test
                 try
                 {
 
-                    Roblox.Test.Client.RunClient runclient = new Roblox.Test.Client.RunClient("BasicHttpBinding_IRun", address);
+                    Roblox.Test.Client.RunClient runclient = CreateRunClient(address);
 
                     result = runclient.Execute(binroot, testnamearg) + tw.NewLine;
                     s++;
@@ -278,7 +289,7 @@ namespace Roblox.Test
                 try
                 {
 
-                    Roblox.Test.Client.RunClient runclient = new Roblox.Test.Client.RunClient("BasicHttpBinding_IRun", address);
+                    Roblox.Test.Client.RunClient runclient = CreateRunClient(address);
 
                     result = runclient.SpawnProcess(out pid, procname, procargs) + tw.NewLine;
                 }
@@ -323,7 +334,7 @@ namespace Roblox.Test
                 try
                 {
 
-                    Roblox.Test.Client.RunClient runclient = new Roblox.Test.Client.RunClient("BasicHttpBinding_IRun", address);
+                    Roblox.Test.Client.RunClient runclient = CreateRunClient(address);
 
                     result = runclient.Ping() + tw.NewLine;
                     s++;
@@ -359,7 +370,7 @@ namespace Roblox.Test
                 try
                 {
 
-                    Roblox.Test.Client.RunClient runclient = new Roblox.Test.Client.RunClient("BasicHttpBinding_IRun", address);
+                    Roblox.Test.Client.RunClient runclient = CreateRunClient(address);
 
                     result = runclient.Cleanup() + tw.NewLine;
                 }
@@ -508,21 +519,56 @@ namespace Roblox.Test
 
         static Dictionary<int, Process> spawnedProcesses = new Dictionary<int, Process>();
 
+        /// <summary>
+        /// Builds a WCF client and attaches the shared-secret header behavior.
+        /// Without this, remote rig hosts will reject every request.
+        /// </summary>
+        private static Roblox.Test.Client.RunClient CreateRunClient(string address)
+        {
+            Roblox.Test.Client.RunClient client =
+                new Roblox.Test.Client.RunClient("BasicHttpBinding_IRun", address);
+            client.Endpoint.Behaviors.Add(new RigAuthEndpointBehavior());
+            return client;
+        }
+
         public static void RegisterProcess(Process proc)
         {
-            spawnedProcesses[proc.Id] = proc;
+            lock (spawnedProcesses)
+            {
+                spawnedProcesses[proc.Id] = proc;
+            }
+        }
+
+        /// <summary>Kills only processes that this rig actually started.</summary>
+        public static void KillRegisteredProcess(int pid)
+        {
+            Process proc;
+            lock (spawnedProcesses)
+            {
+                if (!spawnedProcesses.TryGetValue(pid, out proc))
+                    throw new InvalidOperationException("pid was not started by this test rig");
+            }
+            if (!proc.HasExited)
+                proc.Kill();
+            lock (spawnedProcesses)
+            {
+                spawnedProcesses.Remove(pid);
+            }
         }
 
         public static void Cleanup()
         {
-            foreach (KeyValuePair<int, Process> kv in spawnedProcesses)
+            lock (spawnedProcesses)
             {
-                if (!kv.Value.HasExited)
+                foreach (KeyValuePair<int, Process> kv in spawnedProcesses)
                 {
-                    kv.Value.Kill();
+                    if (!kv.Value.HasExited)
+                    {
+                        kv.Value.Kill();
+                    }
                 }
+                spawnedProcesses.Clear();
             }
-            spawnedProcesses.Clear();
         }
 
 
@@ -532,11 +578,38 @@ namespace Roblox.Test
             PublishResultsToDB(sr);
         }
 
+        /// <summary>Column names cannot be parameterized, so whitelist them strictly.</summary>
+        private static void ValidateColumnName(string name)
+        {
+            if (string.IsNullOrEmpty(name) || name.Length > 64)
+                throw new ArgumentException("Invalid column name in results file");
+            foreach (char c in name)
+            {
+                if (!char.IsLetterOrDigit(c) && c != '_')
+                    throw new ArgumentException("Invalid column name in results file");
+            }
+        }
+
+        private static void AddParameter(System.Data.SqlClient.SqlCommand command, string name, string value)
+        {
+            // Preserve the old "NaN" -> NULL behaviour, without string concatenation.
+            command.Parameters.AddWithValue(name, value == "NaN" ? (object)DBNull.Value : (object)value);
+        }
+
         public static void PublishResultsToDB(TextReader tr)
         {
             var schemaline = tr.ReadLine();
+            if (schemaline == null) return;
             var rgschema = schemaline.Split(new char[] { '\t' });
-            var columnnames = schemaline.Replace('\t', ',');
+
+            // Build the identifier list from validated column names only. Values
+            // are always bound as parameters: the original code concatenated
+            // unescaped result-file text straight into the INSERT statement.
+            foreach (var column in rgschema) ValidateColumnName(column);
+            var quotedColumns = new string[rgschema.Length];
+            for (int i = 0; i < rgschema.Length; ++i)
+                quotedColumns[i] = "[" + rgschema[i] + "]";
+            var columnnames = string.Join(",", quotedColumns);
 
             var csb = new SqlConnectionStringBuilder();
             csb.InitialCatalog = "LabPerf";
@@ -553,10 +626,6 @@ namespace Roblox.Test
                 while ((line = tr.ReadLine()) != null)
                 {
                     var rgvalues = line.Split(new char[] { '\t' });
-                    var values = "'" + line.Replace("\t", "','") + "'";
-
-                    values = values.Replace("'NaN'", "NULL");
-
 
                     using (var command = cn.CreateCommand())
                     {
@@ -564,38 +633,33 @@ namespace Roblox.Test
 
                         if (rgvalues.Length == rgschema.Length) // non-exceptional input. just feed in to db.
                         {
-                            command.CommandText = "INSERT INTO ClientPerf(" + columnnames + ") VALUES (" + values + ")";
-                            Console.WriteLine("Execyting Sql Command:" + command.CommandText);
+                            var parameterNames = new string[rgvalues.Length];
+                            for (int i = 0; i < rgvalues.Length; ++i)
+                            {
+                                parameterNames[i] = "@p" + i;
+                                AddParameter(command, parameterNames[i], rgvalues[i]);
+                            }
+                            command.CommandText = "INSERT INTO ClientPerf(" + columnnames + ") VALUES (" +
+                                string.Join(",", parameterNames) + ")";
                             command.ExecuteNonQuery();
                         }
                         else if (rgvalues.Length >= 3 && rgschema[0] == "Time" && rgschema[1] == "Machine" && rgschema[2] == "TestName") // exception likely occured. need some processing.
                         {
-                            var sb = new StringBuilder();
-
-                            sb.Append("'");
-                            sb.Append(rgvalues[0]); sb.Append("','");
-                            sb.Append(rgvalues[1]); sb.Append("','");
-                            sb.Append(rgvalues[2]); sb.Append("','");
-                            for (int i = 3; i < rgvalues.Length; ++i)
-                            {
-                                var scrubbedvalue = rgvalues[i].Replace("'", "''");
-                                sb.Append(scrubbedvalue);
-                                if (i != rgvalues.Length - 1)
-                                {
-                                    sb.Append("\t");
-                                }
-                            }
-                            sb.Append("'");
-
-                            command.CommandText = "INSERT INTO ClientPerf(Time, Machine, TestName, Exception) VALUES (" + sb.ToString() + ")";
-                            Console.WriteLine("Execyting Sql Command:" + command.CommandText);
+                            var exceptionText = string.Join("\t", rgvalues, 3, rgvalues.Length - 3);
+                            AddParameter(command, "@p0", rgvalues[0]);
+                            AddParameter(command, "@p1", rgvalues[1]);
+                            AddParameter(command, "@p2", rgvalues[2]);
+                            AddParameter(command, "@p3", exceptionText);
+                            command.CommandText = "INSERT INTO ClientPerf([Time], [Machine], [TestName], [Exception]) VALUES (@p0, @p1, @p2, @p3)";
                             command.ExecuteNonQuery();
                         }
                         else if(!string.IsNullOrEmpty(line))
                         {
-                            throw new Exception(string.Format("Unknown line format : {0}", line));
+                            throw new Exception("Unknown line format in results file");
                         }
-                       
+
+                        // Do not print the SQL text: it used to leak the result
+                        // values (and made injection easy to confirm).
                     }
                 }
 

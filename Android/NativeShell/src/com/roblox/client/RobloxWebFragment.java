@@ -25,12 +25,14 @@ import android.widget.TextView;
 import android.webkit.*;
 import android.widget.Toast;
 
+import com.roblox.client.http.HttpAgent;
 import com.roblox.client.http.HttpResponse;
 import com.roblox.client.http.OnRbxHttpRequestFinished;
 import com.roblox.client.http.RbxHttpGetRequest;
 import com.roblox.client.managers.NotificationManager;
 import com.roblox.client.managers.SessionManager;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.NumberFormat;
@@ -50,9 +52,44 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
     private boolean isRobuxDialog, isBCDialog, isCaptchaDialog, isSocialCaptcha = false;
     private String mDefaultUrl = null;
     private WebviewInterface mWebviewInterface = null;
+    private boolean mUseCompat = false;
 
     public static final String FRAGMENT_TAG_CAPTCHA = "captcha_window";
 
+    private static final String JS_BRIDGE_NAME = "interface";
+    private static final String TRUSTED_ASSET_PREFIX = "file:///android_asset/html/";
+
+    /**
+     * The JS bridge exposes native methods (launch game, open settings, ...). It
+     * must only be reachable from the two local "more" pages shipped in the APK,
+     * never from arbitrary web content reached through a link or redirect.
+     */
+    private boolean isTrustedBridgeUrl(String url) {
+        if (url == null || !url.startsWith(TRUSTED_ASSET_PREFIX)) {
+            return false;
+        }
+        String name = url.substring(TRUSTED_ASSET_PREFIX.length()).split("[?#]")[0];
+        return name.equals("more.html") || name.equals("more_phone.html");
+    }
+
+    /** Adds/removes the bridge so it is never exposed to untrusted documents. */
+    private void syncJavascriptInterface(String url) {
+        if (mWebView == null) {
+            return;
+        }
+        boolean allowed = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+                && isTrustedBridgeUrl(url);
+        if (allowed) {
+            if (mWebviewInterface == null) {
+                mWebviewInterface = new WebviewInterface(getActivity(), mUseCompat, mWebView);
+            }
+            mWebView.addJavascriptInterface(mWebviewInterface, JS_BRIDGE_NAME);
+        } else {
+            // removeJavascriptInterface() is available on every supported API.
+            mWebView.removeJavascriptInterface(JS_BRIDGE_NAME);
+            mWebviewInterface = null;
+        }
+    }
 
     // ------------------------------------------------------------------------
     private class WebViewClientEmbedded extends WebViewClient {
@@ -65,12 +102,21 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
         @Override
         public void onPageFinished(android.webkit.WebView view, java.lang.String url) {
             mRefreshLayout.setRefreshing(false);
+            // Covers every navigation path (redirects, history back/forward and
+            // direct loadUrl calls) so the bridge is never left exposed on a
+            // document that is not one of our packaged local pages.
+            syncJavascriptInterface(url);
         }
 
     	// Mirrors iOS: -(BOOL) checkForGameLaunch:(NSURLRequest *)request
     	@Override
         public boolean shouldOverrideUrlLoading(WebView view, String urlString) {
-        	Log.i(TAG, "-> "+urlString);
+            // URLs can carry session ids / api keys in their query string.
+            Log.i(TAG, "-> " + HttpAgent.safeUrlForLog(urlString));
+
+            // The native JS bridge is only for the trusted local "more" pages.
+            // Any link/redirect to web content must drop it immediately.
+            syncJavascriptInterface(urlString);
 
     		if( Utils.alertIfNetworkNotConnected() )
     		{
@@ -284,6 +330,14 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
         mWebView.getSettings().setJavaScriptEnabled(true);
 		mWebView.getSettings().setUserAgentString(RobloxSettings.userAgent());
 		mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // LOAD_CACHE_ONLY
+
+        // A local HTML page must not be able to read arbitrary files or make
+        // cross-origin requests. These are the dangerous defaults on old WebViews.
+        mWebView.getSettings().setAllowContentAccess(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mWebView.getSettings().setAllowFileAccessFromFileURLs(false);
+            mWebView.getSettings().setAllowUniversalAccessFromFileURLs(false);
+        }
         mWebView.setHorizontalScrollBarEnabled(false);
         mWebView.setVerticalScrollBarEnabled(false);
 
@@ -292,18 +346,13 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
         mWebView.getSettings().setUserAgentString(null);
         String defaultUA = mWebView.getSettings().getUserAgentString();
         mWebView.getSettings().setUserAgentString(tempUA);
-        boolean useCompat = false;
-        if (!defaultUA.contains("Chrome/"))
-            useCompat = true;
+        mUseCompat = !defaultUA.contains("Chrome/");
 
         if(mURLToLoad != null) {
+            // Decide from an exact trusted-URL match, not a substring test:
+            // "https://evil.example/more.html?x=1" must not get the bridge.
+            syncJavascriptInterface(mURLToLoad);
             mWebView.loadUrl(mURLToLoad);
-            // For performance, only initialize the JS interface when it's absolutely needed
-            if ( mURLToLoad.contains("more_phone.html") || mURLToLoad.contains("more.html") ) {
-                mWebviewInterface = new WebviewInterface(getActivity(), useCompat, mWebView);
-                mWebView.addJavascriptInterface(mWebviewInterface, "interface");
-            }
-
             mURLToLoad = null;
         }
 
@@ -343,16 +392,12 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
 
 		Utils.alertIfNetworkNotConnected();
 
-		String baseUrl = RobloxSettings.baseUrl();
-
+        // Remote WebView debugging exposes the DOM/cookies to anyone with ADB
+        // access. Keep it for internal builds only.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mWebView.setWebContentsDebuggingEnabled(true);
+            mWebView.setWebContentsDebuggingEnabled(RobloxSettings.isInternalBuild());
         }
 
-
-
-        //mWebView.addJavascriptInterface(new WebviewInterface(getActivity(), useCompat), "interface");
-        //Log.i("USERAGENT", "WebFragmentUA = " + mWebView.getSettings().getUserAgentString());
         return view;
 	}
 
@@ -411,6 +456,7 @@ public class RobloxWebFragment extends DialogFragment implements NotificationMan
         if(mWebView == null) {
             mURLToLoad = url;
         } else {
+            syncJavascriptInterface(url);
             mWebView.loadUrl(url);
         }
     }
@@ -507,8 +553,16 @@ class WebviewInterface {
                             if (j != null)
                             {
                                 RobloxSettings.eventsData = j.toString();
-                                mWebViewRef.loadUrl("javascript:parseEvents('" + RobloxSettings.baseUrlWWW() + "', " +
-                                        stripPadding(RobloxSettings.eventsData) + ", " + RobloxSettings.isPhone() + ", " + useCompat + ");");
+                                // The events payload comes from the network. Round-tripping
+                                // it through JSONArray/JSONObject.quote guarantees the
+                                // javascript: URL contains data literals, not executable
+                                // code (previously a crafted response could inject JS).
+                                String eventsLiteral = new JSONArray(
+                                        stripPadding(RobloxSettings.eventsData)).toString();
+                                mWebViewRef.loadUrl("javascript:parseEvents(" +
+                                        JSONObject.quote(RobloxSettings.baseUrlWWW()) + ", " +
+                                        eventsLiteral + ", " + RobloxSettings.isPhone() + ", " +
+                                        useCompat + ");");
                             }
                         }
                         catch (Exception e)
@@ -566,9 +620,15 @@ class WebviewInterface {
 
     private String stripPadding(String json)
     {
-        String stripped = json.substring(8, json.length());
-        stripped = stripped.substring(0, stripped.length() - 1);
-        return stripped;
+        // eventsData is stored as {"Data":[...]}. Be defensive: an unexpected
+        // shape used to throw StringIndexOutOfBoundsException and could feed
+        // arbitrary text into a javascript: URL.
+        if (json == null || json.length() < 10 || !json.startsWith("{\"Data\":")
+                || !json.endsWith("}"))
+        {
+            return "[]";
+        }
+        return json.substring(8, json.length() - 1);
     }
 
     @JavascriptInterface

@@ -1,7 +1,5 @@
 package com.roblox.client.http;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -32,7 +30,6 @@ import com.roblox.client.managers.SessionManager;
 public class WebkitCookieManagerProxy extends CookieManager 
 {
     private android.webkit.CookieManager webkitCookieManager;
-    private static final String TAG = "roblox.webkitCookieMgr";
 
     public WebkitCookieManagerProxy()
     {
@@ -117,8 +114,8 @@ public class WebkitCookieManagerProxy extends CookieManager
 
     private static void getAndSetLatestCookieExpiration(String cookie) {
         if (cookie != null) {
-            Log.i(TAG, "Cookie = " + cookie);
-
+            // The header contains the reusable .ROBLOSECURITY session cookie.
+            // Only the expiry is needed here; never write the value to logcat.
             Pattern pattern = Pattern.compile("([0-9]+-\\w+-[0-9][0-9][0-9][0-9]\\s[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\sGMT);");
             Matcher match = pattern.matcher(cookie);
 

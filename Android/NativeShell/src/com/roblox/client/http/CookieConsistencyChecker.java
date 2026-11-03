@@ -1,8 +1,6 @@
 package com.roblox.client.http;
 
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.webkit.CookieManager;
 
 import com.roblox.client.AndroidAppSettings;
 import com.roblox.client.RobloxSettings;
@@ -73,8 +71,8 @@ public class CookieConsistencyChecker {
     public static String getCurrentBtid() {
         String cookie = android.webkit.CookieManager.getInstance().getCookie(Utils.stripSubDomain(RobloxSettings.baseUrl()));
         if (cookie != null) {
-            Log.i(GA_CATEGORY, "Cookie = " + cookie);
-
+            // Only the browser-tracker id is needed; the full cookie header also
+            // carries the reusable .ROBLOSECURITY session token. Do not log it.
             Pattern pattern = Pattern.compile("&browserid=(\\d*);");
             Matcher match = pattern.matcher(cookie);
 

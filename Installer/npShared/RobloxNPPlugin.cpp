@@ -10,6 +10,30 @@
 #include <string>
 #include "RobloxNPPlugin.h"
 #include <map>
+#include <cstring>
+
+namespace {
+
+// NPVariant strings come from untrusted script. UTF8_LENGTH is a uint32_t, so
+// "UTF8_LENGTH + 1" used to overflow to zero for UINT32_MAX and leave a
+// zero-length vector that the following memcpy then overran. Cap the length
+// and centralize the copy so every invocation gets the same checks.
+const uint32_t kMaxNPStringLength = 8192;
+
+bool CopyNPString(const NPVariant &value, std::vector<char> &out)
+{
+	if (value.type != NPVariantType_String)
+		return false;
+	const uint32_t length = value.value.stringValue.UTF8_LENGTH;
+	if (length > kMaxNPStringLength || value.value.stringValue.UTF8_CHARACTERS == NULL)
+		return false;
+	out.assign(static_cast<size_t>(length) + 1, '\0');
+	if (length > 0)
+		memcpy(&out[0], value.value.stringValue.UTF8_CHARACTERS, length);
+	return true;
+}
+
+} // namespace
 
 
 
@@ -140,8 +164,8 @@ static bool invokeRobloxAdapterHelloWorld(NPObject *obj, const NPVariant *args, 
 }
 
 static bool invokeRobloxAdapterHello(NPObject *obj, const NPVariant *args, uint32_t argCount, NPVariant *result) {
-	char ssMess[2048];
-	uint32_t size = (uint32_t)strlen(ssMess) + 1;
+	char ssMess[2048] = {0};
+	uint32_t size = 1;
 	objList.writeLogEntry("invokeRobloxAdapterHello 0x%8.8x", (void*)obj);
 	
 	IRobloxLauncher *robloxLauncher = sObjList->find(obj);
@@ -157,11 +181,17 @@ static bool invokeRobloxAdapterHello(NPObject *obj, const NPVariant *args, uint3
 		size = (uint32_t)strlen(ssMess) + 1;
 		result->value.stringValue.UTF8_LENGTH = size - 1;
 		
-		result->value.stringValue.UTF8_CHARACTERS = (const NPUTF8 *)sObjList->npnfs->memalloc(size);
-		strcpy( (char *)result->value.stringValue.UTF8_CHARACTERS, ssMess );
+		NPUTF8 *buffer = (NPUTF8 *)sObjList->npnfs->memalloc(size);
+		if (buffer == NULL) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			return true;
+		}
+		result->value.stringValue.UTF8_CHARACTERS = buffer;
+		memcpy(buffer, ssMess, size);
 	}
 	
-	objList.writeLogEntry("RobloxAdapterHello result=%d size=%d ssMess=%s", result->value.intValue, size, ssMess);
+	objList.writeLogEntry("RobloxAdapterHello result size=%u", size);
 	
 	return true;
 }
@@ -189,15 +219,24 @@ static bool invokeRobloxAdapterStartGame(NPObject *obj, const NPVariant *args, u
 			return true;
 		}
 		
-		std::vector<char> zauthFF(args[0].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zauthFF[0], args[0].value.stringValue.UTF8_CHARACTERS, args[0].value.stringValue.UTF8_LENGTH);
-		zauthFF[args[0].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zauthFF;
+		if (!CopyNPString(args[0], zauthFF)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
-		std::vector<char> zscriptFF(args[1].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zscriptFF[0], args[1].value.stringValue.UTF8_CHARACTERS, args[1].value.stringValue.UTF8_LENGTH);
-		zscriptFF[args[1].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zscriptFF;
+		if (!CopyNPString(args[1], zscriptFF)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
-		objList.writeLogEntry("RobloxAdapterStartGame Auth = %s, Script = %s", &zauthFF[0], &zscriptFF[0]);
+		objList.writeLogEntry("RobloxAdapterStartGame auth length=%u script length=%u",
+			args[0].value.stringValue.UTF8_LENGTH, args[1].value.stringValue.UTF8_LENGTH);
 		result->value.intValue = robloxLauncher->StartGame(&zauthFF[0], &zscriptFF[0]);
 	}
 	
@@ -231,8 +270,8 @@ static bool invokeRobloxAdapterPreStartGame(NPObject *obj, const NPVariant *args
 
 
 static bool invokeRobloxAdapterGet_InstallHost(NPObject *obj, const NPVariant *args, uint32_t argCount, NPVariant *result) {
-	char ssMess[2048];
-	uint32_t size=(uint32_t)strlen(ssMess) + 1;
+	char ssMess[2048] = {0};
+	uint32_t size=1;
 	
 	objList.writeLogEntry("invokeRobloxAdapterGet_InstallHost 0x%8.8x", (void*)obj);
 	
@@ -251,11 +290,17 @@ static bool invokeRobloxAdapterGet_InstallHost(NPObject *obj, const NPVariant *a
 		result->value.stringValue.UTF8_LENGTH = size;
 		// result->value.stringValue.UTF8_LENGTH = size - 1;
 		
-		result->value.stringValue.UTF8_CHARACTERS = (const NPUTF8 *) sObjList->npnfs->memalloc(size);
-		strcpy((char *)result->value.stringValue.UTF8_CHARACTERS, ssMess);
+		NPUTF8 *buffer = (NPUTF8 *) sObjList->npnfs->memalloc(size);
+		if (buffer == NULL) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			return true;
+		}
+		result->value.stringValue.UTF8_CHARACTERS = buffer;
+		memcpy(buffer, ssMess, size);
 	}
 	
-	objList.writeLogEntry("RobloxAdapterGet_InstallHost result=%d size=%d ssMess=%s", result->value.intValue, size, ssMess);
+	objList.writeLogEntry("RobloxAdapterGet_InstallHost result size=%u", size);
 	
 	return true;
 }
@@ -301,11 +346,16 @@ static bool invokeRobloxAdapterPut_AuthenticationTicket(NPObject *obj, const NPV
 			objList.writeLogEntry("RobloxAdapterPut_AuthenticationTicket Bad arguments type : MUST BE String");
 			return true;
 		}
-		std::vector<char> zticket(args[0].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zticket[0], args[0].value.stringValue.UTF8_CHARACTERS, args[0].value.stringValue.UTF8_LENGTH);
-		zticket[args[0].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zticket;
+		if (!CopyNPString(args[0], zticket)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
-		objList.writeLogEntry("RobloxAdapterPut_AuthenticationTicket Ticket = %s", &zticket[0]);
+		objList.writeLogEntry("RobloxAdapterPut_AuthenticationTicket ticket length=%u",
+			args[0].value.stringValue.UTF8_LENGTH);
 		result->value.intValue = robloxLauncher->Put_AuthenticationTicket(&zticket[0]);
 	}
 	
@@ -531,13 +581,16 @@ static bool invokeRobloxAdapterGetKeyValue(NPObject *obj, const NPVariant *args,
 			objList.writeLogEntry("invokeRobloxAdapterGetKeyValue arg[0] : must be string");
 			return true;
 		}
-		char *key = (char *)args[0].value.stringValue.UTF8_CHARACTERS;
+				std::vector<char> zkey;
+		if (!CopyNPString(args[0], zkey)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
-		std::vector<char> zkey(args[0].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zkey[0], args[0].value.stringValue.UTF8_CHARACTERS, args[0].value.stringValue.UTF8_LENGTH);
-		zkey[args[0].value.stringValue.UTF8_LENGTH] = 0;
-		
-		objList.writeLogEntry("invokeRobloxAdapterGetKeyValue key = %s len = %d", &zkey[0], args[0].value.stringValue.UTF8_LENGTH);
+		objList.writeLogEntry("invokeRobloxAdapterGetKeyValue key length=%u",
+			args[0].value.stringValue.UTF8_LENGTH);
 		char strValue[2048] = {0};
 		
 		int hr = robloxLauncher->GetKeyValue(&zkey[0], strValue);
@@ -545,10 +598,17 @@ static bool invokeRobloxAdapterGetKeyValue(NPObject *obj, const NPVariant *args,
 		{
 			int size = (uint32_t)strlen(strValue) + 1;
 			result->value.stringValue.UTF8_LENGTH = size - 1;
-			objList.writeLogEntry("invokeRobloxAdapterGetKeyValue value = %s len = %d", strValue, result->value.stringValue.UTF8_LENGTH);
+			objList.writeLogEntry("invokeRobloxAdapterGetKeyValue value length=%u",
+				result->value.stringValue.UTF8_LENGTH);
 			
-			result->value.stringValue.UTF8_CHARACTERS = (const NPUTF8 *) sObjList->npnfs->memalloc(size);
-			strcpy((char *)result->value.stringValue.UTF8_CHARACTERS, strValue);
+			NPUTF8 *buffer = (NPUTF8 *) sObjList->npnfs->memalloc(size);
+			if (buffer == NULL) {
+				result->type = NPVariantType_Int32;
+				result->value.intValue = -1;
+				return true;
+			}
+			result->value.stringValue.UTF8_CHARACTERS = buffer;
+			memcpy(buffer, strValue, size);
 		} else {
 			result->value.intValue = -1;
 			result->type = NPVariantType_Int32;
@@ -581,13 +641,21 @@ static bool invokeRobloxAdapterSetKeyValue(NPObject *obj, const NPVariant *args,
 			return true;
 		}
 		
-		std::vector<char> zkey(args[0].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zkey[0], args[0].value.stringValue.UTF8_CHARACTERS, args[0].value.stringValue.UTF8_LENGTH);
-		zkey[args[0].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zkey;
+		if (!CopyNPString(args[0], zkey)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
-		std::vector<char> zvalue(args[1].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zvalue[0], args[1].value.stringValue.UTF8_CHARACTERS, args[1].value.stringValue.UTF8_LENGTH);
-		zvalue[args[1].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zvalue;
+		if (!CopyNPString(args[1], zvalue)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
 		result->value.intValue = robloxLauncher->SetKeyValue(&zkey[0], &zvalue[0]);
 		if (result->value.intValue != 0) {
@@ -616,9 +684,13 @@ static bool invokeRobloxAdapterDeleteKeyValue(NPObject *obj, const NPVariant *ar
 			return true;
 		}
 		
-		std::vector<char> zkey(args[0].value.stringValue.UTF8_LENGTH + 1);
-		memcpy(&zkey[0], args[0].value.stringValue.UTF8_CHARACTERS, args[0].value.stringValue.UTF8_LENGTH);
-		zkey[args[0].value.stringValue.UTF8_LENGTH] = 0;
+				std::vector<char> zkey;
+		if (!CopyNPString(args[0], zkey)) {
+			result->type = NPVariantType_Int32;
+			result->value.intValue = -1;
+			objList.writeLogEntry("Rejected invalid NPVariant string argument");
+			return true;
+		}
 		
 		result->value.intValue = robloxLauncher->DeleteKeyValue(&zkey[0]);// RobloxAdapterDeleteKeyValue(robloxLauncher, &zkey[0]);
 		

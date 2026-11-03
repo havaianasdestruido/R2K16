@@ -488,3 +488,13 @@ XboxClient/libraries/*
 
 # Jekyll primary webpage (site/) — local build output
 _site/
+
+# Local build/SDK configuration and signing material (never commit secrets).
+# Generate these from protected CI secrets or a local, untracked file.
+local.properties
+signing.properties
+crashlytics.local.properties
+*.jks
+*.keystore
+*.p12
+Android/robloxAndroidPK_DO_NOT_DELETE

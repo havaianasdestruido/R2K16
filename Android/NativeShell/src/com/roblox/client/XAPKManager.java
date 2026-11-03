@@ -26,6 +26,11 @@ public class XAPKManager
     private static String FINGERPRINT_FILENAME = "fingerprint.txt";
     private static int BUFFER_SIZE = 8192;
 
+    // Upper bounds for the (untrusted) OBB archive. Without these a malformed or
+    // hostile container can exhaust storage/CPU (zip bomb) even with safe paths.
+    private static final int MAX_ZIP_ENTRIES = 10000;
+    private static final long MAX_UNCOMPRESSED_BYTES = 1024L * 1024L * 1024L; // 1 GiB
+
     private static final Lock mLock = new ReentrantLock();
     private static String mCachedAssetPath = null;
 
@@ -166,13 +171,38 @@ public class XAPKManager
         return fingerprint;
     }
 
+    /**
+     * Zip Slip guard: an archive entry must resolve to a file inside baseDir.
+     * This rejects absolute paths, Windows drive letters, backslash separators,
+     * ".." traversal and entries that escape through an existing symlink.
+     */
+    private static boolean isSafeDestination(File baseDir, String entryName) throws IOException
+    {
+        if (entryName == null || entryName.isEmpty()
+                || entryName.startsWith("/") || entryName.startsWith("\\")
+                || entryName.indexOf('\\') >= 0 || entryName.indexOf('\0') >= 0)
+        {
+            return false;
+        }
+
+        String base = baseDir.getCanonicalPath();
+        if (!base.endsWith(File.separator))
+        {
+            base += File.separator;
+        }
+        return new File(baseDir, entryName).getCanonicalPath().startsWith(base);
+    }
+
     private static void unzipContainer(Context context, final String baseAssetPath)
     {
         int size;
         byte[] buffer = new byte[BUFFER_SIZE];
+        long totalBytes = 0;
+        int entryCount = 0;
 
         try
         {
+            final File baseDir = new File(baseAssetPath);
         	InputStream inputStream = new BufferedInputStream( context.getAssets().open(ASSET_CONTAINER_FILENAME) );
             ZipInputStream zin = new ZipInputStream(inputStream);
             try
@@ -180,8 +210,21 @@ public class XAPKManager
                 ZipEntry ze = null;
                 while((ze = zin.getNextEntry()) != null)
                 {
-                    String path = baseAssetPath + "/" + ze.getName();
-                    File unzipFile = new File(path);
+                    if (++entryCount > MAX_ZIP_ENTRIES)
+                    {
+                        Log.e(TAG, "Aborting unzip: too many entries");
+                        break;
+                    }
+
+                    if (!isSafeDestination(baseDir, ze.getName()))
+                    {
+                        // Never create a file outside the private asset directory.
+                        // Log only the (untrusted) name, not any local absolute path.
+                        Log.e(TAG, "Skipping unsafe zip entry name");
+                        continue;
+                    }
+
+                    File unzipFile = new File(baseDir, ze.getName());
 
                     if( ze.isDirectory() )
                     {
@@ -209,6 +252,11 @@ public class XAPKManager
                         {
                             while ( (size = zin.read(buffer, 0, BUFFER_SIZE)) != -1 )
                             {
+                                totalBytes += size;
+                                if (totalBytes > MAX_UNCOMPRESSED_BYTES)
+                                {
+                                    throw new IOException("Uncompressed asset size limit exceeded");
+                                }
                                 fout.write(buffer, 0, size);
                             }
 

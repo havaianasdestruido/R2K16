@@ -19,9 +19,20 @@ public class AndroidAppSettings {
     }
 
     public static RbxHttpGetRequest fetchFromServer(final FetchSettingsCallback callback) {
-        RbxHttpGetRequest settingsReq = new RbxHttpGetRequest(RobloxSettings.appSettingsUrl(), new OnRbxHttpRequestFinished() {
+        final String settingsUrl = RobloxSettings.appSettingsUrl();
+        RbxHttpGetRequest settingsReq = new RbxHttpGetRequest(settingsUrl, new OnRbxHttpRequestFinished() {
             @Override
             public void onFinished(HttpResponse response) {
+                // The response body is treated as trusted configuration. Refuse
+                // anything that did not arrive over HTTPS (including downgrades).
+                if (response == null || response.url() == null
+                        || !response.url().toLowerCase(java.util.Locale.US).startsWith("https://")) {
+                    Log.e(TAG, "Refusing app settings from a non-HTTPS URL");
+                    if (callback != null)
+                        callback.onFinished(false, response);
+                    return;
+                }
+
                 if (response != null && !response.responseBodyAsString().isEmpty()) {
                     try {
                         JSONObject j = new JSONObject(response.responseBodyAsString());

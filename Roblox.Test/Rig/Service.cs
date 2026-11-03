@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +47,11 @@ namespace Roblox.Test
             StringWriter sw = new StringWriter();
             try
             {
+                // binroot/testname arrive over the network. Restrict the assembly
+                // directory and reject path-like test names before they reach
+                // AppDomain.CreateInstanceAndUnwrap / Path.Combine.
+                binroot = RigSecurity.ValidateBinRoot(binroot);
+                RigSecurity.ValidateName(testname, "testname");
                 Console.Write(DateTime.Now + " Executing " + testname + "...");
 
                 if (testname == "Ping")
@@ -80,6 +85,8 @@ namespace Roblox.Test
             StringWriter sw = new StringWriter();
             try
             {
+                binroot = RigSecurity.ValidateBinRoot(binroot);
+                RigSecurity.ValidateName(testname, "testname");
                 Program.ShimExecutorDelegate getHeader = delegate(IRemoteTestShim shim, string AssemblyName, string DeploymentDir, TextWriter tw)
                 {
                     sw.WriteLine(shim.GetTestHeader(AssemblyName, testname));
@@ -124,12 +131,19 @@ namespace Roblox.Test
             StringWriter sw = new StringWriter();
             try
             {
-                Console.Write(DateTime.Now + " Spawning " + filename + " " + args + "...");
-                sw.Write(DateTime.Now.ToString() + "\t" + Environment.MachineName + "\t" + "Spawning " + filename + " " + args + "..." + "\t");
+                // Only launch allowlisted executables. Never let a remote caller
+                // choose an arbitrary binary/command line (CWE-78 / command injection).
+                string executable = RigSecurity.ValidateExecutable(filename);
+                string arguments = RigSecurity.ValidateArguments(args);
+                // Do not echo the arguments into logs: they may contain credentials.
+                Console.Write(DateTime.Now + " Spawning " + executable + "...");
+                sw.Write(DateTime.Now.ToString() + "\t" + Environment.MachineName + "\t" + "Spawning " + executable + "..." + "\t");
 
                 Process proc = new Process();
-                proc.StartInfo.FileName = filename;
-                proc.StartInfo.Arguments = args;
+                proc.StartInfo.FileName = executable;
+                proc.StartInfo.Arguments = arguments;
+                // Make explicit that no shell is involved.
+                proc.StartInfo.UseShellExecute = false;
 
                 proc.Start();
 
@@ -153,16 +167,15 @@ namespace Roblox.Test
         public string KillProcess(int pid)
         {
             string result = "OK";
-            pid = 0;
             StringWriter sw = new StringWriter();
             try
             {
                 Console.Write(DateTime.Now + " Killing " + pid + "...");
                 sw.Write(DateTime.Now.ToString() + "\t" + Environment.MachineName + "\t" + "Killing #" + pid + "..." + "\t");
 
-                Process proc = Process.GetProcessById(pid);
-
-                proc.Kill();
+                // Only processes started by this rig may be killed; a remote
+                // caller must not be able to kill arbitrary system processes.
+                Program.KillRegisteredProcess(pid);
 
                 sw.Flush();
                 result = sw.ToString();
@@ -208,6 +221,11 @@ namespace Roblox.Test
         {
             using (ServiceHost serviceHost = new ServiceHost(typeof(RunService)))
             {
+                // The rig can execute processes and load assemblies. Do not
+                // expose it unauthenticated on the network: require a shared
+                // token for remote callers, otherwise accept loopback only.
+                serviceHost.Authorization.ServiceAuthorizationManager = new RigAuthorizationManager();
+
                 // Open the ServiceHost to create listeners and start listening for messages.
                 serviceHost.Open();
 

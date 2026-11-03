@@ -1,4 +1,6 @@
-source 'http://rubygems.org'
+# Fetch gems over TLS only; the old http:// source allowed dependency
+# substitution by anyone on the network path (rb/insecure-dependency).
+source 'https://rubygems.org'
 
 gem 'rspec'
 gem 'cucumber'

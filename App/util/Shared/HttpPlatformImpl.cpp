@@ -28,6 +28,8 @@
 #include <string.h>
 #endif
 
+#include <cctype>
+#include <cstring>
 #include <cmath>
 
 #include <curl/curl.h>
@@ -52,6 +54,9 @@ DYNAMIC_LOGGROUP(HttpTrace)
 DYNAMIC_FASTFLAG(DebugHttpAsyncCallsForStatsReporting)
 DYNAMIC_FASTINTVARIABLE(HttpMaxRedirects, 10)
 DYNAMIC_FASTSTRINGVARIABLE(HttpCurlProxyHostAndPort, "")
+// Optional path to a PEM CA bundle for TLS builds that do not use the platform
+// trust store (e.g. OpenSSL on Windows). Peer verification stays ON either way.
+DYNAMIC_FASTSTRINGVARIABLE(HttpCurlCAInfo, "")
 DYNAMIC_FASTINTVARIABLE(HttpCacheCleanMinFilesRequired, 3000)
 DYNAMIC_FASTINTVARIABLE(HttpCacheCleanMaxFilesToKeep, 1500)
 DYNAMIC_FASTINTVARIABLE(HttpCacheSendStatsEveryXSeconds, 60)
@@ -594,7 +599,19 @@ public:
         setupDebugger();
         
         
-        logCurlError("CURLOPT_SSLVERSION", curl_easy_setopt(curl,  CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1));
+        // TLS 1.0/1.1 are deprecated and vulnerable (BEAST, POODLE, RC4, ...).
+        // Require TLS 1.2 or newer.
+        logCurlError("CURLOPT_SSLVERSION", curl_easy_setopt(curl,  CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2));
+
+        // HttpService accepts URLs from game scripts. Restrict both the initial
+        // URL and any redirect target to HTTP(S), so schemes such as file://,
+        // gopher:// or dict:// cannot be used for SSRF/local file disclosure.
+        const long allowedProtocols = CURLPROTO_HTTP | CURLPROTO_HTTPS;
+        logCurlError("CURLOPT_PROTOCOLS", curl_easy_setopt(curl, CURLOPT_PROTOCOLS, allowedProtocols));
+        logCurlError("CURLOPT_REDIR_PROTOCOLS", curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, allowedProtocols));
+
+        // Never forward credentials/cookies to a different host on redirect.
+        logCurlError("CURLOPT_UNRESTRICTED_AUTH", curl_easy_setopt(curl, CURLOPT_UNRESTRICTED_AUTH, 0));
 
         // Setup our handle to share data.
         logCurlError("CURLOPT_SHARE", curl_easy_setopt(curl,  CURLOPT_SHARE, curlsh.get()));
@@ -647,8 +664,16 @@ public:
         // Set Accept-Encoding header to all supported encoding schemes: identity, deflate, and gzip.
         logCurlError("CURLOPT_ACCEPT_ENCODING", curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, ""));
 
-        // Don't verify SSL peers.  Less secure, but means we don't have to install certificates.
-        logCurlError("CURLOPT_SSL_VERIFYPEER", curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0));
+        // Always authenticate the TLS peer and its hostname. Disabling this made
+        // every authenticated request (including .ROBLOSECURITY cookies) trivially
+        // interceptable by an on-path attacker (CWE-295). Set DFString::HttpCurlCAInfo
+        // when running against a TLS backend that has no platform trust store.
+        logCurlError("CURLOPT_SSL_VERIFYPEER", curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1));
+        logCurlError("CURLOPT_SSL_VERIFYHOST", curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2));
+        if (!DFString::HttpCurlCAInfo.empty())
+        {
+            logCurlError("CURLOPT_CAINFO", curl_easy_setopt(curl, CURLOPT_CAINFO, DFString::HttpCurlCAInfo.c_str()));
+        }
 
         // Don't use signals, which will prevent problems with resolver timeouts in multi-threaded environments.
         // XXX Might need to setup SSL's mutex callback mechanism, per this URL:
@@ -1073,26 +1098,23 @@ public:
             break;
         }
 
-        // Print our cookies to fastlog.
+        // The cookie list contains the reusable .ROBLOSECURITY session token.
+        // Log only how many cookies were present, never their values.
         if (DFLog::HttpTrace)
         {
-            struct curl_slist *cookies;
+            struct curl_slist *cookies = NULL;
             if (!logCurlErrorNoThrow("CURLINFO_COOKIELIST", curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies)))
             {
+                int cookieCount = 0;
+                for (struct curl_slist *curr = cookies; curr; curr = curr->next)
+                {
+                    ++cookieCount;
+                }
                 if (cookies)
                 {
-                    for (struct curl_slist *curr = cookies; curr; curr = curr->next)
-                    {
-                        std::stringstream ss;
-                        ss << reinterpret_cast<void*>(this) << "): " << curr->data;
-                        FASTLOGS(DFLog::HttpTrace, "CURL cookie(%s", ss.str().c_str());
-                    }
                     curl_slist_free_all(cookies);
                 }
-                else
-                {
-                    FASTLOG1(DFLog::HttpTrace, "No cookies(%p)", this);
-                }
+                FASTLOG1(DFLog::HttpTrace, "CURL cookies(%d)", cookieCount);
             }
         }
 
@@ -1110,6 +1132,66 @@ size_t headerCallback(char* buffer, size_t size, size_t nitems, void* userdata)
     return size*nitems;
 }
 
+static bool headerStartsWith(const std::string& line, const char* lowerCaseName)
+{
+    const size_t n = std::strlen(lowerCaseName);
+    if (line.size() < n) return false;
+    for (size_t i = 0; i < n; ++i)
+    {
+        if (std::tolower(static_cast<unsigned char>(line[i])) != lowerCaseName[i]) return false;
+    }
+    return true;
+}
+
+static bool isSensitiveHeaderLine(const std::string& line)
+{
+    return headerStartsWith(line, "cookie:")
+        || headerStartsWith(line, "set-cookie:")
+        || headerStartsWith(line, "set-cookie2:")
+        || headerStartsWith(line, "authorization:")
+        || headerStartsWith(line, "proxy-authorization:")
+        || headerStartsWith(line, "x-csrf-token:");
+}
+
+/**
+ * libcurl's verbose callback receives complete request/response bodies and
+ * headers. Those contain passwords, .ROBLOSECURITY cookies and CSRF tokens, so
+ * they must never be copied into the FastLog/deep-error-reporting buffers.
+ */
+static std::string sanitizeCurlDebugData(curl_infotype infotype, const char* data, size_t dataBytes)
+{
+    if (infotype == CURLINFO_DATA_IN || infotype == CURLINFO_DATA_OUT
+        || infotype == CURLINFO_SSL_DATA_IN || infotype == CURLINFO_SSL_DATA_OUT)
+    {
+        return std::string();
+    }
+    if (infotype == CURLINFO_TEXT)
+    {
+        return std::string(data, dataBytes);
+    }
+
+    const std::string input(data, dataBytes);
+    std::string output;
+    size_t lineStart = 0;
+    while (lineStart < input.size())
+    {
+        const size_t lineEnd = input.find('\n', lineStart);
+        const size_t lineLength = (lineEnd == std::string::npos ? input.size() : lineEnd + 1) - lineStart;
+        const std::string line = input.substr(lineStart, lineLength);
+        if (isSensitiveHeaderLine(line))
+        {
+            output += "<redacted header>\n";
+        }
+        else
+        {
+            output += line;
+        }
+        if (lineEnd == std::string::npos) break;
+        lineStart = lineEnd + 1;
+    }
+    return output;
+}
+
 void debugCallback(CURL* curl, curl_infotype infotype, char* dataNonTerminated, size_t dataBytes, void* userdata)
 {
     const static char *infotype_map[CURLINFO_END] = {
@@ -1122,16 +1204,15 @@ void debugCallback(CURL* curl, curl_infotype infotype, char* dataNonTerminated, 
         "CURLINFO_SSL_DATA_OUT",
     };
 
-    boost::scoped_array<char> data(new char[dataBytes+1]);
-    memcpy(data.get(), dataNonTerminated, dataBytes);
-    data[dataBytes] = '\0';
+    const std::string safeData = sanitizeCurlDebugData(infotype, dataNonTerminated, dataBytes);
+    if (safeData.empty()) return;
 
     std::stringstream ss;
     ss << infotype_map[infotype] << "(" << userdata << "): ";
-    ss << data.get();
+    ss << safeData;
 
     CurlHandle* handle = reinterpret_cast<CurlHandle*>(userdata);
-    handle->addLogLine(data.get());
+    if (handle) handle->addLogLine(safeData.c_str());
 
     FASTLOGS(DFLog::HttpTrace, "Curl debug callback: %s", ss.str().c_str());
 }

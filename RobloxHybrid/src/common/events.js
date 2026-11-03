@@ -41,6 +41,9 @@ define("Events", {}, function(require, exports, module) {
          * @instance
          */
         this.subscribe = function(listener) {
+            if (typeof listener !== 'function') {
+                return;
+            }
             listeners.push(listener);
 
             // Fire the event if its sticky and was already fired
@@ -78,10 +81,14 @@ define("Events", {}, function(require, exports, module) {
                 emittedEvent = eventInstance;
             }
 
-            var listenersCount = listeners.length;
-            for(var i = 0; i < listenersCount; i++) {
-                var listener = listeners[i];
-                if( listener(eventInstance) ) {
+            // Deliver to a snapshot of the subscriber list. A listener may
+            // subscribe or unsubscribe while an event is being emitted;
+            // iterating the live array by index used to skip listeners or call
+            // undefined as a function once the array shrank.
+            var snapshot = listeners.slice();
+            for(var i = 0; i < snapshot.length; i++) {
+                var listener = snapshot[i];
+                if( typeof listener === 'function' && listener(eventInstance) ) {
                     break;
                 }
             }

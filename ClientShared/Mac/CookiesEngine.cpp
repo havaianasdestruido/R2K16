@@ -1,10 +1,39 @@
 #include "CookiesEngine.h"
 #include "../format_string.h"
 #include <vector>
+#include <string>
+#include <sys/stat.h>
 
 #define RBX_PLIST_KEY "CPath"
 #define RBX_PLAYER_BUNDLE_ID "com.roblox.RobloxPlayer"
 #include <CoreFoundation/CoreFoundation.h>
+
+/**
+ * Creates a directory tree without invoking a shell. The old implementation
+ * interpolated a preference-controlled path into "mkdir -p %s" and passed it to
+ * system(), so a crafted CFPreferences value could execute arbitrary commands.
+ * EEXIST is ignored; any other failure is simply left to the caller's existing
+ * error handling.
+ */
+static void createDirectoryRecursive(const std::string& path)
+{
+    std::string current;
+    if (!path.empty() && path[0] == '/') current = "/";
+
+    size_t pos = 0;
+    while (pos < path.size())
+    {
+        size_t next = path.find('/', pos);
+        if (next == std::string::npos) next = path.size();
+        if (next > pos)
+        {
+            if (!current.empty() && current[current.size() - 1] != '/') current += '/';
+            current += path.substr(pos, next - pos);
+            ::mkdir(current.c_str(), 0700);
+        }
+        pos = next + 1;
+    }
+}
 
 bool CookiesEngine::reportValue(CookiesEngine &engine, std::string key, std::string value)
 {
@@ -43,13 +72,11 @@ std::wstring CookiesEngine::getCookiesFilePath()
 			{
 				path = cookiePathString;
 				
-				//check if the directory exists
-				std::string directoryPath = path.substr(0, path.rfind("/"));
-				if (access(directoryPath.c_str(), F_OK) == -1)
+				// Create the parent directories if they do not exist.
+				std::string::size_type slash = path.rfind("/");
+				if (slash != std::string::npos)
 				{
-					char cmdBuffer[1024];
-					snprintf(cmdBuffer, 1024, "mkdir -p %s", directoryPath.c_str());
-					system(cmdBuffer);
+					createDirectoryRecursive(path.substr(0, slash));
 				}
 			}
             

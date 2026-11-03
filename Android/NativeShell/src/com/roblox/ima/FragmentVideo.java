@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.roblox.client.R;
 import com.roblox.client.RobloxSettings;
+import com.roblox.client.http.HttpAgent;
 
 public class FragmentVideo extends DialogFragment {
     private AdPlayerController mVideoPlayerController;
@@ -35,7 +36,8 @@ public class FragmentVideo extends DialogFragment {
 
     public void loadVideo() {
         String url = ((mGoogleAdUrl == null) || (mGoogleAdUrl.equals("")) ? getResources().getString(R.string.GoogleAdTagUrl) : mGoogleAdUrl);
-        Log.i(TAG, "mGoogleAdUrl: " + mGoogleAdUrl + " | url: " + url);
+        // Ad tag URLs may contain identifiers/tokens in their query string.
+        Log.i(TAG, "ad url: " + HttpAgent.safeUrlForLog(url));
         mVideoPlayerController.setAdTagUrl(url);
         mVideoPlayerController.requestAndPlayAds();
     }

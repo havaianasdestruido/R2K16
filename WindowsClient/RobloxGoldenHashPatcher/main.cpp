@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int readFile(const char* fileName, std::vector<char>& buffer)
 {
     std::ifstream file(fileName, std::ifstream::binary);
@@ -57,7 +61,46 @@ std::string getFileName(const std::string& sysPath, const std::string& fileName)
 
 std::string setCommand(const std::string& sysPath, const std::string& sysExe, const std::string& fileName)
 {
-    return getFileName(sysPath, sysExe) + " -w 195936478 --globalBasicSettingsPath " + fileName;
+    // Quote the executable: paths with spaces must remain a single argument.
+    return "\"" + getFileName(sysPath, sysExe) + "\" -w 195936478 --globalBasicSettingsPath " + fileName;
+}
+
+/**
+ * Launches the target directly with CreateProcess instead of system().
+ * system() runs the string through cmd.exe, so a directory/exe name supplied on
+ * the command line containing &, |, >, % or ! would execute extra commands.
+ * No shell is involved here and the call waits for the child, matching the
+ * previous blocking behaviour.
+ */
+static bool runCommand(const std::string& executablePath, const std::string& commandLine)
+{
+#ifdef _WIN32
+    std::vector<char> mutableCommandLine(commandLine.begin(), commandLine.end());
+    mutableCommandLine.push_back('\0');
+
+    STARTUPINFOA startupInfo;
+    ZeroMemory(&startupInfo, sizeof(startupInfo));
+    startupInfo.cb = sizeof(startupInfo);
+    PROCESS_INFORMATION processInfo;
+    ZeroMemory(&processInfo, sizeof(processInfo));
+
+    BOOL started = CreateProcessA(executablePath.c_str(), &mutableCommandLine[0],
+        NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
+    if (!started)
+    {
+        std::cerr << "CreateProcess failed with error " << GetLastError() << "\n";
+        return false;
+    }
+
+    WaitForSingleObject(processInfo.hProcess, INFINITE);
+    CloseHandle(processInfo.hThread);
+    CloseHandle(processInfo.hProcess);
+    return true;
+#else
+    // This is a Windows-only maintenance tool; never fall back to a shell.
+    std::cerr << "runCommand is only supported on Windows\n";
+    return false;
+#endif
 }
 
 size_t findAndSetOffset(const std::vector<char>& exeBuffer, size_t idx, const char* search, size_t& location)
@@ -104,7 +147,7 @@ int main(int argc, char** argv)
     relFile = getFileName(sysPath, baseFile);
     sysCommand = setCommand(sysPath, sysExe, baseFile);
     std::cout << sysCommand << std::endl;
-    system(sysCommand.c_str());
+    runCommand(exeFile, sysCommand);
     int fileErrorCode = 0;
     fileErrorCode = readFile(relFile.c_str(), cmpBufferOne);
     if (fileErrorCode < 0)
@@ -128,7 +171,7 @@ int main(int argc, char** argv)
     sysCommand = setCommand(sysPath, sysExe, baseFile);
     while (maxIters)
     {
-        system(sysCommand.c_str());
+        runCommand(exeFile, sysCommand);
         fileErrorCode = readFile(relFile.c_str(), cmpBufferTwo);
         if (fileErrorCode < 0)
         {
@@ -274,7 +317,7 @@ int main(int argc, char** argv)
     baseFile = "buffer2.bin";
     relFile = getFileName(sysPath, baseFile);
     sysCommand = setCommand(sysPath, sysExe, baseFile);
-    system(sysCommand.c_str());
+    runCommand(exeFile, sysCommand);
     fileErrorCode = readFile(relFile.c_str(), cmpBufferTwo);
     if (fileErrorCode < 0)
     {
@@ -295,7 +338,7 @@ int main(int argc, char** argv)
     baseFile = "buffer3.bin";
     relFile = getFileName(sysPath, baseFile);
     sysCommand = setCommand(sysPath, sysExe, baseFile);
-    system(sysCommand.c_str());
+    runCommand(exeFile, sysCommand);
     fileErrorCode = readFile(relFile.c_str(), cmpBufferGold);
     if (fileErrorCode < 0)
     {
