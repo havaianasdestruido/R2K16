@@ -1,0 +1,26 @@
+# Template for release signing configuration. No secret values belong in Git.
+#
+# The keystore and the inline passwords that used to live in build.gradle and in
+# ../robloxAndroidPK_DO_NOT_DELETE were published with this repository. Treat that
+# key as compromised, rotate it, and never re-commit it.
+#
+# Release builds read these values from environment variables (set them from a
+# protected CI secret store, or from an untracked local shell profile):
+#
+#   ROBLOX_RELEASE_KEYSTORE        absolute path to the NEW .jks/.keystore file
+#   ROBLOX_RELEASE_STORE_PASSWORD  keystore password
+#   ROBLOX_RELEASE_KEY_ALIAS       key alias inside the keystore
+#   ROBLOX_RELEASE_KEY_PASSWORD    key password
+#
+# If any of them is missing, the release build is produced unsigned instead of
+# silently falling back to the exposed key.
+#
+# Fabric/Crashlytics release uploads additionally need a rotated apiSecret;
+# inject it into crashlytics.properties from CI (see that file's comments).
+#
+# Machine-local SDK/NDK locations go into an untracked local.properties:
+#
+#   sdk.dir=/path/to/Android/sdk
+#   ndk.dir=/path/to/Android/ndk
+#
+# and ANDROID_NDK_HOME (or ndk-build on PATH) is used for the native build.

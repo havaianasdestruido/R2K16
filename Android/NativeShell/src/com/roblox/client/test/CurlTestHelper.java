@@ -35,7 +35,8 @@ public class CurlTestHelper {
     public String getCookieString(){
 
         String curlCookiesString = getCookieStringJNI();
-        Log.v(TAG, "CurlTestHelper.getCookieString() s:" + curlCookiesString);
+        // The cookie jar contains session credentials; log only its size.
+        Log.v(TAG, "CurlTestHelper.getCookieString() length:" + curlCookiesString.length());
 
         String[] curlCookies = curlCookiesString.split(";");
 

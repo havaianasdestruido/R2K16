@@ -1,7 +1,10 @@
 #include <stdio.h>
+#include <string.h>
+#include <wchar.h>
 #include <comdef.h>
 
 #include "RobloxProxy_i.h"
+#include "rolbox_adapter.h"
 
 
 const IID IID_ILauncher =
@@ -47,41 +50,56 @@ bool isComStarted(void){
 //=================================================================================
 
 /**
-* Conversion from ASCII to WideChar
+* Conversion from ASCII to WideChar, bounded by an explicit destination size.
 *
+* bufLen is the size of pwcBuf in WCHARs. A zero/negative length can no longer
+* mean "the caller allocated enough": the source string is supplied by a COM
+* object (and ultimately by a web page), so an unbounded conversion was a
+* straight buffer overflow. Fail closed when it does not fit.
 */
-
 int Str2Wc( char* pBuf, WCHAR* pwcBuf, int bufLen){
-	if( pwcBuf == NULL || pBuf == NULL )
+	if( pwcBuf == NULL || pBuf == NULL || bufLen <= 0 )
 		return -1;
 
-	// If zero then assume the user has allocated enough
-	if( bufLen == 0 ){
-		bufLen = (int)( strlen(pBuf) + 1 );
-	}
-	if( MultiByteToWideChar( CP_ACP, 0, pBuf, -1, pwcBuf, bufLen) == 0 ){
+	int required = MultiByteToWideChar( CP_ACP, 0, pBuf, -1, NULL, 0 );
+	if( required <= 0 || required > bufLen )
 		return -1;
-	}
-	pwcBuf[strlen(pBuf)] = 0;
+
+	int written = MultiByteToWideChar( CP_ACP, 0, pBuf, -1, pwcBuf, bufLen );
+	if( written <= 0 )
+		return -1;
+	pwcBuf[written - 1] = 0;
 	return 0;
 }
 /**
-* Conversion from WideChar to ASCII
+* Conversion from WideChar to ASCII, bounded by an explicit destination size.
 *
+* bufLen is the size of pBuf in bytes. See Str2Wc above.
 */
 int Wc2Str(WCHAR* pwcBuf, char* pBuf, int bufLen){
-	if( pwcBuf == NULL || pBuf == NULL )
+	if( pwcBuf == NULL || pBuf == NULL || bufLen <= 0 )
 		return -1;
 
-// If zero then assume the user has allocated enough
-	if( bufLen == 0 ){
-		bufLen = (int)( wcslen( pwcBuf) + 1 );
-	}
-	if( WideCharToMultiByte( CP_ACP, 0, pwcBuf, -1, pBuf, bufLen, NULL, NULL) == 0 ){
+	int required = WideCharToMultiByte( CP_ACP, 0, pwcBuf, -1, NULL, 0, NULL, NULL );
+	if( required <= 0 || required > bufLen )
 		return -1;
-	}
-	pBuf[wcslen(pwcBuf)] = 0;
+
+	int written = WideCharToMultiByte( CP_ACP, 0, pwcBuf, -1, pBuf, bufLen, NULL, NULL );
+	if( written <= 0 )
+		return -1;
+	pBuf[written - 1] = 0;
 	return 0;
+}
+
+/** Bounded replacement for the old strcpy(..., "error") paths. */
+static void CopyBounded(char *dest, int destLen, const char *src)
+{
+	if( dest == NULL || src == NULL || destLen <= 0 )
+		return;
+	int i = 0;
+	for( ; i + 1 < destLen && src[i] != 0; ++i )
+		dest[i] = src[i];
+	dest[i] = 0;
 }
 
 //=================================================================================
@@ -129,10 +147,12 @@ int RobloxAdapterHello(ILauncher *iIRobloxLauncher,char *retMessage){
 	hr = -1;
 	hr = iIRobloxLauncher->Hello( &hhh );
 	if( SUCCEEDED(hr) ){
-		Wc2Str( hhh, retMessage, 0 );
+		Wc2Str( hhh, retMessage, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE );
+		SysFreeString( hhh );
 	}
 	else {
-		strcpy( retMessage, "IRobloxLauncher->Hello() Error occured !" );
+		CopyBounded( retMessage, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE,
+			"IRobloxLauncher->Hello() Error occured !" );
 	}
 
 	return hr;
@@ -176,10 +196,12 @@ int RobloxAdapterGet_InstallHost(ILauncher *iIRobloxLauncher,char *cbufHost){
 	hr = iIRobloxLauncher->get_InstallHost( &host );
 
 	if( SUCCEEDED(hr) ){
-		Wc2Str( host, cbufHost, 0 );
+		Wc2Str( host, cbufHost, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE );
+		SysFreeString( host );
 	}
 	else {
-		strcpy( cbufHost, "IRobloxLauncher->get_InstallHost() Error occured !" );
+		CopyBounded( cbufHost, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE,
+			"IRobloxLauncher->get_InstallHost() Error occured !" );
 	}
 
 
@@ -197,10 +219,12 @@ int RobloxAdapterGet_Version(ILauncher *iIRobloxLauncher,char *cbufHost) {
 	hr = iIRobloxLauncher->get_Version( &host );
 
 	if( SUCCEEDED(hr) ){
-		Wc2Str( host, cbufHost, 0 );
+		Wc2Str( host, cbufHost, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE );
+		SysFreeString( host );
 	}
 	else {
-		strcpy( cbufHost, "IRobloxLauncher->get_Version() Error occured !" );
+		CopyBounded( cbufHost, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE,
+			"IRobloxLauncher->get_Version() Error occured !" );
 	}
 
 
@@ -361,9 +385,10 @@ int RobloxAdapterGetKeyValue(ILauncher *iIRobloxLauncher, char *key, char *value
 	hr = iIRobloxLauncher->GetKeyValue(bstrKey, &bstrValue);
 	if (SUCCEEDED(hr))
 	{
-		Wc2Str(bstrValue, value, 0);
+		Wc2Str(bstrValue, value, ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE);
+		SysFreeString(bstrValue);
 	} else {
-		value = NULL;
+		value[0] = 0;
 	}
 
 	return hr;

@@ -145,7 +145,9 @@ endif(UNIX)
 add_library(roblox SHARED
   $<TARGET_OBJECTS:boost>
   $<TARGET_OBJECTS:Base>
-  $<TARGET_OBJECTS:Log>
+  # Log.cpp is part of the Base object library (add_subdirectory(Log) is
+  # disabled); referring to a non-existent "Log" OBJECT target makes modern
+  # CMake fail at generate time with a TARGET_OBJECTS error.
   $<TARGET_OBJECTS:App>
   $<TARGET_OBJECTS:Network>
   $<TARGET_OBJECTS:G3D>

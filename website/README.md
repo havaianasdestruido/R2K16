@@ -55,3 +55,30 @@ URLs: `https://<user>.github.io/R2K16/` (Jekyll) and
 
 See `docs/development/docs-site.md` in the built site for the full maintenance
 guide.
+
+## Dependency security overrides
+
+Docusaurus 3.10.2 pins several transitive dependencies to versions with known
+advisories (including RCE issues in `tinypool`, `serialize-javascript` and
+`dompurify`). Upgrading Docusaurus itself is not possible yet — no stable
+release contains the fixes — so `package.json` pins the affected transitive
+packages to their patched releases with npm `overrides`. `package-lock.json` is
+generated from those overrides; keep both files in sync and re-run `npm ci`
+plus `npm run build` after changing them. Avoid `npm audit fix --force` here: it
+downgrades Docusaurus rather than fixing the nested packages.
+
+With these overrides `npm audit` reports no critical, high or moderate findings.
+The five remaining low findings all stem from `deepmerge` (prototype poisoning
+in `@svgr/plugin-svgo` → `@svgr/webpack` → `@docusaurus/plugin-svgr`); no
+patched `deepmerge` release exists. That code only processes the site's own SVG
+assets during the build and never receives untrusted input, so the residual
+risk is limited to build time.
+
+One compatibility note: `minimatch` 11 exposes named CommonJS exports instead
+of a callable default. `serve-handler` still calls `require('minimatch')` as a
+function, but only in its optional `rewrites` / `redirects` / `headers` paths,
+which this site does not configure. `npm run build`, `npm start` and
+`npm run serve` were smoke-tested with the override in place. If custom
+`serve-handler` rules are ever added, either drop that override (accepting the
+two moderate `minimatch` / `serve-handler` advisories) or replace
+`docusaurus serve` with a maintained static server.

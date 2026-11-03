@@ -5,18 +5,32 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: push to codeberg
-        run: |
-          git remote add codeberg "https://${{ secrets.CODEBERG_PAT }}@codeberg.org/PatoFlamejanteTV/R2K16.git"
-          git push --mirror codeberg
         env:
+          CODEBERG_PAT: ${{ secrets.CODEBERG_PAT }}
           GIT_TERMINAL_PROMPT: 0
+        run: |
+          set -euo pipefail
+          if [ -z "${CODEBERG_PAT}" ]; then
+            echo "::error::CODEBERG_PAT is not configured"
+            exit 1
+          fi
+          # Do not embed the PAT in the remote URL: that URL is written to git
+          # output, logs and the process command line. Pass it as an HTTP
+          # Authorization header for this single push instead.
+          auth="$(printf '%s:' "${CODEBERG_PAT}" | base64 -w 0)"
+          git -c "http.extraheader=AUTHORIZATION: basic ${auth}" \
+            push --mirror "https://codeberg.org/PatoFlamejanteTV/R2K16.git"

@@ -142,8 +142,9 @@ public class SocialManager {
             fbd.realName = realName;
             fbd.email = email;
             fbd.gender = (gender.equals("f") ? "Female" : "Male");
-            Log.i(TAG, "UID = " + mUid + ", UIDSignature = " + mUidSignature);
-            Log.i(TAG, "EncodedUID = " + URLEncoder.encode(mUid, "UTF-8") + ", EncodedUIDSignature = " + URLEncoder.encode(mUidSignature, "UTF-8"));
+            // mUidSignature is a reusable social-login credential. Do not log it
+            // (or its encoded form); log only that the flow reached this point.
+            Log.i(TAG, "Preparing social login request");
             String params = RobloxSettings.socialLoginParams(URLEncoder.encode(mUidSignature, "UTF-8"), mSignatureTimestamp,
                     URLEncoder.encode(mUid, "UTF-8"), mProvider, mLoginProvider, mLoginProviderUid,
                     birthDay, birthMonth, birthYear);

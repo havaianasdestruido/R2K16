@@ -1,6 +1,12 @@
 #ifndef _ROLBOX_ADAPTER_H_
 #define _ROLBOX_ADAPTER_H_
 
+/* Every char* output parameter below (retMessage, cbufHost, value, ...) must
+ * point to a buffer of at least this many bytes. The adapter used to assume
+ * "bufLen == 0 means the caller allocated enough" and copy a COM BSTR of
+ * arbitrary length into it, which is a stack/heap overflow. */
+#define ROBLOX_ADAPTER_OUTPUT_BUFFER_SIZE 2048
+
 void StartCom(void);
 void StopCom(void);
 bool isComStarted(void);

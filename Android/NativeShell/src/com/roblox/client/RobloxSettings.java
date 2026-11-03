@@ -220,7 +220,9 @@ public class RobloxSettings {
     }
 
     // --- Device Blacklist URL
-    static String  appSettingsUrl()				{ return "http://clientsettings.api." + baseURLNoHttp().replace("www.", "") + "Setting/QuietGet/AndroidAppSettings/?apiKey=76E5A40C-3AE1-4028-9F10-7C62520BD94F"; }
+    // Remote app settings change feature flags and telemetry endpoints at runtime.
+    // They must never be fetched over cleartext HTTP (on-path tampering).
+    static String  appSettingsUrl()				{ return "https://clientsettings.api." + baseURLNoHttp().replace("www.", "") + "Setting/QuietGet/AndroidAppSettings/?apiKey=76E5A40C-3AE1-4028-9F10-7C62520BD94F"; }
 
     public static void setUserEmail(String newEmail) { mUserEmail = newEmail; }
 
@@ -349,7 +351,7 @@ public class RobloxSettings {
 
     public static String    ephemeralCounterParams(String counterName, int amount) { return "&counterName=" + counterName + "&amount=" + amount;}
     public static String    ephemeralCounterUrl() {
-        return mBaseUrl.replace("www.", "http://ephemeralcounters.api.")
+        return mBaseUrl.replace("www.", "https://ephemeralcounters.api.")
                 + "v1.1/Counters/Increment/?apiKey=76E5A40C-3AE1-4028-9F10-7C62520BD94F";
     }
 
@@ -502,7 +504,8 @@ public class RobloxSettings {
             List<String> lines = Utils.readTextFile(mRobloxCookiesTmpFile.toString());
             if (lines.size() > 0)
             {
-                Log.i(TAG, "Setting ROBLOX cookies for domain " + lines.get(0) + " to " + lines.get(1));
+                // Never log the cookie value (it contains .ROBLOSECURITY).
+                Log.i(TAG, "Setting ROBLOX cookies for domain " + lines.get(0));
                 nativeSetCookiesForDomain(lines.get(0), lines.get(1));
             }
         }

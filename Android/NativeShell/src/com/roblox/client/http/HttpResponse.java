@@ -41,12 +41,12 @@ public class HttpResponse {
 
     @Override
     public String toString() {
-        String str = "HTTP Response for URL: " + mUrl + "\n" +
+        // HttpResponse is logged by several callers. A full URL can contain an
+        // apiKey/password in its query string and the body can contain session
+        // data, so expose only non-sensitive metadata here.
+        return "HTTP Response for URL: " + HttpAgent.safeUrlForLog(mUrl) + "\n" +
                 "Request Type: " + requestType + "\n" +
-                "Response Body: " + mResponseString + "\n" +
                 "Response Code: " + mResponseCode;
-
-        return str;
     }
 
     public long responseTime() { return mResponseTime; }

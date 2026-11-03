@@ -184,6 +184,8 @@ RBX::Log* MainLogManager::provideLog()
 #include < process.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
+#include <stddef.h>
 #include <fcntl.h>
 #include <io.h>
 
@@ -191,7 +193,21 @@ RBX::Log* MainLogManager::provideLog()
 
 HANDLE  g_hConsoleOut;                   // Handle to debug console
 
-
+// CrashReportControls uses fixed-size char arrays. Unbounded strcpy() here could
+// overflow them with a long path/app name; strncpy() alone does not guarantee
+// termination. Always copy at most size-1 bytes and terminate explicitly.
+static void copyBounded(char* destination, size_t destinationSize, const char* source)
+{
+	if (destinationSize == 0)
+		return;
+	if (source == NULL)
+	{
+		destination[0] = '\0';
+		return;
+	}
+	strncpy(destination, source, destinationSize - 1);
+	destination[destinationSize - 1] = '\0';
+}
 
 RobloxCrashReporter::RobloxCrashReporter(const char* outputPath, const char* appName, const char* crashExtention)
 {
@@ -200,12 +216,10 @@ RobloxCrashReporter::RobloxCrashReporter(const char* outputPath, const char* app
 	if(IsVistaPlus())
 		controls.minidumpType |= MiniDumpWithIndirectlyReferencedMemory;
 	
-	strcpy(controls.pathToMinidump, outputPath);
-
-	strcpy(controls.appName, appName);
-
-	strncpy(controls.appVersion, GetAppVersion().c_str(), 128);
-	strncpy(controls.crashExtention, crashExtention, sizeof(controls.crashExtention));
+	copyBounded(controls.pathToMinidump, sizeof(controls.pathToMinidump), outputPath);
+	copyBounded(controls.appName, sizeof(controls.appName), appName);
+	copyBounded(controls.appVersion, sizeof(controls.appVersion), GetAppVersion().c_str());
+	copyBounded(controls.crashExtention, sizeof(controls.crashExtention), crashExtention);
 }
 
 bool RobloxCrashReporter::silent;

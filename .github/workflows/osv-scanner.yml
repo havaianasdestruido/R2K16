@@ -22,15 +22,16 @@ on:
     branches: [ "main" ]
 
 permissions:
-  # Require writing security events to upload SARIF file to security tab
-  security-events: write
-  # Read commit contents
   contents: read
 
 jobs:
   scan-scheduled:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.9.1" # v1.7.1
+    permissions:
+      contents: read
+      security-events: write # to upload SARIF to the security tab
+      actions: read
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@daa2c68f50d845057895a9c300e42478481c1d26" # v1.9.1
     with:
       # Example of specifying custom arguments
       scan-args: |-
@@ -39,7 +40,11 @@ jobs:
         ./
   scan-pr:
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v1.9.1" # v1.7.1
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@daa2c68f50d845057895a9c300e42478481c1d26" # v1.9.1
     with:
       # Example of specifying custom arguments
       scan-args: |-

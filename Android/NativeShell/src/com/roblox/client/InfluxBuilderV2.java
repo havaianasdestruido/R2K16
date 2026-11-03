@@ -1,16 +1,21 @@
 package com.roblox.client;
 
 import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
 
+import com.roblox.client.http.HttpAgent;
 import com.roblox.client.http.HttpResponse;
 import com.roblox.client.http.OnRbxHttpRequestFinished;
 import com.roblox.client.http.RbxHttpPostRequest;
 
 import org.json.JSONArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -92,20 +97,44 @@ public class InfluxBuilderV2 {
             mTimestampPrecision = TIMESTAMP_PRECISION.MILLISECONDS;
         }
 
+        // Never put the telemetry credentials in the request URI: URIs are
+        // logged by HttpAgent, proxies and servers. Use HTTP Basic auth instead
+        // and require TLS so the header is not sent in cleartext.
+        final String endpoint = AndroidAppSettings.InfluxUrl();
+        if (endpoint == null || !endpoint.toLowerCase(Locale.US).startsWith("https://")) {
+            if (listener != null) listener.onReportFinished();
+            return;
+        }
+
+        String credentials;
+        String db;
+        try {
+            credentials = AndroidAppSettings.InfluxUser() + ":" + AndroidAppSettings.InfluxPassword();
+            db = URLEncoder.encode(String.valueOf(AndroidAppSettings.InfluxDatabase()), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            if (listener != null) listener.onReportFinished();
+            return;
+        }
+
+        HttpAgent.HttpHeader authorization = new HttpAgent.HttpHeader();
+        authorization.header = "Authorization";
+        try {
+            authorization.value = "Basic " + Base64.encodeToString(
+                    credentials.getBytes("UTF-8"), Base64.NO_WRAP);
+        } catch (UnsupportedEncodingException e) {
+            if (listener != null) listener.onReportFinished();
+            return;
+        }
+
         StringBuilder url = new StringBuilder().
-                append(AndroidAppSettings.InfluxUrl()).
+                append(endpoint).
                 append("/write?db=").
-                append(AndroidAppSettings.InfluxDatabase()).
-                append("&u=").
-                append(AndroidAppSettings.InfluxUser()).
-                append("&p=").
-                append(AndroidAppSettings.InfluxPassword()).
+                append(db).
                 append("&precision=").
                 append(getTimestampPrecision());
 
-
-
-        RbxHttpPostRequest req = new RbxHttpPostRequest(url.toString(), getDataString(), null, new OnRbxHttpRequestFinished() {
+        RbxHttpPostRequest req = new RbxHttpPostRequest(url.toString(), getDataString(),
+                new HttpAgent.HttpHeader[] { authorization }, new OnRbxHttpRequestFinished() {
             @Override
             public void onFinished(HttpResponse response) {
                 if (listener != null) listener.onReportFinished();

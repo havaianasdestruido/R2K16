@@ -67,12 +67,22 @@ dependencies {
 }
 
 android {
+    // Release signing credentials are injected from protected environment
+    // variables/CI secrets. They used to be committed here together with the
+    // keystore itself; that key material is public and MUST be rotated.
+    // See signing.properties.example for the variable names.
     signingConfigs {
         packageRelease {
-            keyAlias 'seriously_do_not_delete_this_file'
-            keyPassword 'Sa4e63uCh4$robloxAndroid$'
-            storeFile file('../robloxAndroidPK_DO_NOT_DELETE')
-            storePassword 'Sa4e63uCh4$robloxAndroid$'
+            def releaseStore = System.getenv('ROBLOX_RELEASE_KEYSTORE')
+            def releaseStorePassword = System.getenv('ROBLOX_RELEASE_STORE_PASSWORD')
+            def releaseKeyAlias = System.getenv('ROBLOX_RELEASE_KEY_ALIAS')
+            def releaseKeyPassword = System.getenv('ROBLOX_RELEASE_KEY_PASSWORD')
+            if (releaseStore && releaseStorePassword && releaseKeyAlias && releaseKeyPassword) {
+                storeFile file(releaseStore)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
         }
     }
     compileSdkVersion 23
@@ -165,7 +175,14 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.packageRelease
+            // Fail safe: without injected credentials the release APK is simply
+            // unsigned rather than signed with a compromised, hard-coded key.
+            if (System.getenv('ROBLOX_RELEASE_KEYSTORE')
+                    && System.getenv('ROBLOX_RELEASE_STORE_PASSWORD')
+                    && System.getenv('ROBLOX_RELEASE_KEY_ALIAS')
+                    && System.getenv('ROBLOX_RELEASE_KEY_PASSWORD')) {
+                signingConfig signingConfigs.packageRelease
+            }
         }
     }
     splits {
@@ -211,8 +228,12 @@ crashlytics {
 }
 
 task runNDKBuild(type:Exec) { //, 'NDK_OUT=libsDebug',
-    commandLine '/usr/local/android/android-ndk-r10e/ndk-build', '-C', 'jni', 'NDK_APP_OUT=jniLibs', 'NDK_OUT=libsDebug', 'RELEASE=1', 'PATH_PREFIX=../'
-    //commandLine 'ndk-build', '-C', 'jni', 'RELEASE=1'
+    // Never execute a binary from a fixed, machine-specific absolute path:
+    // on a shared build host that path could be planted by another tenant.
+    // Resolve the NDK from ANDROID_NDK_HOME or the documented PATH instead.
+    def ndkHome = System.getenv('ANDROID_NDK_HOME')
+    def ndkBuild = ndkHome ? new File(ndkHome, 'ndk-build').absolutePath : 'ndk-build'
+    commandLine ndkBuild, '-C', 'jni', 'NDK_APP_OUT=jniLibs', 'NDK_OUT=libsDebug', 'RELEASE=1', 'PATH_PREFIX=../'
 }
 
 tasks.withType(JavaCompile) {

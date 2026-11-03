@@ -160,3 +160,225 @@ No implementation source was changed. Website dependencies/build output created 
 - The Crashlytics secret’s validity/permissions and the current Influx endpoint/configuration are unknown; no credential was tested.
 - Android, iOS/Xcode, Windows/MSVC compilation, .NET/MSBuild, Jekyll, and the repository’s native test suites were not run because the required toolchains are unavailable. The merged PR #11 C++ changes were reviewed but remain uncompiled; no defect is asserted from that review. The workspace is shallow, limiting historical review. A broad heuristic secret scan timed out, so this is not a claim that no other secrets exist.
 - The GitHub security/code-scanning metadata API returned 403; existing security alerts could not be reviewed through that API. This does not change the confirmed local `npm audit` results.
+
+---
+
+## Remediation pass — 2026-11-03 (Draft 12)
+
+**Branch:** `arena/1326d6d0-r2k16` (from `8facd0eb1ce4ab1ea8a1e941b096beccd1c8a8e9`).
+**Scope of this pass:** implement the fixes for the drafts above and for the
+code-scanning export in `res/gh_alerts.csv`, without touching third-party
+library code. This section records what changed, what was deliberately left
+alone, and exactly what was verified. Unlike Drafts 1–11, implementation files
+*were* changed in this pass.
+
+### 12.1 Alert inventory and scope decisions
+
+`res/gh_alerts.csv` (read with `encoding='utf-8-sig'`) contains **575 rows**:
+460 `error`, 115 `warning`; 565 `open`, 10 `fixed`. Excluding the vendored
+`Library/` and `boostlibs/` trees leaves **102 first-party alerts**, grouped as
+34 binary artifacts, 22 pinned/vulnerable dependencies, 9 untrusted-JavaScript
+items, 6 workflow token-permission items, 4 weak-crypto items, 2 command
+injections, 2 implicit Android exports, plus zip-slip, ReDoS, path-injection,
+insecure-dependency and 9 website CVE/GHSA rows.
+
+Scope decisions, stated explicitly because they create residual findings:
+
+- **`Library/`, `boostlibs/`, `QTitanRibbon/`** are vendored third-party code and
+  were not modified, per the task constraint. Vulnerabilities inside them must
+  be handled by upstream upgrades, not by patching vendored sources here.
+- **Tracked binaries and archives** (`Installer/.../rtc.exe`,
+  `Rendering/ShaderCompiler/*.exe`, `*.jar`, `*.lib`, `RobloxHybrid/closure-compiler/compiler.jar`,
+  fonts, keystores) cannot be repaired in place. They were left byte-identical;
+  four *first-party* configuration files that leaked machine paths/credentials
+  were removed from the tracked tree instead (see 12.2).
+- **`RobloxHybrid/docs/jaguar/` is the third-party "jaguar" JSDoc template** (it
+  ships its own `LICENSE`), and `RobloxHybrid/docs/out/` is generated from it by
+  `RobloxHybrid/docs/build_doc.sh`. The four `js/functionality-from-untrusted-source`
+  warnings in `docs/out/scripts/main.js` and `docs/jaguar/static/scripts/main.js`
+  and the `js/prototype-pollution-utility` warning in
+  `docs/jsdoc/lib/jsdoc/config.js` are therefore *not* patched here: that would
+  mean editing third-party template/vendor code. **Residual risk rationale:** the
+  generated `main.js` builds `new RegExp(searchBoxValue)` from a purely local
+  search field and loads Disqus over `http://`; the first is a client-only ReDoS
+  in a static HTML page (no server-side exposure, no untrusted cross-origin
+  input) and the second is unreachable because first-party
+  `RobloxHybrid/docs/conf.json` sets `"disqus": ""`. `mergeRecurse` in the JSDoc
+  config only merges the repository-controlled `conf.json`, not attacker input.
+  These are warnings, not critical/high findings. If the template is upgraded,
+  regenerate `docs/out/` and re-scan.
+- **`website/package-lock.json` overlaps open Dependabot PR #14.** The lockfile
+  was regenerated with overrides (12.3) rather than by cherry-picking #14; PR
+  #14 should be closed once this lands. PR #8 is already merged and is not
+  duplicated.
+
+### 12.2 What was fixed
+
+**Credentials / secrets (Drafts 1, 2, 3, 4, 6).** Removed the tracked Android
+release keystore (`Android/robloxAndroidPK_DO_NOT_DELETE`) and all three
+machine-specific `local.properties` files with `git rm`; replaced the committed
+Fabric/Crashlytics `apiSecret` with a value-free template; changed
+`Android/NativeShell/build.gradle` to take release-signing credentials from
+`ROBLOX_RELEASE_*` environment variables and the NDK from `ANDROID_NDK_HOME`/`PATH`;
+added `.gitignore` entries for keystores, `local.properties`, `signing.properties`
+and `crashlytics.local.properties`; added `signing.properties.example` with
+configuration instructions. **The old keystore, its passwords and the old
+`apiSecret` remain in Git history and must still be rotated/revoked by the
+repository owner — deleting a file is not a rotation.**
+
+Android logging now uses `HttpAgent.safeUrlForLog()` (scheme/host/path only),
+`HttpResponse.toString()` emits metadata only, cookie managers no longer print
+`Set-Cookie` values, and social/signup/video/test logging no longer emits
+auth material. `InfluxBuilderV2` now requires an `https://` endpoint, URL-encodes
+the database name, and sends credentials as an HTTP `Basic` `Authorization`
+header instead of `&u=`/`&p=` query parameters. App settings and ephemeral
+counter URLs moved to HTTPS; `AndroidAppSettings` rejects any response whose
+`url()` is not HTTPS, and `HttpAgent` rejects HTTPS→HTTP redirects.
+
+**Cryptography, input validation, WebView (CSV weak-crypto / zip-slip / ReDoS /
+untrusted-JS rows).** `ConfigEncryption` replaced deterministic MD5/DES with
+per-installation random-key AES-256-CBC + HMAC-SHA256, random IV, versioned
+payload and fail-closed legacy rejection. `XAPKManager` caps entry count/bytes,
+checks canonical containment and rejects unsafe names. `FragmentChangePassword`
+uses linear digit validation instead of a quadratic regex. `RobloxWebFragment`
+now binds the JS interface only for exact trusted HTTPS URLs (and re-syncs it on
+navigation/page load), restricts file/content access, disables WebView debugging
+outside internal builds, and passes `parseEvents()` data through
+`JSONArray`/`JSONObject.quote`. `AndroidManifest.xml` sets `allowBackup=false`,
+explicit `android:exported` on every listed component and the missing Amazon
+`NOTIFY` permission.
+
+**Native / C++ (Drafts 7, 8, 11; CSV command/path injection).**
+`App/util/Shared/HttpPlatformImpl.cpp` now requires TLS 1.2, verifies the
+peer and hostname, limits initial URLs and redirects to HTTP(S), disables
+cross-host auth forwarding, supports an optional `HttpCurlCAInfo` CA bundle,
+logs cookie counts instead of values, and redacts bodies/sensitive headers from
+the libcurl debug callback. `ClientShared/Mac/CookiesEngine.cpp` replaced
+`system("mkdir -p %s")` with a recursive `::mkdir(..., 0700)`.
+`Win/LogManager.cpp` bounds every `CrashReportControls` copy.
+`Network/Server.cpp` filters/bounds IPv4 host strings in `RBX_STUDIO_BUILD` and
+gives the `SocketDescriptor` array a correct array deleter.
+`WindowsClient/RobloxGoldenHashPatcher/main.cpp` replaced four `system()` calls
+with quoted `CreateProcessA()` (non-Windows path fails closed).
+`Installer/nproblox/roblox_adapter.cpp` now requires an explicit destination
+size for `Str2Wc`/`Wc2Str`, bounds error-message copies and frees returned BSTRs;
+`Installer/npShared/RobloxNPPlugin.cpp` bounds/caps all NPVariant string copies
+(the old `UTF8_LENGTH + 1` overflowed to zero for `UINT32_MAX`), zero-initializes
+its output buffers, checks `memalloc()` results, and no longer logs authentication
+tickets, auth URLs or key values. `CMakeLists.txt` drops the stale
+`$<TARGET_OBJECTS:Log>` (Draft 7).
+
+**Distributed test rig (CSV `cs/command-line-injection`, `cs/path-injection`).**
+New `Roblox.Test/Rig/RigSecurity.cs` validates deployment directories,
+executable paths, arguments, test/output names and machine names, and adds a
+WCF `ServiceAuthorizationManager` that accepts loopback callers only unless
+`ROBLOX_TEST_RIG_TOKEN` is set (then a constant-time-compared
+`X-Roblox-Test-Token` header is required, injected client-side by an
+`IEndpointBehavior`). `Service.cs`/`Program.cs` use those validators, kill only
+processes the rig registered, and parameterize the `ClientPerf` INSERT with
+whitelisted column identifiers. `App.config` disables HTTP-GET metadata and the
+`mex` endpoint, and documents the transport limitation.
+
+**Workflows (CSV token-permission / pinned-action rows).** All eight workflows
+now declare least-privilege `permissions` blocks, use `persist-credentials: false`
+where applicable, and pin every third-party action to a full 40-character commit
+SHA (all 14 SHAs were verified as real commits via the GitHub API). `sync.yml`
+passes `CODEBERG_PAT` as an `http.extraheader` Basic credential instead of
+embedding it in the remote URL. `docs-deploy.yml` (Draft 9) chowns `_site` after
+the root-owned Jekyll container and pins the Pages/Jekyll/Docusaurus toolchain.
+
+**Docs / small first-party files.** `RobloxMac/Resources/*.html|htm` no longer
+load jQuery 1.4.2 / jQuery UI over plaintext HTTP or embed a hardcoded auth
+ticket; they use plain DOM and HTTPS endpoints. Android asset HTML `http://`
+URLs were switched to HTTPS. `RobloxMobileTest/Appium/POM/Gemfile` now uses
+`https://rubygems.org`. `RobloxHybrid/src/common/events.js` and the tracked
+`RobloxHybrid/RobloxHybrid.js` bundle iterate a listener snapshot (Draft 11) —
+fixing the reproduced `listener is not a function` crash in both source and
+shipped bundle.
+
+### 12.3 Website dependency audit (Draft 10)
+
+Command run in `website/` after `npm ci`:
+
+```
+npm audit --json          # also: npm audit --package-lock-only --json
+```
+
+Before: **38 findings — 17 critical, 5 high, 11 moderate, 5 low** (the nine
+CSV rows are `CVE-2026-104844`, `CVE-2026-104849`, `CVE-2026-104848`,
+`CVE-2026-103923`, `CVE-2026-93687`, `CVE-2026-93748`, `CVE-2026-41907`,
+`CVE-2026-34043`, `GHSA-5c6j-r48x-rmvq`). A temp-directory
+`npm audit fix --force --package-lock-only` reached only 28 findings, so the
+forced fix was **not** applied to the repository.
+
+Fix: `website/package.json` gained npm `overrides` pinning the patched
+transitive releases and `website/package-lock.json` was regenerated from them:
+`tinypool 2.2.0`, `serialize-javascript 7.1.4`, `dompurify 3.4.17`,
+`mermaid 12.2.0`, `katex 0.19.1`, `postcss-selector-parser 7.1.7`,
+`qs 6.17.1`, `body-parser 1.20.9`, `follow-redirects 1.16.2`,
+`joi 17.13.9`, `launch-editor 2.14.2`, `fast-uri 3.1.9`, `minimatch 11.0.1`,
+and `sockjs`'s `uuid 11.1.1`. No stable Docusaurus 3.x release fixes these
+transitive advisories, so overrides are the only non-breaking option;
+`website/README.md` documents this and warns against `npm audit fix --force`.
+
+After: **`npm audit` reports 5 findings — 0 critical, 0 high, 0 moderate, 5 low.**
+**Residual risk rationale:** all five are one chain,
+`deepmerge` → `@svgr/plugin-svgo` → `@svgr/webpack` →
+`@docusaurus/plugin-svgr` → `@docusaurus/preset-classic`. The `deepmerge`
+prototype-poisoning advisory covers `>=4.2.0 <=4.3.1` and **4.3.1 is the newest
+published version**, so no patched release exists to pin. The affected code
+processes only this repository's own SVG assets during the static site build and
+never receives untrusted input; there is no Node.js runtime on GitHub Pages.
+A second documented compatibility note: `minimatch` 11 exposes named CommonJS
+exports rather than a callable default, and `serve-handler` still calls
+`require('minimatch')` as a function in its optional `rewrites`/`redirects`/
+`headers` paths. This site configures none of those; `npm run build`,
+`npm start` and `npm run serve` were smoke-tested with the override. If custom
+serve rules are ever added, replace `docusaurus serve` with a maintained static
+server (or accept the two moderate `minimatch`/`serve-handler` advisories).
+
+### 12.4 Verification performed
+
+- `npm ci`, `npm audit --json` and `npm run build` in `website/` — all passed;
+  `docusaurus build` compiled client and server successfully. `npm run serve`
+  returned HTTP 200 for the published `/R2K16/docs/` path.
+- `g++ -std=c++11 -fsyntax-only` on `WindowsClient/RobloxGoldenHashPatcher/main.cpp`
+  both unmodified (non-Windows stub) and with `-D_WIN32` plus a minimal
+  `windows.h` stub — **exit 0** on both paths.
+- `g++ -std=c++11 -fsyntax-only -Duint32=uint32_t` on
+  `Installer/npShared/RobloxNPPlugin.cpp` — **exit 0**; the unmodified baseline
+  fails the same command (missing `<cstring>` and other errors).
+- `g++ -std=c++11 -fsyntax-only` with minimal COM stubs on
+  `Installer/nproblox/roblox_adapter.cpp` — **exit 0**; the baseline produces 7
+  errors under the same stubs.
+- Tree-sitter parse comparison (modified vs. `HEAD`) over every changed
+  Java/C#/C++/HTML/JS file: **no new parse errors** except
+  `HttpPlatformImpl.cpp` 19→20, which is the added
+  `DYNAMIC_FASTSTRINGVARIABLE(HttpCurlCAInfo, "")` macro line — the same
+  macro-without-semicolon artifact that already produces the 19 baseline nodes.
+  `RigSecurity.cs` parses with 0 errors.
+- `node --check` on `RobloxHybrid/src/common/events.js` and
+  `RobloxHybrid/RobloxHybrid.js`; a Node harness loaded the shipped `Events`
+  module, self-unsubscribed the first listener and confirmed both listeners
+  were delivered.
+- `git diff --check` clean; XML parse OK for `AndroidManifest.xml`,
+  `Roblox.Test/Rig/App.config`, `Roblox.Test/Rig/Roblox.Test.csproj`; YAML parse
+  OK for all 8 workflows; JSON parse OK for `website/package.json`,
+  `website/package-lock.json`, `RobloxHybrid/docs/conf.json`.
+- All pinned action SHAs verified against their repositories' commit endpoints;
+  `actions/jekyll-build-pages`'s `destination` input confirmed from its
+  `action.yml`.
+
+### 12.5 Coverage limitations (unchanged from earlier drafts)
+
+No JDK/Android SDK/NDK, .NET/MSBuild, MSVC, Xcode, CMake, Ruby or Jekyll build
+was run in this environment; the Java, C# and platform-specific C++ edits are
+uncompiled on their real toolchains (only the stub/syntax checks above apply).
+No Semgrep scan or hosted workflow run was executed. **The committed keystore,
+its passwords and the Crashlytics `apiSecret` are still present in Git history
+and require owner-side rotation/revocation.** The broad heuristic secret scan
+from the earlier pass timed out, so this is not a claim that no other secrets
+exist. `Library/`, `boostlibs/`, `QTitanRibbon/`, generated `docs/out/` output
+and tracked binaries were deliberately left untouched (12.1). Earlier notes on
+the unavailable hosted MSVC/Pages stderr and the code-scanning metadata API 403
+still apply.

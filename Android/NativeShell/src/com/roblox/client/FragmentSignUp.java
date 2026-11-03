@@ -1026,7 +1026,8 @@ public class FragmentSignUp extends DialogFragment implements NotificationManage
             Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "FSU.fireSignupFailure()");
             Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     status:" + result.status);
             Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     action:" + result.reportingAction);
-            Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     url:" + result.url);
+            // Signup URLs can carry query parameters; strip them before logging.
+            Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     url:" + HttpAgent.safeUrlForLog(result.url));
             Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     code:" + result.code);
             Log.e(com.roblox.client.signup.SignUpAsyncTask.TAG, "     message:" + result.message);
 

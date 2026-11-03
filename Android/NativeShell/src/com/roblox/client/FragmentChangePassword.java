@@ -31,9 +31,6 @@ import com.roblox.client.managers.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class FragmentChangePassword extends DialogFragment {
     private String TAG = "FragmentChangePassword";
 
@@ -277,9 +274,10 @@ public class FragmentChangePassword extends DialogFragment {
             }
                 return true;
         } else {
-            Pattern p = Pattern.compile(".*[0-9].*[0-9].*");
-            Matcher m = p.matcher(userNewPassword);
-            boolean matches = m.matches();
+            // Linear scan instead of ".*[0-9].*[0-9].*": that pattern has
+            // overlapping unbounded wildcards and can backtrack quadratically
+            // on long input, allowing a remote/user-supplied string to hang the UI.
+            boolean matches = hasAtLeastTwoDigits(userNewPassword);
 
             if (userNewPassword.length() < 4) {
                 if (showErrorNewPass)
@@ -300,6 +298,21 @@ public class FragmentChangePassword extends DialogFragment {
                 return true;
         }
 
+        return false;
+    }
+
+    /** Equivalent to the old ".*[0-9].*[0-9].*" check, but O(n) and non-backtracking. */
+    private static boolean hasAtLeastTwoDigits(String value) {
+        if (value == null) {
+            return false;
+        }
+        int digits = 0;
+        for (int i = 0; i < value.length(); ++i) {
+            char c = value.charAt(i);
+            if (c >= '0' && c <= '9' && ++digits >= 2) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -4,19 +4,25 @@
 # To use this workflow, you will need to set up a .github/labeler.yml
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
+#
+# pull_request_target is intentional (the job needs write permission), but the
+# action is pinned to a full commit SHA and the job never checks out or executes
+# code from the pull request. Permissions are the minimum required.
 
 name: Labeler
 on: [pull_request_target]
 
+permissions:
+  contents: read
+
 jobs:
   label:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
 
     steps:
-    - uses: actions/labeler@v4
+    - uses: actions/labeler@ac9175f8a1f3625fd0d4fb234536d26811351594 # v4
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"

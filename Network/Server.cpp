@@ -1,5 +1,7 @@
 /* Copyright 2003-2006 ROBLOX Corporation, All Rights Reserved */
 
+#include <string.h>
+
 #include "Server.h"
 
 #include "Network/API.h"
@@ -53,6 +55,15 @@ DYNAMIC_FASTFLAGVARIABLE(CloudEditCheckClientPresent, false)
 using namespace RBX;
 using namespace Network;
 using namespace RakNet;
+
+#ifdef RBX_STUDIO_BUILD
+// boost::shared_ptr created from new[] needs an array deleter; a plain
+// shared_ptr would call scalar delete. Used by the studio-only bind path.
+static void deleteSocketDescriptorArray(RakNet::SocketDescriptor* descriptors)
+{
+    delete[] descriptors;
+}
+#endif
 
 const char* const Network::sServer = "NetworkServer";
 
@@ -264,13 +275,29 @@ void Server::start(int port, int threadSleepTime)
     std::vector<std::string> addresses;
     
 #ifdef RBX_STUDIO_BUILD
-    addresses = Server::getAllIPv4Addresses();
-    shared_ptr<RakNet::SocketDescriptor> sdArray(new RakNet::SocketDescriptor[addresses.size()]);
+    // RakNet's SocketDescriptor has a fixed hostAddress[32]. Unbounded strcpy()
+    // here could overflow it if an interface name/address were ever longer than
+    // expected. Filter to addresses that fit and copy with an explicit bound.
+    const size_t maxHostAddressLength = sizeof(((RakNet::SocketDescriptor*)0)->hostAddress) - 1;
+    std::vector<std::string> allAddresses = Server::getAllIPv4Addresses();
+    addresses.clear();
+    for (size_t i = 0; i < allAddresses.size(); ++i)
+    {
+        if (!allAddresses[i].empty() && allAddresses[i].size() <= maxHostAddressLength)
+            addresses.push_back(allAddresses[i]);
+    }
+
+    // The array is allocated with new[]: a plain shared_ptr would call scalar
+    // delete on it. Supply an array deleter (and keep the hostAddress bounds
+    // above) so the studio-only bind path has defined behaviour.
+    shared_ptr<RakNet::SocketDescriptor> sdArray(
+        new RakNet::SocketDescriptor[addresses.size()], &deleteSocketDescriptorArray);
         
     for (unsigned int i = 0; i < addresses.size(); i++)
     {
         sdArray.get()[i].port = port;
-        strcpy(sdArray.get()[i].hostAddress, addresses[i].c_str());
+        strncpy(sdArray.get()[i].hostAddress, addresses[i].c_str(), maxHostAddressLength);
+        sdArray.get()[i].hostAddress[maxHostAddressLength] = '\0';
     }
         
     res = rakPeer->rawPeer()->Startup(maxClients, sdArray.get(), addresses.size());

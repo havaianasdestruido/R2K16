@@ -38,7 +38,32 @@ public class HttpAgent {
 		public String header;
 		public String value;
 	}
-	
+
+	/**
+	 * URLs in this client can carry credentials in the query string (login,
+	 * Influx telemetry, app settings apiKey). Never put a full URL in logcat:
+	 * keep only scheme://host/path so diagnostics remain useful without
+	 * leaking passwords, session cookies or API keys.
+	 */
+	public static String safeUrlForLog(String url) {
+		if (url == null) {
+			return "";
+		}
+		try {
+			URL parsed = new URL(url);
+			StringBuilder sb = new StringBuilder();
+			sb.append(parsed.getProtocol()).append("://").append(parsed.getHost());
+			if (parsed.getPort() != -1) {
+				sb.append(':').append(parsed.getPort());
+			}
+			sb.append(parsed.getPath());
+			return sb.toString();
+		} catch (Exception e) {
+			// Unparseable input: do not echo it, it may itself contain a secret.
+			return "<invalid-url>";
+		}
+	}
+
 	static public void onCreate(Context context) {
         CookieSyncManager.createInstance(context);
         CookieManager.getInstance().setAcceptCookie(true);       
@@ -109,6 +134,23 @@ public class HttpAgent {
 		}
 
 		int status = httpConnection.getResponseCode();
+
+		// HttpURLConnection follows same-protocol redirects automatically but
+		// leaves a protocol-changing (HTTPS -> HTTP) 3xx response unfollowed.
+		// Inspect that Location before any caller reads the body: otherwise a
+		// caller that treats a 3xx as successful could be redirected to
+		// cleartext and expose credentials/configuration to an on-path attacker.
+		if ("https".equalsIgnoreCase(urlObj.getProtocol())
+				&& status >= 300 && status < 400) {
+			String location = httpConnection.getHeaderField("Location");
+			if (location != null) {
+				URL redirectTarget = new URL(urlObj, location);
+				if (!"https".equalsIgnoreCase(redirectTarget.getProtocol())) {
+					httpConnection.disconnect();
+					throw new IOException("Refusing cleartext redirect from HTTPS URL");
+				}
+			}
+		}
 		if(status == 403 && XSRF_ERROR_MESSAGE.equals(httpConnection.getResponseMessage())){
 			// If the status code is 403 (XSRF Token Validation Failed),
 			// the request should be reposted with the new token provided in the response
@@ -128,7 +170,7 @@ public class HttpAgent {
 
         if( status != 200 ) {
             Log.i(TAG, "User-Agent:" + httpConnection.getRequestProperty("User-Agent"));
-            Log.i(TAG, "URL:" + url);
+            Log.i(TAG, "URL:" + safeUrlForLog(url));
             Log.i(TAG, "HTTP Status:" + status);
         }
         else
@@ -161,12 +203,12 @@ public class HttpAgent {
             response.setResponseBody(baos);
 
 		} catch (IOException e) {
+            // POST bodies contain URL-encoded passwords, auth tickets and social
+            // login signatures. Log only safe metadata, never the body or the
+            // credential-bearing query string.
             Log.i(TAG, "readUrlToBytes:" + e.toString() );
-            Log.i(TAG, "url:" + url );
-            if( post != null )
-            {
-                Log.i(TAG, "post:" + post );
-            }
+            Log.i(TAG, "url:" + safeUrlForLog(url) );
+            Log.i(TAG, "method:" + (post != null ? "POST" : "GET") );
 			try {
 				// If there wasn't an input stream, there's a good chance there's an error stream
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
