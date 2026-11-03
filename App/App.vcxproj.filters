@@ -1457,6 +1457,9 @@
     <ClCompile Include="v8datamodel\Light.cpp">
       <Filter>Source Files\V8DataModel Source</Filter>
     </ClCompile>
+    <ClCompile Include="v8datamodel\PostEffect.cpp">
+      <Filter>Source Files\V8DataModel Source</Filter>
+    </ClCompile>
     <ClCompile Include="v8datamodel\LoginService.cpp">
       <Filter>Source Files\V8DataModel Source</Filter>
     </ClCompile>
@@ -3347,6 +3350,9 @@
       <Filter>Header Files\V8DataModel Header</Filter>
     </ClInclude>
     <ClInclude Include="include\v8datamodel\Light.h">
+      <Filter>Header Files\V8DataModel Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\v8datamodel\PostEffect.h">
       <Filter>Header Files\V8DataModel Header</Filter>
     </ClInclude>
     <ClInclude Include="include\v8datamodel\LoginService.h">

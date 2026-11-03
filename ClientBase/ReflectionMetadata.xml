@@ -4103,6 +4103,39 @@
     </Item>
     <Item class="ReflectionMetadataClass">
       <Properties>
+        <string name="Name">PostEffect</string>
+        <string name="summary">Abstract base class for post-processing effects. Post effects change how the world looks after it has been rendered; they do not affect GuiObjects. Parent to Lighting or to the current Camera to apply.</string>
+        <bool name="Browsable">false</bool>
+        <string name="ExplorerOrder">3</string>
+        <string name="ExplorerImageIndex">81</string>
+      </Properties>
+      <Item class="ReflectionMetadataProperties">
+        <Item class="ReflectionMetadataMember">
+          <Properties>
+            <string name="Name">Enabled</string>
+            <string name="summary">Toggles whether or not the post-processing effect is enabled.</string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+    <Item class="ReflectionMetadataClass">
+      <Properties>
+        <string name="Name">BlurEffect</string>
+        <string name="summary">Applies a Gaussian blur to the entire rendered game world</string>
+        <string name="ExplorerOrder">3</string>
+        <string name="ExplorerImageIndex">81</string>
+      </Properties>
+      <Item class="ReflectionMetadataProperties">
+        <Item class="ReflectionMetadataMember">
+          <Properties>
+            <string name="Name">Size</string>
+            <string name="summary">Determines the blur radius, measured in pixels. Range is 0 to 56.</string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+    <Item class="ReflectionMetadataClass">
+      <Properties>
         <string name="Name">RemoteFunction</string>
         <string name="summary">Allow functions defined in one script to be called by another script across client/server boundary</string>
         <string name="ExplorerOrder">4</string>

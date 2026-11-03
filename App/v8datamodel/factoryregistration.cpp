@@ -165,6 +165,7 @@
 #include "V8DataModel/MegaCluster.h"
 #include "V8DataModel/Bindable.h"
 #include "V8DataModel/Light.h"
+#include "V8DataModel/PostEffect.h"
 #include "V8DataModel/Remote.h"
 #include "V8DataModel/PartOperation.h"
 #include "V8DataModel/PartOperationAsset.h"
@@ -547,6 +548,8 @@ RBX_REGISTER_CLASS(Light);
 RBX_REGISTER_CLASS(PointLight);
 RBX_REGISTER_CLASS(SpotLight);
 RBX_REGISTER_CLASS(SurfaceLight);
+RBX_REGISTER_CLASS(PostEffect);
+RBX_REGISTER_CLASS(BlurEffect);
 RBX_REGISTER_CLASS(LoginService);
 RBX_REGISTER_CLASS(ReplicatedStorage);
 RBX_REGISTER_CLASS(RobloxReplicatedStorage);

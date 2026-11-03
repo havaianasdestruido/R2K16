@@ -164,6 +164,7 @@
     <ClCompile Include="StatsServiceTest.cpp" />
     <ClCompile Include="StreamRegionTest.cpp" />
     <ClCompile Include="ThreadPoolTest.cpp" />
+    <ClCompile Include="PostEffectTest.cpp" />
     <ClCompile Include="ToolTest.cpp" />
     <ClCompile Include="URLParserTest.cpp" />
     <ClCompile Include="VoxelCellUtilTest.cpp" />

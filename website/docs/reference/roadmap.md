@@ -40,6 +40,8 @@ done in the current tree.
 
 ## Graphics & rendering
 
+- [ ] Post-processing effects — [x] `BlurEffect` (incl. the `PostEffect` base class);
+      `BloomEffect`, `ColorCorrectionEffect`, `SunRaysEffect` still to go
 - [ ] Modern graphics pipeline (DirectX 12 / Vulkan)
 - [ ] Real-time ray tracing capabilities
 - [ ] Enhanced particle effects system

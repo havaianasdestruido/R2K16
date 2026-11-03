@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "v8datamodel/lighting.h"
+#include "v8datamodel/PostEffect.h"
 #include "v8datamodel/sky.h"
 
 #include "Util/RobloxGoogleAnalytics.h"
@@ -168,7 +169,8 @@ void Lighting::setGeographicLatitude(float value)
 
 bool Lighting::askAddChild(const Instance* instance) const
 {
-	return Instance::fastDynamicCast<Sky>(instance)!=0;
+	return Instance::fastDynamicCast<Sky>(instance)!=0
+		|| Instance::fastDynamicCast<PostEffect>(instance)!=0;
 }
 
 void Lighting::fireLightingChanged(bool skyboxChanged)
