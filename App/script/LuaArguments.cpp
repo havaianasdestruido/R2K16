@@ -337,6 +337,8 @@ bool LuaArguments::getRec(lua_State *L, int luaIndex, Reflection::Variant& value
 				return true;
 			if (Color3Bridge::getValue(L, luaIndex, value))
 				return true;
+			if (Color3uint8Bridge::getValue(L, luaIndex, value))
+				return true;
 			if (BrickColorBridge::getValue(L, luaIndex, value))
 				return true;
 			if (UDimBridge::getValue(L, luaIndex, value))

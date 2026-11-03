@@ -3,6 +3,7 @@
 #include "Lua/LuaBridge.h"
 #include "util/G3DCore.h"
 #include "g3d/Color3.h"
+#include "g3d/Color3uint8.h"
 #include "g3d/CoordinateFrame.h"
 #include "g3d/Vector3.h"
 #include "g3d/Vector3int16.h"
@@ -235,6 +236,18 @@ namespace RBX { namespace Lua {
 	private:
 		static int newColor3(lua_State *L);
 		static int newRGBColor3(lua_State *L);
+		static const luaL_reg classLibrary[];
+	};
+
+	class Color3uint8Bridge : public Bridge<G3D::Color3uint8>
+	{
+		friend class Bridge< G3D::Color3uint8 >;
+	public:
+		static void registerClassLibrary (lua_State *L);
+		static void pushColor3uint8(lua_State *L, const G3D::Color3uint8& color);
+
+	private:
+		static int newRGBColor3uint8(lua_State *L);
 		static const luaL_reg classLibrary[];
 	};
 

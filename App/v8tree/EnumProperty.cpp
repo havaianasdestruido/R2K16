@@ -1633,6 +1633,13 @@ const Type& Type::getSingleton<G3D::Color3>()
 }
 
 template<>
+const Type& Type::getSingleton<G3D::Color3uint8>()
+{
+	static TType<G3D::Color3uint8> type("Color3uint8", "Color3uint8");
+	return type;
+}
+
+template<>
 int TypedPropertyDescriptor<G3D::Color3>::getDataSize(const DescribedBase* instance) const 
 {
     return sizeof(G3D::Color3);
