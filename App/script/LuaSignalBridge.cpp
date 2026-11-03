@@ -77,6 +77,10 @@ class FunctionScriptSlot
 {
 	typedef Reflection::TGenericSlotWrapper<FunctionScriptSlot> WrapperType;
     const Reflection::EventDescriptor* descriptor;
+	// When non-NULL the slot only fires for this property. Set by GetPropertyChangedSignal,
+	// which hands out a fake "Changed" signal. The descriptor argument is consumed here so
+	// that the Lua handler is called without arguments.
+	const Reflection::PropertyDescriptor* propertyFilter;
 	ScriptContext& context;
 	WeakFunctionRef function;
 	WeakThreadRef cachedSlotThread;		// cached thread to be re-used if available
@@ -86,8 +90,9 @@ class FunctionScriptSlot
 	weak_ptr<DataModel> weakDm;
 public:
 
-    FunctionScriptSlot(const Reflection::EventDescriptor* descriptor, lua_State* thread, int functionIndex, bool useSubmitTask)
+    FunctionScriptSlot(const Reflection::EventDescriptor* descriptor, const Reflection::PropertyDescriptor* propertyFilter, lua_State* thread, int functionIndex, bool useSubmitTask)
     : descriptor(descriptor)
+	, propertyFilter(propertyFilter)
 	, context(ScriptContext::getContext(thread))
 	, function(thread, functionIndex)
 	, executionDepth(0)
@@ -104,8 +109,26 @@ public:
 		this->weakSelf = weakSelf;
 	}
 
+	// Returns false if this notification is for a different property than the one
+	// requested through GetPropertyChangedSignal
+	bool acceptsArguments(const Reflection::EventArguments& arguments) const
+	{
+		if (!propertyFilter)
+			return true;
+
+		// "Changed" passes the Reflection::PropertyDescriptor* that was modified
+		if (arguments.size() != 1)
+			return false;
+
+		const Reflection::PropertyDescriptor* const * changedProperty = arguments[0].tryCast<const Reflection::PropertyDescriptor*>();
+		return changedProperty && *changedProperty == propertyFilter;
+	}
+
 	void operator()(const Reflection::EventArguments& arguments)
 	{
+		if (!acceptsArguments(arguments))
+			return;
+
 		if (useSubmitTask)
 		{
 			if (shared_ptr<DataModel> dm = weakDm.lock())
@@ -191,8 +214,9 @@ public:
 				// Push the function onto the stack
 				lua_pushfunction(slotThread, function);
 
-				// Push arguments onto slotThread's stack
-				const int nargs = LuaArguments::pushValues(arguments, slotThread);
+				// Push arguments onto slotThread's stack. GetPropertyChangedSignal signals
+				// don't forward the property descriptor; handlers are called with no arguments.
+				const int nargs = propertyFilter ? 0 : LuaArguments::pushValues(arguments, slotThread);
 
 				// resume slotThread
 				const ScriptContext::Result result = context.resume(slotThread, nargs);
@@ -256,10 +280,14 @@ class WaitScriptSlot
 	bool useSubmitTask;
 	weak_ptr<DataModel> weakDm;
 	weak_ptr<WrapperType> weakSelf;
+	// Non-NULL for signals produced by GetPropertyChangedSignal. The wait keeps going until
+	// the requested property (and not just any property) is changed.
+	const Reflection::PropertyDescriptor* propertyFilter;
 public:
-	WaitScriptSlot(lua_State* thread, bool useSubmitTask)
+	WaitScriptSlot(lua_State* thread, bool useSubmitTask, const Reflection::PropertyDescriptor* propertyFilter)
 		:waitThread(thread)
 		,useSubmitTask(useSubmitTask)
+		,propertyFilter(propertyFilter)
 	{
 		if (useSubmitTask)
 		{
@@ -272,8 +300,23 @@ public:
 		this->weakSelf = weakSelf;
 	}
 
+	bool acceptsArguments(const Reflection::EventArguments& arguments) const
+	{
+		if (!propertyFilter)
+			return true;
+
+		if (arguments.size() != 1)
+			return false;
+
+		const Reflection::PropertyDescriptor* const * changedProperty = arguments[0].tryCast<const Reflection::PropertyDescriptor*>();
+		return changedProperty && *changedProperty == propertyFilter;
+	}
+
 	void operator()(const Reflection::EventArguments& arguments)
 	{
+		if (!acceptsArguments(arguments))
+			return;
+
 		// Waits are one-shots, so disconnect now
 		disconnect();
 		if (useSubmitTask)
@@ -303,8 +346,8 @@ public:
 	{
 		if (ThreadRef thread = waitThread.lock())
 		{
-			// Push arguments onto slotThread's stack
-			const int nargs = LuaArguments::pushValues(arguments, thread);
+			// Push arguments onto slotThread's stack (filtered signals carry no arguments)
+			const int nargs = propertyFilter ? 0 : LuaArguments::pushValues(arguments, thread);
 
 			// resume the waiting thread
 			ScriptContext::getContext(thread).resume(thread, nargs);
@@ -341,7 +384,7 @@ int EventBridge::connect(lua_State *L)
 		bool useSubmitTask = DFFlag::UseSubmitTaskWhenFiringSignalsOnSettings && source->useSubmitTaskForLuaListeners();
 
 		shared_ptr< RBX::Reflection::TGenericSlotWrapper<FunctionScriptSlot> > wrapper(
-			rbx::make_shared< RBX::Reflection::TGenericSlotWrapper<FunctionScriptSlot> >(FunctionScriptSlot(ei.descriptor, L, 2, useSubmitTask))
+			rbx::make_shared< RBX::Reflection::TGenericSlotWrapper<FunctionScriptSlot> >(FunctionScriptSlot(ei.descriptor, ei.propertyFilter, L, 2, useSubmitTask))
 		);
 		if (useSubmitTask)
 		{
@@ -372,7 +415,7 @@ int EventBridge::wait(lua_State *L)
 			bool useSubmitTask = DFFlag::UseSubmitTaskWhenFiringSignalsOnSettings && source->useSubmitTaskForLuaListeners();
 
 			shared_ptr<RBX::Reflection::TGenericSlotWrapper<WaitScriptSlot> > wrapper(
-				rbx::make_shared< RBX::Reflection::TGenericSlotWrapper<WaitScriptSlot> >(WaitScriptSlot(L, useSubmitTask))
+				rbx::make_shared< RBX::Reflection::TGenericSlotWrapper<WaitScriptSlot> >(WaitScriptSlot(L, useSubmitTask, ei.propertyFilter))
 			);
 			if (useSubmitTask)
 			{
@@ -430,7 +473,19 @@ int SignalConnectionBridge::disconnect(lua_State *L) {
 		int Bridge<EventInstance>::on_tostring(const EventInstance& object, lua_State *L)
 		{
 			std::string s = "Signal ";
-			s += object.descriptor->name.toString();
+			if (object.propertyFilter)
+			{
+				// Signals from GetPropertyChangedSignal aren't real reflected events, so make
+				// them distinguishable from the plain "Changed" event when printed.
+				s += object.descriptor->name.toString();
+				s += " (";
+				s += object.propertyFilter->name.toString();
+				s += ")";
+			}
+			else
+			{
+				s += object.descriptor->name.toString();
+			}
 			lua_pushstring(L, s);
 			return 1;
 		}

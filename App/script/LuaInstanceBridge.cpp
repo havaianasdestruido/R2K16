@@ -428,7 +428,7 @@ namespace RBX { namespace Lua {
 			if (object->getRobloxLocked())
 				securityContext.requirePermission(RBX::Security::Plugin, name);
 
-			EventInstance evt = { signal, object };
+			EventInstance evt(signal, object);
 			EventBridge::pushNewObject(L, evt);
 			return 1;
 		}
