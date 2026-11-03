@@ -139,7 +139,8 @@ Microsoft::Xbox::GameChat::ChatUser^ ChatClient::AddUserToChatChannel(
 
         // Check for an existing ChatUser to use
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
         {
             if (StringUtils::IsStringEqualCaseInsenstive(chatUser->User->XboxUserId, user->XboxUserId) )
             {
@@ -525,7 +526,8 @@ Windows::Foundation::Collections::IVectorView<unsigned int>^ ChatClient::GetAllU
     if( chatManager != nullptr )
     {
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
         {
             if( chatManager->OnCompareUniqueConsoleIdentifiersHandler(chatUser->UniqueConsoleIdentifier, uniqueConsoleIdentifier) )
             {
@@ -832,7 +834,8 @@ void ChatClient::LogCommentWithError(
 void ChatClient::ClearTalkingModeForAllChatUsers()
 {
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         chatUser->SetTalkingMode(ChatUserTalkingMode::NotTalking);
     }
@@ -905,7 +908,8 @@ bool ChatClient::DoesRemoteUniqueConsoleIdentifierExist(
         chatManager != nullptr )
     {
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
         {
             if( chatManager->OnCompareUniqueConsoleIdentifiersHandler(chatUser->UniqueConsoleIdentifier, remoteUniqueConsoleIdentifier) )
             {

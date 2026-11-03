@@ -281,7 +281,8 @@ void ChatManager::OnRemoteUserReadyToAddHandler(
     )
 {
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         // Look at each non-user who doesn't match the XboxUserId and see if they have the same exclusive audio devices.
         // If the do, then remove them since non-shared devices aren't allowed to have more than one user
@@ -344,7 +345,8 @@ Windows::Foundation::IAsyncAction^
 
         // Find the local users connected to chat.  This list will be used to verify if a new remote user is a Favorite.
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
         {
             if (chatUser != nullptr && chatUser->IsLocal)
             {
@@ -408,7 +410,8 @@ Windows::Foundation::IAsyncAction^
                 Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::Services::Social::XboxSocialRelationship^>^ results = socialResult->Items;
 
                 // Check for our local users in the list of Favorites
-                for each(Microsoft::Xbox::Services::Social::XboxSocialRelationship^ relation in results)
+                // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                for each (const Microsoft::Xbox::Services::Social::XboxSocialRelationship^& relation in results)
                 {
                     if (StringUtils::IsStringEqualCaseInsenstive(relation->XboxUserId, remoteUser->XboxUserId))
                     {
@@ -441,10 +444,12 @@ Windows::Foundation::IAsyncAction^
                 Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::Services::UserStatistics::ServiceConfigurationStatistic^>^ values = result->ServiceConfigurationStatistics;
 
                 // Look through returned statistic values for the overall reputation
-                for each(Microsoft::Xbox::Services::UserStatistics::ServiceConfigurationStatistic^ serviceStat in values)
+                // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                for each (const Microsoft::Xbox::Services::UserStatistics::ServiceConfigurationStatistic^& serviceStat in values)
                 {
                     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::Services::UserStatistics::Statistic^>^ stats = serviceStat->Statistics;
-                    for each(Microsoft::Xbox::Services::UserStatistics::Statistic^ stat in stats)
+                    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                    for each (const Microsoft::Xbox::Services::UserStatistics::Statistic^& stat in stats)
                     {
                         if (StringUtils::IsStringEqualCaseInsenstive(stat->StatisticName, "OverallReputationIsBad") && 
                             StringUtils::IsStringEqualCaseInsenstive(stat->Value, "1"))
@@ -469,7 +474,8 @@ Windows::Foundation::IAsyncAction^
             // Since this is run async and requires multiple service calls, the user may
             // be gone or disconnected so make sure they're still a current user.
             Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-            for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+            for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
             {
                 if (chatUser && StringUtils::IsStringEqualCaseInsenstive(chatUser->XboxUserId, remoteUser->XboxUserId))
                 {
@@ -498,11 +504,13 @@ bool ChatManager::DoAudioDeviceCollectionsMatch(
         return false;
     }
 
-    for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDeviceInfo1 in audioDevices1)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDeviceInfo1 in audioDevices1)
     {
         // See audioDeviceInfo->Id is in audioDevices2
         bool found = false;
-        for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDeviceInfo2 in audioDevices2)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDeviceInfo2 in audioDevices2)
         {
             if( StringUtils::IsStringEqualCaseInsenstive(audioDeviceInfo1->Id, audioDeviceInfo2->Id) )
             {
@@ -533,14 +541,16 @@ bool ChatManager::DoesAudioDeviceCollectionsMatchExclusiveDevices(
         return false;
     }
 
-    for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDeviceInfo1 in audioDevices1)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDeviceInfo1 in audioDevices1)
     {
         bool isSharedDevice = (audioDeviceInfo1->Sharing == Windows::Xbox::System::AudioDeviceSharing::Shared);
         if( !isSharedDevice ) 
         {
             // See audioDeviceInfo1->Id is in audioDevices2
             bool found = false;
-            for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDeviceInfo2 in audioDevices2)
+            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+            for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDeviceInfo2 in audioDevices2)
             {
                 if( StringUtils::IsStringEqualCaseInsenstive(audioDeviceInfo1->Id, audioDeviceInfo2->Id) )
                 {
@@ -571,7 +581,8 @@ void ChatManager::OnRemoteUserReadyToRemoveHandler(
     {
         ChatUser^ userToRemove = nullptr;
         Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
         {
             if (chatUser != nullptr && chatUser->XboxUserId == remoteUserXuid)
             {
@@ -697,7 +708,8 @@ void ChatManager::UnmuteUserFromAllChannels( ChatUser^ chatUser )
 void ChatManager::MuteAllUsersFromAllChannels()
 {
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         if (chatUser != nullptr)
         {
@@ -713,7 +725,8 @@ void ChatManager::MuteAllUsersFromAllChannels()
 void ChatManager::UnmuteAllUsersFromAllChannels()
 {
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         if (chatUser != nullptr)
         {
@@ -745,7 +758,8 @@ void ChatManager::SendLocalUsersToRemoteConsole(
     )
 {
     Windows::Foundation::Collections::IVectorView<Microsoft::Xbox::GameChat::ChatUser^>^ chatUsers = GetChatUsers();
-    for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatUsers)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatUsers)
     {
         if (chatUser->IsLocal)
         {
@@ -766,7 +780,8 @@ Windows::Foundation::IAsyncAction^
 {
     return create_async( [this, channelIndex, users]()
     {
-        for each (Windows::Xbox::System::User^ user in users)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Windows::Xbox::System::User^& user in users)
         {
             auto asyncOp = AddLocalUserToChatChannelAsync(channelIndex, user);
             create_task(asyncOp).wait();

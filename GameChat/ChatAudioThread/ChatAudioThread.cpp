@@ -234,7 +234,8 @@ void ChatAudioThread::AudioThreadDoWork()
 
     if (chatClient != nullptr && chatNetwork != nullptr)
     {
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in chatAudioThreadState->allChatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in chatAudioThreadState->allChatUsers)
         {
             chatUser->SetTalkingMode(ChatUserTalkingMode::NotTalking);
         }
@@ -312,7 +313,8 @@ void ChatAudioThread::SetChatSessionState(
         if( m_chatManagerSettings->IsAtDiagnosticsTraceLevel(GameChatDiagnosticsTraceLevel::Info) )
         {
             LogCommentFormat( L"SetChatSessionState: Size: %d chatCaptureSourceId: %s", chatUsersVector->Size, chatCaptureSource->Id->Data() );
-            for each (ChatUser^ user in chatUsersVector)
+            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+            for each (const ChatUser^& user in chatUsersVector)
             {
                 LogCommentFormat( L"SetChatSessionState: ChatUser: 0x%0.8x XUID: %s UserId: 0x%0.8x", user, user->XboxUserId->Data(), user->User->Id );
             }
@@ -352,7 +354,8 @@ void ChatAudioThread::SetChatSessionState(
 
         Platform::String^ renderTargetId = chatRenderTarget->Id;
 
-        for each (Microsoft::Xbox::GameChat::ChatUser^ chatUser in allChatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Microsoft::Xbox::GameChat::ChatUser^& chatUser in allChatUsers)
         {
             if( !chatUser->IsLocal )
             {
@@ -360,7 +363,8 @@ void ChatAudioThread::SetChatSessionState(
             }
 
             auto audioDevices = chatUser->User->AudioDevices;
-            for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDevice in audioDevices)
+            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+            for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDevice in audioDevices)
             {
                 if( StringUtils::IsStringEqualCaseInsenstive(audioDevice->Id, renderTargetId) )
                 {
@@ -457,7 +461,8 @@ void ChatAudioThread::CaptureDataFromLocalCaptureSources(
                     IBuffer^ destBuffer = BufferUtils::BufferCopy( encodedBuffer, m_factoryCache->GetBufferFactory() );
 
                     bool isCaptureSourceMuted = false;
-                    for each (ChatUser^ user in chatAudioThreadCaptureSource->chatUsers)
+                    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                    for each (const ChatUser^& user in chatAudioThreadCaptureSource->chatUsers)
                     {
                         if( user->IsLocalUserMuted )
                         {
@@ -469,7 +474,8 @@ void ChatAudioThread::CaptureDataFromLocalCaptureSources(
                     {
                         chatAudioThreadCaptureSource->audioBufferQueue.push( destBuffer );
 
-                        for each (ChatUser^ user in chatAudioThreadCaptureSource->chatUsers)
+                        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                        for each (const ChatUser^& user in chatAudioThreadCaptureSource->chatUsers)
                         {
                             user->SetTalkingMode( chatAudioThreadCaptureSource->talkingMode );
                         }
@@ -511,7 +517,8 @@ void ChatAudioThread::CaptureDataFromLocalCaptureSources(
                         IBuffer^ destBuffer = BufferUtils::BufferCopy( encodedBuffer, m_factoryCache->GetBufferFactory() );
 
                         bool isCaptureSourceMuted = false;
-                        for each (ChatUser^ user in chatAudioThreadCaptureSource->chatUsers)
+                        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                        for each (const ChatUser^& user in chatAudioThreadCaptureSource->chatUsers)
                         {
                             if( user->IsLocalUserMuted )
                             {
@@ -523,7 +530,8 @@ void ChatAudioThread::CaptureDataFromLocalCaptureSources(
                         {
                             chatAudioThreadCaptureSource->audioBufferQueue.push( destBuffer );
 
-                            for each (ChatUser^ user in chatAudioThreadCaptureSource->chatUsers)
+                            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                            for each (const ChatUser^& user in chatAudioThreadCaptureSource->chatUsers)
                             {
                                 user->SetTalkingMode( chatAudioThreadCaptureSource->talkingMode );
                             }
@@ -634,7 +642,8 @@ void ChatAudioThread::RenderAudioToAllRenderTargets(
                                 );
 
                             // Take update any users who are associated with this remote capture source
-                            for each (ChatUser^ user in remoteCaptureSource->chatUsers)
+                            // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+                            for each (const ChatUser^& user in remoteCaptureSource->chatUsers)
                             {
                                 user->SetTalkingMode( remoteCaptureSource->talkingMode );
                                 user->SetRestrictionMode( restriction );
@@ -686,7 +695,8 @@ void ChatAudioThread::RenderAudioToAllRenderTargets(
         }
 
         // For UI & debugging only: This shows the number of pending audio packets that the render queue still has.
-        for each (ChatUser^ user in remoteCaptureSource->chatUsers)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const ChatUser^& user in remoteCaptureSource->chatUsers)
         {
             user->SetNumberOfPendingAudioPacketsToPlay( (uint32)remoteCaptureSource->jitterBuffer->GetCurrentPacketCount() );
             user->SetDynamicNeededPacketCount( (uint32)remoteCaptureSource->jitterBuffer->GetDynamicNeededPacketCount() );

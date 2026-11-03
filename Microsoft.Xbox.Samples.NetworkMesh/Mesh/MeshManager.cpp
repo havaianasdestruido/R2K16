@@ -168,7 +168,8 @@ void MeshManager::OnAutoConnectWorkerThreadDoWork( Microsoft::Xbox::Samples::Net
     // Try to connect to every outgoing connection that we are disconnected from.
     SecureDeviceAssociationTemplate^ secureDeviceAssociationTemplate = GetSecureDeviceAssociationTemplate();
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allDisconnectedConnections = GetConnectionsByType(ConnectionStatus::Disconnected);
-    for each (MeshConnection^ meshConnection in allDisconnectedConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allDisconnectedConnections)
     {
         if(meshConnection->IsInComingAssociation())
         {
@@ -237,7 +238,8 @@ void MeshManager::OnHeartbeatWorkerThreadDoWork( Microsoft::Xbox::Samples::Netwo
 
     // Send hello to all connections that need it
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allconnected = GetConnectionsByType(ConnectionStatus::Connected);
-    for each (MeshConnection^ meshConnection in allconnected)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allconnected)
     {
         //Send hello to retry handshake.
         Windows::Xbox::Networking::SecureDeviceAssociation^ association = meshConnection->GetAssociation();
@@ -252,7 +254,8 @@ void MeshManager::OnHeartbeatWorkerThreadDoWork( Microsoft::Xbox::Samples::Netwo
 
     // Send heartbeat to all connections that we have completed handshake with
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ initializedConnections = GetConnectionsByType(ConnectionStatus::PostHandshake);
-    for each (MeshConnection^ meshConnection in initializedConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in initializedConnections)
     {
         Windows::Xbox::Networking::SecureDeviceAssociation^ association = meshConnection->GetAssociation();
         if( association != nullptr )
@@ -300,7 +303,8 @@ Windows::Foundation::Collections::IVectorView<MeshConnection^>^ MeshManager::Get
     auto associationsByType = ref new Platform::Collections::Vector<MeshConnection^>();
     
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         if( meshConnection->GetConnectionStatus() == type )
         {
@@ -314,7 +318,8 @@ void MeshManager::RefreshConnections()
 {
     // First, loop through all connections and mark all connections as not found in the template
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         meshConnection->SetAssocationFoundInTemplate(false);
     }
@@ -322,7 +327,8 @@ void MeshManager::RefreshConnections()
     // Now, Loop thought template and find the each connection and mark the ones that we found
     // And take note of anything in the template that is not yet in our internal list of connections.
     Windows::Foundation::Collections::IVectorView<Windows::Xbox::Networking::SecureDeviceAssociation^>^ associations = GetSecureDeviceAssociationTemplate()->Associations;
-    for each (Windows::Xbox::Networking::SecureDeviceAssociation^ associationInTemplate in associations)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Windows::Xbox::Networking::SecureDeviceAssociation^& associationInTemplate in associations)
     {
         MeshConnection^ meshConnection = GetConnectionFromSecureDeviceAddress(associationInTemplate->RemoteSecureDeviceAddress);
         if(meshConnection != nullptr)
@@ -350,7 +356,8 @@ void MeshManager::RefreshConnections()
     // First, loop through all connections again and for anything not found in the template, disconnect from it and tell the game.
     // Get the latest list again as connections could have been deleted.
     allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         if ( meshConnection != nullptr && 
             false == meshConnection->GetAssocationFoundInTemplate() && 
@@ -441,7 +448,8 @@ MeshConnection^ MeshManager::GetConnectionFromSecureDeviceAddress(Windows::Xbox:
     }
 
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         SecureDeviceAddress^ remoteSecureDeviceAddress = meshConnection->GetSecureDeviceAddress();
         if(AreSecureDeviceAddressesEqual(remoteSecureDeviceAddress, address))
@@ -455,7 +463,8 @@ MeshConnection^ MeshManager::GetConnectionFromSecureDeviceAddress(Windows::Xbox:
 MeshConnection^ MeshManager::GetConnectionFromConsoleId(uint8 consoleId)
 {
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         uint8 meshConsoleId = meshConnection->GetConsoleId();
         if( meshConsoleId == consoleId )
@@ -539,7 +548,8 @@ void MeshManager::DisconectFromAddress( Windows::Xbox::Networking::SecureDeviceA
 void MeshManager::DestroyAndDisconnectAll()
 {
     Windows::Foundation::Collections::IVectorView<MeshConnection^>^ allConnections = GetConnections();
-    for each (MeshConnection^ meshConnection in allConnections)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const MeshConnection^& meshConnection in allConnections)
     {
         DestroyConnection(meshConnection);
     }
@@ -563,7 +573,8 @@ void MeshManager::DestroyAllTemplateAssociations()
         }
 
         LogCommentFormat(L"We have %d associations on MeshManager::Initialize", associations->Size );
-        for each (Windows::Xbox::Networking::SecureDeviceAssociation^ associationInTemplate in associations)
+        // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+        for each (const Windows::Xbox::Networking::SecureDeviceAssociation^& associationInTemplate in associations)
         {
             IAsyncAction^ asyncOp = associationInTemplate->DestroyAsync();
             create_task(asyncOp)

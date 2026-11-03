@@ -95,7 +95,8 @@ void ChatDiagnostics::TraceChatUserAndAudioDevices(
         user->AudioDevices->Size // NumAudioDevices
         );
 
-    for each (Windows::Xbox::System::IAudioDeviceInfo^ audioDeviceInfo in user->AudioDevices)
+    // ⚡ Bolt: Iterating by reference (const Type^&) avoids atomic ref-counting on WinRT objects
+    for each (const Windows::Xbox::System::IAudioDeviceInfo^& audioDeviceInfo in user->AudioDevices)
     {
         TraceChatUserAudioDevice(
             user->XboxUserId->Data(),
