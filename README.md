@@ -17,10 +17,11 @@ The project website is published to GitHub Pages at <https://havaianasdestruido.
 - **Primary webpage** (`/R2K16/`) — built with [Jekyll](https://jekyllrb.com/) from the [`site/`](site/) folder.
 - **Docs** (`/R2K16/docs/`) — built with [Docusaurus](https://docusaurus.io/) from the [`website/`](website/) folder. It covers the engine architecture, every module in the repository, build guides and reference material.
 
-Both are built and deployed together by [`.github/workflows/docs-deploy.yml`](.github/workflows/docs-deploy.yml) on every push to `main` touching `site/` or `website/` (Pages must be set to *Source: GitHub Actions* in the repository settings).
+Both are built and deployed together by [`.github/workflows/docs-deploy.yml`](.github/workflows/docs-deploy.yml) on every push to `main` (Pages must be set to *Source: GitHub Actions* in the repository settings).
 
 Run the docs locally:
 ```sh
+$ python3 -m pip install -r website/scripts/requirements.txt
 $ cd website
 $ npm install
 $ npm start

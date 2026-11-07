@@ -498,3 +498,6 @@ crashlytics.local.properties
 *.keystore
 *.p12
 Android/robloxAndroidPK_DO_NOT_DELETE
+
+# Generated code reference (rebuilt from tracked source by Python / CI)
+website/static/generated/

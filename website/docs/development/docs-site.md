@@ -11,12 +11,12 @@ The published site at `https://havaianasdestruido.github.io/R2K16/` has two part
 - **These docs** (at `/R2K16/docs/`) — built with
   [Docusaurus 3](https://docusaurus.io/), living in **`website/`**.
 
-The docs source is plain Markdown under `website/docs/` — no generated content,
-so it's easy to keep in sync with the code.
+Hand-written docs live under `website/docs/`. The [generated code reference](../reference/generated-reference) is rebuilt from tracked source by Python for local builds and deployment.
 
 ## Running locally
 
 ```bash
+python3 -m pip install -r website/scripts/requirements.txt
 cd website
 npm install     # first time only
 npm start       # dev server on http://localhost:3000 with hot reload

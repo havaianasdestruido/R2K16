@@ -99,6 +99,7 @@ const config = {
             label: 'Reference',
             position: 'left',
           },
+          { to: '/code-reference', label: 'Code reference', position: 'left' },
           {
             href: 'https://havaianasdestruido.github.io/R2K16/',
             label: 'Homepage',

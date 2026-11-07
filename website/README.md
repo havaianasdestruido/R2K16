@@ -10,6 +10,7 @@ Full codebase documentation for the R2K16 repository, built with
 ## Quick start
 
 ```bash
+python3 -m pip install -r website/scripts/requirements.txt
 cd website
 npm install
 npm start          # dev server with hot reload (http://localhost:3000)
@@ -49,7 +50,7 @@ enabled. Broken links fail the build.
 `.github/workflows/docs-deploy.yml` (repo root) builds this site **and** the
 Jekyll primary webpage ([`site/`](../site/)), merges the Docusaurus build under
 `/docs/` of the Jekyll build, and publishes the combined artifact to GitHub
-Pages on every push to `main` touching `site/**` or `website/**`. Published
+Pages on every push to `main`. Published
 URLs: `https://<user>.github.io/R2K16/` (Jekyll) and
 `https://<user>.github.io/R2K16/docs/` (these docs).
 
@@ -82,3 +83,11 @@ which this site does not configure. `npm run build`, `npm start` and
 `serve-handler` rules are ever added, either drop that override (accepting the
 two moderate `minimatch` / `serve-handler` advisories) or replace
 `docusaurus serve` with a maintained static server.
+
+## Generated code reference
+
+`npm start` and `npm run build` regenerate the source index using Python. Install
+the pinned Python requirements first. The generated files are not committed.
+The [methodology](docs/reference/generated-reference.md) describes supported
+languages, test matching, comparisons, and limitations. Run generator tests with
+`python3 -m unittest discover -s website/scripts -p "test_*.py"`.
