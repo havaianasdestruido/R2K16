@@ -4,6 +4,8 @@
   "private": true,
   "description": "Docusaurus documentation site for the R2K16 codebase (modded fork of the 2016 Roblox engine source)",
   "scripts": {
+    "generate-docs": "python3 ../scripts/generate_docs.py",
+    "prebuild": "python3 ../scripts/generate_docs.py",
     "docusaurus": "docusaurus",
     "start": "docusaurus start --host 0.0.0.0 --no-open",
     "build": "docusaurus build",

@@ -3,14 +3,14 @@
 #   https://havaianasdestruido.github.io/R2K16/        <- primary webpage (Jekyll, site/)
 #   https://havaianasdestruido.github.io/R2K16/docs/   <- documentation (Docusaurus, website/)
 #
-# The two are built separately and merged into a single Pages artifact:
-#   1. The Jekyll site in site/ is built with actions/jekyll-build-pages —
-#      the same Jekyll engine GitHub Pages itself uses for branch deploys.
-#   2. The Docusaurus site in website/ is built with baseUrl /R2K16/docs/
-#      (docs-only mode) and copied under /docs/ of the Jekyll output.
+# The documentation is generated from the codebase using Python scripts in scripts/docgen/
+# to automatically detect and document newly added functions, test cases, and platform variants.
 #
-# All third-party actions are pinned to full commit SHAs so a moved tag cannot
-# inject new code into a job that holds a Pages deployment token.
+# The two are built separately and merged into a single Pages artifact:
+#   1. Python generates the comprehensive function and test docs in website/docs/codebase/
+#   2. Docusaurus in website/ is built with baseUrl /R2K16/docs/
+#   3. Jekyll in site/ is built with actions/jekyll-build-pages
+#   4. Docusaurus output is mounted under /docs/ of the Jekyll output
 #
 # Requires Pages to be enabled in the repository settings with
 # Source: GitHub Actions.
@@ -22,6 +22,27 @@ on:
     paths:
       - "site/**"
       - "website/**"
+      - "scripts/**"
+      - "Base/**"
+      - "App/**"
+      - "Network/**"
+      - "Rendering/**"
+      - "ClientShared/**"
+      - "ClientBase/**"
+      - "CSG/**"
+      - "WindowsClient/**"
+      - "Win/**"
+      - "RobloxStudio/**"
+      - "RCCService/**"
+      - "XboxClient/**"
+      - "Roblox.RccServiceArbiter/**"
+      - "RbxTestHooks/**"
+      - "App.UnitTest/**"
+      - "Base.UnitTest/**"
+      - "RobloxTest/**"
+      - "Roblox.Test/**"
+      - "RCCService.Test/**"
+      - "tests/**"
       - ".github/workflows/docs-deploy.yml"
   workflow_dispatch:
 
@@ -44,6 +65,14 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a6004b88259ca6 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate Codebase Documentation
+        run: python3 scripts/generate_docs.py
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
