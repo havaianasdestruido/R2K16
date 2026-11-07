@@ -95,6 +95,12 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'codebase/index',
+            label: 'Codebase & Functions',
+            position: 'left',
+          },
+          {
+            type: 'doc',
             docId: 'reference/repo-map',
             label: 'Reference',
             position: 'left',
@@ -122,6 +128,7 @@ const config = {
               { label: 'Getting Started', to: '/getting-started/' },
               { label: 'Architecture', to: '/architecture/' },
               { label: 'Module Reference', to: '/modules/' },
+              { label: 'Codebase & Functions', to: '/codebase/' },
             ],
           },
           {

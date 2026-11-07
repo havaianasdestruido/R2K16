@@ -11,14 +11,17 @@ The published site at `https://havaianasdestruido.github.io/R2K16/` has two part
 - **These docs** (at `/R2K16/docs/`) — built with
   [Docusaurus 3](https://docusaurus.io/), living in **`website/`**.
 
-The docs source is plain Markdown under `website/docs/` — no generated content,
-so it's easy to keep in sync with the code.
+The documentation combines human-written architectural guides with **comprehensive, automatically generated codebase documentation**:
+
+- **Human-written documentation** (under `website/docs/` for architecture, modules, development, reference).
+- **Automated Codebase Reference** (under `website/docs/codebase/`) — generated and maintained via Python scripts in `scripts/docgen/` and `scripts/generate_docs.py`. It automatically detects all functions across the codebase, analyzes internal logic, maps test usages, and identifies cross-platform behavioral differences.
 
 ## Running locally
 
 ```bash
 cd website
 npm install     # first time only
+npm run generate-docs # generates codebase documentation via Python
 npm start       # dev server on http://localhost:3000 with hot reload
 ```
 
@@ -27,8 +30,44 @@ npm start       # dev server on http://localhost:3000 with hot reload
 ## Production build & preview
 
 ```bash
-npm run build   # static site into website/build/
+npm run build   # runs prebuild (Python docgen) + Docusaurus build
 npm run serve   # serves the production build
+```
+
+## Automated Codebase Documentation Generator
+
+The documentation generator (`scripts/generate_docs.py`) automatically maintains the `website/docs/codebase/` documentation tree. It is designed to automatically detect and document newly added functions, test cases, and platform variants as the engine evolves.
+
+### Architecture of the Python Generator
+
+```
+scripts/
+├── generate_docs.py           # CLI entrypoint for documentation generation
+└── docgen/
+    ├── __init__.py            # Module exports
+    ├── config.py              # Subsystem mappings, module list, exclusions
+    ├── models.py              # Data models for functions, tests, analysis
+    ├── parser.py              # C++, C#, Python AST and regex function extractor
+    ├── analyzer.py            # Internal logic, memory, concurrency & assert analyzer
+    ├── test_mapper.py         # Boost/MSUnit test suite parser & assertion mapper
+    ├── divergence_detector.py # Preprocessor guards (#ifdef) & multi-file divergence
+    └── markdown_generator.py  # Production-grade Docusaurus Markdown & MDX generator
+```
+
+### CLI Options
+
+```bash
+# Generate all codebase documentation into website/docs/codebase/
+python3 scripts/generate_docs.py
+
+# Check statistics without modifying files
+python3 scripts/generate_docs.py --stats-only
+
+# Dry-run validation check
+python3 scripts/generate_docs.py --check
+
+# Custom output directory
+python3 scripts/generate_docs.py --output-dir /path/to/docs
 ```
 
 ### The base-URL gotcha

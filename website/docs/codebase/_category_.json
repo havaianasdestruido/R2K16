@@ -1,0 +1,8 @@
+{
+  "label": "Codebase & Functions",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Exhaustive function-by-function documentation, internal implementations, test coverage, and cross-file behavioral differences for the R2K16 engine."
+  }
+}

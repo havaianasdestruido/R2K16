@@ -46,6 +46,7 @@ The tree is a snapshot of the entire 2016 Roblox client/server/studio technology
 
 - **New to the repo?** Start with [Getting Started](./getting-started/index.md), then read the
   [Architecture overview](./architecture/index.md) top to bottom.
+- **Looking for in-depth function & code reference?** Explore the [Codebase Architecture & Function Hub](./codebase/index.md), featuring function-by-function documentation, internal implementation breakdowns, test usage mappings, and platform divergence matrices.
 - **Looking for one specific folder?** Jump to the
   [Module Reference](./modules/index.md) or the [Repository Map](./reference/repo-map.md).
 - **Trying to build?** See [Building on Windows](./getting-started/building-windows.md) and
