@@ -2454,11 +2454,12 @@ void XboxPlatform::setGameProgress()
         [=](AchievementsResult^ achievements) -> void
         {
             int usersGamerscore = 0;
-            for( Achievement^ achievement : achievements->Items )
+            // [Bolt]: Use const auto& to prevent expensive COM AddRef/Release on each iteration
+            for( const auto& achievement : achievements->Items )
             {
                 if (achievement->ProgressState == AchievementProgressState::Achieved)
                 {
-                    for( AchievementReward^ reward : achievement->Rewards )
+                    for( const auto& reward : achievement->Rewards )
                     {
                         if (reward->RewardType == AchievementRewardType::Gamerscore)
                         {
