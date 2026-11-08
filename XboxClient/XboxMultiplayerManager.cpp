@@ -857,10 +857,10 @@ void XboxMultiplayerManager::processSessionDeltas( MultiplayerSession^ currentSe
         if (voiceChat)
         {
             // find users that were removed
-            for (MultiplayerSessionMember^ memberOld : previousSession->Members)
+            for (const auto& memberOld : previousSession->Members)
             {
                 bool found = false;
-                for (MultiplayerSessionMember^ memberNew : currentSession->Members)
+                for (const auto& memberNew : currentSession->Members)
                 {
                     if (memberNew->XboxUserId == memberOld->XboxUserId)
                     {
@@ -883,10 +883,10 @@ void XboxMultiplayerManager::processSessionDeltas( MultiplayerSession^ currentSe
             }
 
             // find new users 
-            for (MultiplayerSessionMember^ memberNew : currentSession->Members)     
+            for (const auto& memberNew : currentSession->Members)
             {
                 bool found = false;
-                for (MultiplayerSessionMember^ memberOld : previousSession->Members)
+                for (const auto& memberOld : previousSession->Members)
                 {
                     if (memberNew->XboxUserId == memberOld->XboxUserId)
                     {
