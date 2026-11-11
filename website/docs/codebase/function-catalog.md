@@ -316,3 +316,20 @@ Master directory listing all **25,310 documented functions** in the R2K16 codeba
 :::info Full Index Availability
 Displaying top 300 alphabetical entries. All 25,310 functions are documented with internal flow, test cases, and platform differences across their respective subsystem pages.
 :::
+
+
+## FAQ
+
+### Is this catalog an exhaustive API specification?
+
+No. It is produced by source parsing and can miss or misinterpret constructs. Confirm declarations, definitions and callers in the repository before using an entry.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'parse_file' -- scripts/docgen
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.

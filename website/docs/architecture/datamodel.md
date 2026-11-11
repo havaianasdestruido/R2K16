@@ -10,6 +10,23 @@ The **DataModel** is the root of the Instance tree in a running game. It owns th
 (Workspace, Players, Lighting, …), which in turn own every part, script and GUI. This folder is
 the single biggest directory in `App/` — it is "the game" itself.
 
+
+## FAQ
+
+### Is the DataModel the same thing as Workspace?
+
+No. Workspace is a service in the wider DataModel, which also hosts services such as Players. When tracing scene behavior, check both the service and the object it manages.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Workspace' -- App/v8datamodel
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Services
 
 `DataModel.cpp` assembles the standard service set. Every service derives from

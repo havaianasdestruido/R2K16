@@ -23,6 +23,23 @@ assets and any binaries you build as educational/archival material, and review t
 
 :::
 
+
+## FAQ
+
+### Where should I start investigating an engine feature?
+
+Start with the architecture overview to understand the boundaries, then use the module reference and source tree to follow a concrete implementation. The generated codebase pages are a navigation aid, not a substitute for reading the implementation.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## What's in the repository?
 
 The tree is a snapshot of the entire 2016 Roblox client/server/studio technology stack:

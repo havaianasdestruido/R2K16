@@ -8,6 +8,23 @@ description: Constructive Solid Geometry boolean operations (Union, Subtract, In
 
 Constructive Solid Geometry boolean operations (Union, Subtract, Intersect).
 
+
+## FAQ
+
+### How can I validate a CSG operation?
+
+Read its implementation and test representative inputs, including invalid or degenerate geometry. A generated function description is not a geometric correctness proof.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'union' -- CSG
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `63`

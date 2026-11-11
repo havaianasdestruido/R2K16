@@ -8,6 +8,23 @@ description: Windows player application, Document/View, launcher utilities, and 
 
 Windows player application, Document/View, launcher utilities, and hooks.
 
+
+## FAQ
+
+### How do I trace the Windows player startup?
+
+Start in the Windows client and launcher code, then follow initialization into shared client and engine components. Check the selected build configuration.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'WinMain' -- WindowsClient
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `499`

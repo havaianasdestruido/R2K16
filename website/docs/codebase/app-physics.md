@@ -8,6 +8,23 @@ description: Physics world, contacts, mechanisms, assemblies, primitives, and jo
 
 Physics world, contacts, mechanisms, assemblies, primitives, and joints.
 
+
+## FAQ
+
+### Where are contact and world behaviors implemented?
+
+Start in v8world and follow the contact or assembly into the kernel. Read actual implementation and tests before relying on a generated behavioral summary.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Contact' -- App/v8world
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `2042`

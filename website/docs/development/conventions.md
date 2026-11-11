@@ -7,6 +7,23 @@ sidebar_position: 5
 Patterns to follow when contributing. The tree is consistent about these — new code that
 matches them reads as "native".
 
+
+## FAQ
+
+### Why check existing code before adding a reflected member?
+
+Registration, naming and notification conventions vary by subsystem. A nearby implementation shows how this branch connects a member to reflection and lifecycle behavior.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'PropertyDescriptor' -- App/v8datamodel
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Namespaces & types
 
 - Everything engine-side lives in `RBX::`. Lua bindings wrap it in the `lua` namespaces

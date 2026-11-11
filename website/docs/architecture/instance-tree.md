@@ -9,6 +9,23 @@ sidebar_position: 2
 
 Everything in a Roblox game is a node in one tree. The node type is `RBX::Instance`.
 
+
+## FAQ
+
+### How do reflected properties relate to the Instance tree?
+
+Instances provide the hierarchy; reflection descriptors expose classes and members to engine systems and scripts. A property declaration alone does not describe all side effects, so inspect its setter and change notifications too.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'PropertyDescriptor' -- App/reflection
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## `RBX::Instance`
 
 `App/v8tree/Instance.cpp` (header: `V8Tree/Instance.h`) implements the base class every game

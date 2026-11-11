@@ -8,6 +8,23 @@ description: ScriptContext, Lua-5.1 runtime integration, Luau bridge, and debugg
 
 ScriptContext, Lua-5.1 runtime integration, Luau bridge, and debugger.
 
+
+## FAQ
+
+### How can I trace script execution?
+
+Start with ScriptContext and follow the VM and security context. Generated signatures are a starting point, not a complete execution or permission model.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'ScriptContext' -- App/script
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `837`

@@ -8,6 +8,23 @@ description: Xbox Durango client, controller buffer, voice chat, and async servi
 
 Xbox Durango client, controller buffer, voice chat, and async services.
 
+
+## FAQ
+
+### Can I assume Windows client behavior applies to Xbox?
+
+No. Xbox has platform-specific services and build dependencies. Inspect the Xbox implementation and guards, and verify any behavior on a supported target.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Durango' -- XboxClient
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `299`
@@ -764,9 +781,9 @@ This function is exercised in **5 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`.
 
-- **Alternative Implementation Files:** `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`
+- **Alternative Implementation Files:** `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`
 
 ---
 
@@ -1482,9 +1499,9 @@ This function is exercised in **39 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Rendering/GfxCore/GL/ContextGLAndroid.cpp`, `Rendering/GfxCore/GL/ContextGLMac.mm`, `XboxClient/async.h`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Rendering/GfxCore/GL/ContextGLWin32.cpp`, `Rendering/GfxCore/GL/ContextGLMac.mm`, `XboxClient/async.h`.
 
-- **Alternative Implementation Files:** `Rendering/GfxCore/GL/ContextGLAndroid.cpp`, `Rendering/GfxCore/GL/ContextGLMac.mm`, `XboxClient/async.h`, `XboxClient/VoiceChatMaxNet.h`, `Rendering/GfxCore/GL/ContextGLWin32.cpp`
+- **Alternative Implementation Files:** `Rendering/GfxCore/GL/ContextGLWin32.cpp`, `Rendering/GfxCore/GL/ContextGLMac.mm`, `XboxClient/async.h`, `XboxClient/VoiceChatMaxNet.h`, `Rendering/GfxCore/GL/ContextGLAndroid.cpp`
 
 ---
 

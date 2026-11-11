@@ -8,6 +8,23 @@ description: MachineConfiguration, ReflectionMetadata, and RenderSettingsItem.
 
 MachineConfiguration, ReflectionMetadata, and RenderSettingsItem.
 
+
+## FAQ
+
+### What is the role of ClientBase?
+
+It contains client-facing configuration and settings components; trace the application that consumes them before assuming a setting applies to every client.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Settings' -- ClientBase
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `77`
@@ -366,9 +383,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -422,9 +439,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -478,9 +495,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -534,9 +551,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -590,9 +607,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -646,9 +663,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -702,9 +719,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -758,9 +775,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 
@@ -814,9 +831,9 @@ This function is exercised in **73 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/UserTranslator.cpp`, `RobloxStudio/RobloxMainWindow.cpp`
+- **Alternative Implementation Files:** `RobloxStudio/RobloxMainWindow.cpp`, `XboxClient/UserTranslator.cpp`
 
 ---
 

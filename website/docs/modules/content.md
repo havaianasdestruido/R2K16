@@ -8,6 +8,23 @@ sidebar_position: 14
 
 Everything the engine loads at runtime that is *data* rather than code.
 
+
+## FAQ
+
+### What is the difference between shared and platform content?
+
+Shared assets live under content, while PlatformContent contains platform-specific material. Check how the target packages and resolves an asset before changing its location.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'rbxasset' -- PlatformContent
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## `content/` — shared content
 
 ```

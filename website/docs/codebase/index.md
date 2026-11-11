@@ -12,6 +12,23 @@ Welcome to the automated architectural reference and function-by-function docume
 This documentation is **generated and maintained entirely via automated Python scripts** located in `scripts/docgen/`. It automatically scans all source and test files on every build, detecting newly added functions and tests to guarantee that documentation never drifts from the actual source code.
 :::
 
+
+## FAQ
+
+### How should I use the generated function hub?
+
+Use it to locate candidate files and symbols, then verify signatures and behavior in source. Parser output and name-based test matches are not proof of complete coverage or platform equivalence.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'CORE_MODULES' -- scripts/docgen
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Key Engine Metrics
 
 | Metric | Count | Description |

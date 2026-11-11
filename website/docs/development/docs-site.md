@@ -16,6 +16,23 @@ The documentation combines human-written architectural guides with **comprehensi
 - **Human-written documentation** (under `website/docs/` for architecture, modules, development, reference).
 - **Automated Codebase Reference** (under `website/docs/codebase/`) — generated and maintained via Python scripts in `scripts/docgen/` and `scripts/generate_docs.py`. It automatically detects all functions across the codebase, analyzes internal logic, maps test usages, and identifies cross-platform behavioral differences.
 
+
+## FAQ
+
+### Will editing a generated codebase page survive a build?
+
+The prebuild script regenerates codebase reference pages. Their curated FAQs live in `scripts/docgen/page_faqs.json` and are inserted by the generator, including for custom output directories. Change the generator for other generated material; hand-written pages live elsewhere under website/docs. Validate both the generator and the site after changes.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'generate_all' -- scripts/docgen
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Running locally
 
 ```bash

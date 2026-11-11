@@ -24,6 +24,23 @@ App.BulletPhysics/
 └── stdafx.h
 ```
 
+
+## FAQ
+
+### Does the embedded Bullet tree replace the engine physics stack?
+
+No. The engine has its own world and kernel and integrates Bullet for particular collision functionality. Trace the engine-side adapter before changing vendored code.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Bullet' -- App/v8world
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## How the engine uses it
 
 `App/v8world` contains dedicated integration points — `BulletContact.cpp`,

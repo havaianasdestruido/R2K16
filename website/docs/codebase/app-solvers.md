@@ -8,6 +8,23 @@ description: PGS constraint solver, Featherstone mechanics, and Humanoid state m
 
 PGS constraint solver, Featherstone mechanics, and Humanoid state machine.
 
+
+## FAQ
+
+### How do I investigate a solver or humanoid change?
+
+Trace the relevant solver constraint or humanoid state and its callers, then look for simulation tests. The generated catalog cannot prove numerical stability.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Constraint' -- App/solver
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `660`

@@ -12,6 +12,23 @@ Practices and infrastructure for changing the codebase:
 4. [Coding conventions](./conventions.md) — patterns used across the C++ tree
 5. [Maintaining the docs site](./docs-site.md) — this website
 
+
+## FAQ
+
+### What should I check before changing shared engine code?
+
+Identify the owning subsystem, its callers, platform guards and existing tests. A local change can affect Studio, clients and server hosts differently, so verify the relevant targets separately.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'RBXASSERT' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## The golden rules
 
 - **Match the era.** This is a 2016 codebase: prefer the existing idioms (Boost smart

@@ -8,6 +8,23 @@ description: Base foundations, TaskScheduler, signals, time, memory, assertions,
 
 Base foundations, TaskScheduler, signals, time, memory, assertions, and string formatting.
 
+
+## FAQ
+
+### How can I verify scheduler or utility behavior?
+
+Read the implementation and its synchronization assumptions, then inspect its callers and tests. Generated analysis is not a thread-safety guarantee.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'TaskScheduler' -- Base
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `906`
@@ -173,9 +190,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/fetchfflags.py`, `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/main.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/fetchfflags.py`, `XboxClient/main.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/fetchfflags.py`, `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/main.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/fetchfflags.py`, `XboxClient/main.cpp`
 
 ---
 

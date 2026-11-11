@@ -8,6 +8,23 @@ description: GfxBase, GfxCore, D3D/OpenGL backends, GfxRender scene graph, and s
 
 GfxBase, GfxCore, D3D/OpenGL backends, GfxRender scene graph, and shaders.
 
+
+## FAQ
+
+### How do I investigate a rendering function across backends?
+
+Trace the device abstraction to the active backend and its callers. Platform guards and runtime configuration both affect which code executes.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Device' -- Rendering
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `6265`

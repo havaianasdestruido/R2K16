@@ -8,6 +8,23 @@ description: Comprehensive mapping of all test suites, test cases, and verified 
 
 This matrix documents **every test case across the R2K16 test suites** (`App.UnitTest`, `Base.UnitTest`, `RobloxTest`, `Roblox.Test`, `RCCService.Test`), detailing what functions are exercised and what invariants are verified.
 
+
+## FAQ
+
+### Does a test mapping prove a function is fully tested?
+
+No. The mapping is heuristic; a name match does not prove execution or meaningful assertions. Read and run the relevant test when the target is available.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'map_tests_to_function' -- scripts/docgen
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Test Suite Overview
 
 | Suite Name | Test Cases | Primary Source File | Target Subsystem |

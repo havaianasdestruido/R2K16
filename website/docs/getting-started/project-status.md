@@ -8,6 +8,23 @@ This page tracks what actually builds in the R2K16 tree today, plus the fork's f
 checklist. It mirrors the *Extras* section of the repository `README.md` — if the README is
 updated, this page should follow.
 
+
+## FAQ
+
+### Does a listed compile status guarantee a working runtime?
+
+No. A compile status is a snapshot, not a runtime or platform certification. Rebuild the specific target and run relevant tests in your own environment.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'build' -- README.md
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Compile status
 
 ### ✅ Building

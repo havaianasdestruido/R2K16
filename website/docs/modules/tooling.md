@@ -6,6 +6,23 @@ sidebar_position: 13
 
 Auxiliary programs that build, sign, analyze and extend — not part of the runtime engine.
 
+
+## FAQ
+
+### Which tool should I use for a source or content task?
+
+Choose by purpose: converters and signers handle content, IncludeChecker examines includes, and test hooks support diagnostics. Read the relevant project before invoking a tool on production assets.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'include' -- IncludeChecker
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## CoreScriptConverter2 — ❌ not building yet
 
 **Path:** `CoreScriptConverter2/` · `cscmain.cpp`, `tool/`, `rsc.config.template`

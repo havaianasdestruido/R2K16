@@ -8,6 +8,23 @@ description: Voxel occupancy grid, smooth terrain v2, materials, and spatial par
 
 Voxel occupancy grid, smooth terrain v2, materials, and spatial partitioning.
 
+
+## FAQ
+
+### Which terrain generation should I inspect?
+
+Identify whether the caller uses voxel or voxel2 before changing storage or material logic. The two representations should not be assumed interchangeable.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Material' -- App/voxel2
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `206`

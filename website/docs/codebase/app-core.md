@@ -8,6 +8,23 @@ description: Core engine runtime headers, shared data structures, and foundation
 
 Core engine runtime headers, shared data structures, and foundational classes.
 
+
+## FAQ
+
+### What does this page cover under engine core?
+
+Its current source list focuses on Lua bridge headers. Inspect the template and its call sites before using a generated signature; template context and ownership matter.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'memberFunctionProxy' -- App/include/lua
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `21`
