@@ -10,6 +10,23 @@ sidebar_position: 3
 `Base` is the low-level library everything else stands on. It deliberately knows nothing about
 Roblox concepts — it is infrastructure.
 
+
+## FAQ
+
+### Why is Base used by so many projects?
+
+Base contains shared infrastructure such as scheduling and utilities. Changes here can have broad effects; inspect callers and tests in addition to the implementation.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'TaskScheduler' -- Base
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Layout
 
 ```

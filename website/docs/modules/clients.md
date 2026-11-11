@@ -7,6 +7,23 @@ sidebar_position: 10
 The player-facing applications, one per platform. All of them embed the same `App` engine; the
 differences are shells, input, and platform services.
 
+
+## FAQ
+
+### Do all client projects share the same platform implementation?
+
+They share engine components, but each platform has its own entry points and integration. Check the target client and its platform guards rather than assuming Windows behavior applies elsewhere.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- WindowsClient
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## WindowsClient (Windows player) — ✅ builds
 
 **Path:** `WindowsClient/`

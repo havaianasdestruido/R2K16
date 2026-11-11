@@ -11,6 +11,23 @@ Places and models are trees of `Instance`s, and they can be persisted in two fla
 (text, human-readable) and **binary** (compact). Both are driven by the
 [reflection](./instance-tree.md#the-reflection-system) descriptors.
 
+
+## FAQ
+
+### Is saved-place serialization identical to network replication?
+
+Both deal with engine objects and reflected data, but persistence and replication have different entry points and purposes. Check the actual serializer or replicator rather than assuming fields are handled identically.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Serializer' -- App/v8xml
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## The serializers
 
 | File | Format / role |

@@ -7,6 +7,23 @@ sidebar_position: 3
 The engine has two global registries you will meet everywhere: **FastFlags** (runtime feature
 toggles) and **FastLog** (log groups). Macros for both are sprinkled through every file.
 
+
+## FAQ
+
+### Are FastFlags and FastLog groups interchangeable?
+
+No. Flags configure behavior, while log groups control diagnostic output. Before changing a flag, find its declaration and call sites and check how its value is supplied on the target platform.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'FASTFLAG' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## FastFlags
 
 Declared with the `DYNAMIC_FASTFLAGVARIABLE` family of macros, e.g. straight from

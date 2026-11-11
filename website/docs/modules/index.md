@@ -32,3 +32,20 @@ Almost every C++ module builds from **both** `Roblox.sln` (via `.vcxproj`) and t
 (via its own `CMakeLists.txt`); several also carry Xcode projects (`.xcodeproj`) for the Mac
 build. Many have `*.PrepForUpload` companion projects that produce upload-ready artifacts.
 :::
+
+
+## FAQ
+
+### How do I choose a module page?
+
+Choose by ownership: App for engine objects and simulation, Base for shared infrastructure, Network for replication, and a client or service page for platform-specific hosting. Then follow the source links.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.

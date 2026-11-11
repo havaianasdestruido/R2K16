@@ -9,6 +9,23 @@ sidebar_position: 5
 The engine embeds **Lua 5.1.4** — the full interpreter source is vendored in `App/Lua-5.1.4/`
 (only `src/` is used). All gameplay, Studio tooling and CoreScripts run on it.
 
+
+## FAQ
+
+### Does a Lua API change only involve the VM?
+
+Not necessarily. ScriptContext, reflection bindings and security checks can all affect what a script can access. Check the embedding and authorization paths as well as the Lua runtime.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'ScriptContext' -- App/script
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## The VM layer
 
 | File | Role |

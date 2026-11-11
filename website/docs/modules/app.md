@@ -11,6 +11,23 @@ sidebar_position: 2
 Instance tree, the DataModel with all its services, Lua scripting, physics, terrain, Studio
 tools and the security model — lives here. Both the player clients and `RCCService` link it.
 
+
+## FAQ
+
+### Where should an App feature investigation begin?
+
+Use the layout above to choose the subsystem, then compare its headers, implementation and tests. App spans object hierarchy, scripting and simulation, so names alone can cross boundaries.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Layout
 
 ```

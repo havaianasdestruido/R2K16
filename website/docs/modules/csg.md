@@ -16,6 +16,23 @@ CSG/
 └── CSG.xcodeproj                 # Mac project
 ```
 
+
+## FAQ
+
+### Where should I investigate a failed solid operation?
+
+Start with the CSG kernel and then trace the engine integration and mesh serialization. A geometry failure can originate in input validation, the boolean operation or downstream use of its result.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'union' -- CSG
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## How it fits together
 
 - Studio commands (`RobloxStudio/CSGOperations.cpp`) invoke the kernel with the selected parts.

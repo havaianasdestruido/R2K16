@@ -20,6 +20,23 @@ compile-and-test pipeline** yet (the unit-test projects don't build — see
 | **Mark stale issues and pull requests** | `stale.yml` | Stale bot |
 | **sync to codeberg** | `sync.yml` | Mirrors the repo to Codeberg |
 
+
+## FAQ
+
+### Does the documentation deployment prove the engine builds?
+
+No. A docs build validates the website, not the native engine, its platform dependencies or runtime behavior. Inspect each workflow and its jobs before interpreting a green result.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'run:' -- .github/workflows
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## The ~557 "issues"
 
 The README tracks *"Fix all 557 'issues' and stuff scanned by Github"* — these are findings

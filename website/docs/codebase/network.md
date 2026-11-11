@@ -8,6 +8,23 @@ description: RakNet replication stack, Client/Server Replicators, physics sender
 
 RakNet replication stack, Client/Server Replicators, physics senders/receivers.
 
+
+## FAQ
+
+### How do I trace a network update?
+
+Find the sender and corresponding receiver, then check validation and object ownership. A function inventory alone does not establish a wire protocol contract.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Replicator' -- Network
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `1546`
@@ -1766,9 +1783,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`.
 
-- **Alternative Implementation Files:** `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 
@@ -1855,9 +1872,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 
@@ -1936,9 +1953,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`.
 
-- **Alternative Implementation Files:** `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 
@@ -2026,10 +2043,10 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Behavior branches internally via conditional compilation for: Windows (Win32/x64 API). Alternative platform-specific implementations exist in: `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Behavior branches internally via conditional compilation for: Windows (Win32/x64 API). Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`.
 
 - **Platform Preprocessor Guards:** `Windows (Win32/x64 API)`
-- **Alternative Implementation Files:** `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 
@@ -2227,9 +2244,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`.
 
-- **Alternative Implementation Files:** `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `App/util/Win/CheatEngine.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 
@@ -2316,9 +2333,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/renderJob.cpp`, `WindowsClient/RenderJob.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RenderJob.cpp`, `XboxClient/renderJob.cpp`
 
 ---
 

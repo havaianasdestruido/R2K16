@@ -38,6 +38,23 @@ flowchart TB
     CLI --> CREP --> RECV
 ```
 
+
+## FAQ
+
+### Are instance replication and physics synchronization the same path?
+
+They are related but distinct: the replication stack handles object and property updates as well as specialized physics traffic. Trace both sender and receiver when diagnosing a mismatch.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Replicator' -- Network
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Topology & peers
 
 - **`Peer.cpp` / `Peer.h`** — base peer abstraction.

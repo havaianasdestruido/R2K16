@@ -6,6 +6,23 @@ sidebar_position: 1
 
 This section gets you from a fresh clone to a compiling tree.
 
+
+## FAQ
+
+### Which build guide should I use?
+
+Use the Windows guide for the Visual Studio solution and the CMake guide for the CMake-based paths. Both require the platform-specific dependencies listed in prerequisites.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'project(' -- CMakeLists.txt
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## The 30-second version
 
 R2K16 is a classic mid-2010s C++ codebase:

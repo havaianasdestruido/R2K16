@@ -8,6 +8,23 @@ description: ClassDescriptor, MemberDescriptor, PropertyDescriptor, and dynamic 
 
 ClassDescriptor, MemberDescriptor, PropertyDescriptor, and dynamic invocation.
 
+
+## FAQ
+
+### How can I trace a reflected member?
+
+Find its descriptor registration and implementation, then inspect any security and change-notification paths. A descriptor entry does not by itself describe every side effect.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Descriptor' -- App/reflection
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `380`

@@ -68,3 +68,20 @@ Details: [Maintaining the docs site](../development/docs-site.md).
 The docs live in `website/docs/` — PRs welcome, or open an issue. The
 [repo map](./repo-map.md) and [module pages](../modules/index.md) are the best places to
 report inaccuracies.
+
+
+## FAQ
+
+### Where can I find answers specific to a subsystem?
+
+Each documentation page has a local FAQ for its subject; start with the relevant architecture or module page and use the source search there to investigate further.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'FAQ' -- website/docs
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.

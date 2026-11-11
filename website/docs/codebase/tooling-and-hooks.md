@@ -8,6 +8,23 @@ description: RbxTestHooks DLL, CoreScriptConverter2, and developer diagnostic to
 
 RbxTestHooks DLL, CoreScriptConverter2, and developer diagnostic tools.
 
+
+## FAQ
+
+### How should I use a test hook or converter safely?
+
+Inspect the tool entry point and arguments first, and use a disposable copy for conversion experiments. The catalog does not guarantee tools are currently buildable.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'hook' -- RbxTestHooks
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `9`
@@ -309,9 +326,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/fetchfflags.py`, `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/main.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/fetchfflags.py`, `XboxClient/main.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/fetchfflags.py`, `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/main.cpp`
+- **Alternative Implementation Files:** `WindowsClient/RobloxGoldenHashPatcher/main.cpp`, `XboxClient/fetchfflags.py`, `XboxClient/main.cpp`
 
 ---
 

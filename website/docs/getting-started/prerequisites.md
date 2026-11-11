@@ -4,6 +4,23 @@ sidebar_position: 2
 
 # Prerequisites
 
+
+## FAQ
+
+### Are the bundled libraries all I need to build?
+
+Not necessarily. Some dependencies, build tools and platform SDKs must be supplied separately. Check the guide for your target and inspect the build configuration for required paths.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'CONTRIB_PATH' -- CMakeLists.txt
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Windows (recommended path)
 
 Building on Windows requires **both** of these Visual Studio generations:

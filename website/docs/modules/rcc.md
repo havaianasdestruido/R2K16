@@ -25,6 +25,23 @@ flowchart LR
     GAME <-->|replication| PLAYERS
 ```
 
+
+## FAQ
+
+### Is RCCService the same as the arbiter?
+
+No. RCCService hosts jobs; the separate C# arbiter coordinates service-side management. When debugging a job, distinguish host behavior from the component assigning or supervising it.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Job' -- RCCService
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## `RCCService/` (C++ service)
 
 | File | Role |

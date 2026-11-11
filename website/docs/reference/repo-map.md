@@ -7,6 +7,23 @@ sidebar_position: 1
 Every top-level entry in the repository, annotated. Deeper dives live in the
 [Module Reference](../modules/index.md).
 
+
+## FAQ
+
+### Does a directory name tell me everything it owns?
+
+No. Headers, implementations, platform integrations and tests may live in different projects. Follow includes and call sites after locating the relevant directory.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Engine & foundations
 
 | Entry | Kind | Description |

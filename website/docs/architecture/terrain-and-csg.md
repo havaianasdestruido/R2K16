@@ -10,6 +10,23 @@ sidebar_position: 10
 Two geometry systems with "construction" in the name: **voxel terrain** (the world's
 landscape) and **CSG** (solid-model boolean operations on parts).
 
+
+## FAQ
+
+### Are voxel terrain and CSG interchangeable representations?
+
+No. The voxel subsystems represent terrain data, while CSG implements solid-geometry operations. Investigate the relevant representation and its conversion or collision path separately.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Material' -- App/voxel2
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Voxel terrain, generation 1 — `App/voxel/`
 
 The classic blocky terrain of early Roblox: the world is a grid of cubic **cells**.

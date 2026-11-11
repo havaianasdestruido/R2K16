@@ -30,6 +30,23 @@ flowchart TB
     GFXCORE --> HW
 ```
 
+
+## FAQ
+
+### Where does engine scene data reach the graphics backend?
+
+AppDraw connects engine-side objects to rendering; GfxRender manages scene rendering and GfxCore abstracts device operations. A backend-specific issue may require tracing through all three.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'VisualEngine' -- Rendering
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## GfxBase — the engine-side foundation
 
 `Rendering/GfxBase/`: types the *engine* talks to, independent of the actual graphics API.

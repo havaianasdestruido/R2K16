@@ -6,6 +6,23 @@ sidebar_position: 2
 
 Terms you'll run into in the code, commit history and docs.
 
+
+## FAQ
+
+### How can I distinguish similar terms such as DataModel and Instance?
+
+An Instance is a node in the object hierarchy; the DataModel is the broader runtime container and service context. Use the architecture pages for lifecycle and implementation details.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- App/include
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Engine concepts
 
 | Term | Meaning |

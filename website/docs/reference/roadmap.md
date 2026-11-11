@@ -7,6 +7,23 @@ sidebar_position: 3
 The fork's plan, transcribed and organized from the repository `README.md`. Checked items are
 done in the current tree.
 
+
+## FAQ
+
+### Should I treat a roadmap item as implemented?
+
+No. A roadmap describes intended work. Confirm current behavior in the source and tests, and check the build status for the target you care about.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'physics' -- README.md
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Build & platform health
 
 - [x] Add all the "Contrib" libraries to the tree

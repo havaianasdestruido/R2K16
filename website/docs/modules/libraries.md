@@ -42,6 +42,23 @@ the first thing to retry — see [Troubleshooting](../reference/troubleshooting.
 
 :::
 
+
+## FAQ
+
+### Is it safe to upgrade a bundled dependency in isolation?
+
+Not without checking its consumers, build settings and license. An ABI or compiler change can affect multiple legacy targets; compare the bundled version and test each affected configuration.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'README' -- Library
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## `Library/README.txt` files
 
 Several subfolders ship READMEs from upstream (SDL2, curl, …). They describe the original

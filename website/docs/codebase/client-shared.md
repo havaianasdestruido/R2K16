@@ -8,6 +8,23 @@ description: Cross-platform CookiesEngine, DataModel serialization, and SDL cont
 
 Cross-platform CookiesEngine, DataModel serialization, and SDL controllers.
 
+
+## FAQ
+
+### Does shared client code behave identically on every platform?
+
+Not necessarily. Check platform conditionals and the platform-specific callers before drawing conclusions from a shared source file.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'DataModel' -- ClientShared
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `114`
@@ -447,9 +464,9 @@ This function is exercised in **5 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`
+- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`
 
 ---
 
@@ -1423,9 +1440,9 @@ This function is exercised in **6 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
-- **Alternative Implementation Files:** `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`
+- **Alternative Implementation Files:** `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`
 - **Caller Context Variations:** Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
 ---
@@ -1465,9 +1482,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Win/VersionInfo.cpp`, `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Win/VersionInfo.cpp`, `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
-- **Alternative Implementation Files:** `Win/VersionInfo.cpp`, `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`
+- **Alternative Implementation Files:** `Win/VersionInfo.cpp`, `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`
 - **Caller Context Variations:** Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
 ---
@@ -1507,9 +1524,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`. Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
-- **Alternative Implementation Files:** `ClientShared/Mac/CookiesEngine.cpp`, `ClientShared/Win/CookiesEngine.cpp`
+- **Alternative Implementation Files:** `ClientShared/Win/CookiesEngine.cpp`, `ClientShared/Mac/CookiesEngine.cpp`
 - **Caller Context Variations:** Windows client uses WinINet cookie cache; Mac uses NSHTTPCookieStorage; Mobile uses sandbox file store.
 
 ---

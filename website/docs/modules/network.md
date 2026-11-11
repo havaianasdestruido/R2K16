@@ -45,6 +45,23 @@ Network/
 └── PacketIds.h             # Protocol packet IDs
 ```
 
+
+## FAQ
+
+### Where do I start tracing replication?
+
+Find the relevant replicator and follow both the serialization and receive paths. Also check the caller and security validation; a packet arriving does not imply that an update is accepted.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Replicator' -- Network
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Where it plugs in
 
 - **Server side:** `RCCService` links `Network` and serves games

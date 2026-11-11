@@ -78,6 +78,25 @@ class MarkdownGenerator:
         self._generate_test_matrix_page(functions, test_cases)
         self._generate_divergence_matrix_page(functions)
         self._generate_function_catalog_page(functions)
+        self._add_page_faqs()
+
+    def _add_page_faqs(self) -> None:
+        """Add curated guidance after regeneration, including for custom output directories."""
+        faq_path = os.path.join(os.path.dirname(__file__), 'page_faqs.json')
+        with open(faq_path, encoding='utf-8') as f:
+            faqs = json.load(f)
+        for filename, faq in faqs.items():
+            path = os.path.join(self.output_dir, filename)
+            with open(path, encoding='utf-8') as f:
+                content = f.read()
+            heading = content.find('\n# ')
+            section = content.find('\n## ', heading + 3)
+            if section < 0:
+                content += '\n\n' + faq
+            else:
+                content = content[:section] + '\n\n' + faq + content[section:]
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(content)
 
     def _write_category_json(self) -> None:
         cat_file = os.path.join(self.output_dir, '_category_.json')

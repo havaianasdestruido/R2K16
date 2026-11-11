@@ -8,6 +8,23 @@ description: Qt-based Studio editor, ribbon framework, docking widgets, and plug
 
 Qt-based Studio editor, ribbon framework, docking widgets, and plugins.
 
+
+## FAQ
+
+### How do I trace a Studio command?
+
+Follow its UI action into the document or engine operation, including undo and state changes where applicable. Generated entries do not capture the full user workflow.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Document' -- RobloxStudio
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `3123`

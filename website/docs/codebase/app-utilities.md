@@ -8,6 +8,23 @@ description: ThreadPool, Http client, G3D primitives, math functions, and URL pa
 
 ThreadPool, Http client, G3D primitives, math functions, and URL parsers.
 
+
+## FAQ
+
+### How should I evaluate a utility function?
+
+Read its implementation, callers and tests, particularly for ownership and threading. Similar utility names do not necessarily have identical contracts.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'ThreadPool' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `1822`

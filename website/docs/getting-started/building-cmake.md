@@ -8,6 +8,23 @@ Beside the Windows solution, the repository carries a root `CMakeLists.txt` used
 Unix (and Android) flavors of the engine. It is the same build system the CI code-analysis
 workflow exercises.
 
+
+## FAQ
+
+### Why might a CMake configure fail before compilation?
+
+The root configuration expects external contribution libraries and include paths; installed tools alone are not sufficient. Read the configure output and supply the paths described above for your platform.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'CONTRIB_PATH' -- CMakeLists.txt
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## What the root CMakeLists expects
 
 The root script is old-school (it declares `cmake_minimum_required(VERSION 2.8)`) and has hard

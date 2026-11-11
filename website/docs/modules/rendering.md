@@ -21,6 +21,23 @@ in [Rendering](../architecture/rendering.md).
 | `ShaderCompiler/` | Shader build tooling (uses `Library/glsl-optimizer`, `Library/hlsl2glslfork`) |
 | `LibOVR/`, `OpenVR/`, `VrApi/` | VR SDKs: Oculus PC, Valve OpenVR, GearVR/mobile |
 
+
+## FAQ
+
+### Which rendering layer should I inspect for a backend bug?
+
+Start at the graphics device abstraction and the backend for your platform, then trace the caller in the scene renderer. Verify the actual backend selected by that build.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Device' -- Rendering/GfxCore
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Backend status in this fork
 
 - **D3D9** — works (the README's suspected text-render bug "never existed in the first place")

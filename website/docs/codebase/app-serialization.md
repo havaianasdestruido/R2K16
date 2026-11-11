@@ -8,6 +8,23 @@ description: DataModel serializer, WebSerializer, Binary format, and XML persist
 
 DataModel serializer, WebSerializer, Binary format, and XML persistence.
 
+
+## FAQ
+
+### How can I verify a serialization format?
+
+Inspect the reader and writer together, including version handling and tests. A function inventory does not establish compatibility between file formats or versions.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'Serializer' -- App/v8xml
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `169`
@@ -2001,9 +2018,9 @@ This function is exercised in **1 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/WinInet.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`.
 
-- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/WinInet.cpp`
+- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`
 
 ---
 
@@ -2084,9 +2101,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`.
 
-- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`, `App/util/WinInet.cpp`
+- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`
 
 ---
 
@@ -2126,9 +2143,9 @@ This function is invoked indirectly through higher-level simulation or integrati
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`.
 
-- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`, `App/util/WinInet.cpp`
+- **Alternative Implementation Files:** `Network/Replicator.NewInstanceItem.cpp`, `App/util/WinInet.cpp`, `App/util/WinHttp.cpp`, `App/util/Darwin/HttpCocoa.mm`
 
 ---
 

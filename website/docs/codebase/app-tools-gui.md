@@ -8,6 +8,23 @@ description: Studio draggers, Selection system, UserInputService, and GUI compon
 
 Studio draggers, Selection system, UserInputService, and GUI components.
 
+
+## FAQ
+
+### How should I investigate input or editor tools?
+
+Trace the input event through the relevant GUI or tool implementation and its callers. Check ownership and platform-specific behavior rather than relying on a generated summary.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'UserInputService' -- App
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Subsystem Metrics
 
 - **Total Documented Functions:** `498`
@@ -1946,9 +1963,9 @@ This function is exercised in **5 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`
+- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`
 
 ---
 
@@ -2038,9 +2055,9 @@ This function is exercised in **5 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`
+- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`
 
 ---
 
@@ -2259,9 +2276,9 @@ This function is exercised in **5 test case(s)**:
 
 #### Behavioral Differences Across Code Files
 
-**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`.
+**Divergence Analysis:** Alternative platform-specific implementations exist in: `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`.
 
-- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `XboxClient/VoiceChatMaxNet.cpp`, `App/util/XboxHttp2.cpp`
+- **Alternative Implementation Files:** `XboxClient/VoiceChat.cpp`, `Win/LogManager.cpp`, `App/util/XboxHttp2.cpp`, `XboxClient/VoiceChatMaxNet.cpp`
 
 ---
 

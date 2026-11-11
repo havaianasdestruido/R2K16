@@ -6,6 +6,23 @@ sidebar_position: 4
 
 Common failure modes, collected from the README and the build system.
 
+
+## FAQ
+
+### What information should I collect before investigating a failure?
+
+Record the target, platform, configuration, first error and reproduction steps. For build errors, start with the earliest failure rather than a later cascade of missing symbols.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'CONTRIB_PATH' -- CMakeLists.txt
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Windows build
 
 ### `rc` is not recognized during the Qt `nmake`

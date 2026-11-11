@@ -7,6 +7,23 @@ sidebar_position: 12
 The tree carries several generations of test infrastructure: C++ unit-test libraries,
 simulation/API test rigs, and C# service tests.
 
+
+## FAQ
+
+### Does finding a test name prove a feature is covered?
+
+No. Read the assertions and setup, and confirm the relevant test target builds and runs in your environment. A name match alone is not evidence of behavioral coverage.
+
+### How can I investigate this in the repository?
+
+From the repository root, search the relevant tracked files for a starting point (results are leads, not proof of behavior):
+
+```bash
+git grep -n -i -F -- 'BOOST_AUTO_TEST_CASE' -- App.UnitTest
+```
+
+Read the surrounding implementation and callers, and check relevant tests before making changes. A search may return no matches when terminology or tracked files change.
+
 ## Unit test projects
 
 | Project | Notes |
